@@ -410,6 +410,36 @@ function ai1wm_archive_bucket( $blog_id = null ) {
 }
 
 /**
+ * Get archive vault name
+ *
+ * @param  integer $blog_id Blog ID
+ * @return string
+ */
+function ai1wm_archive_vault( $blog_id = null ) {
+	$name = array();
+
+	// Add domain
+	if ( ( $domain = explode( '.', parse_url( get_site_url( $blog_id ), PHP_URL_HOST ) ) ) ) {
+		foreach ( $domain as $subdomain ) {
+			if ( $subdomain ) {
+				$name[] = $subdomain;
+			}
+		}
+	}
+
+	// Add path
+	if ( ( $path = explode( '/', parse_url( get_site_url( $blog_id ), PHP_URL_PATH ) ) ) ) {
+		foreach ( $path as $directory ) {
+			if ( $directory ) {
+				$name[] = $directory;
+			}
+		}
+	}
+
+	return strtolower( implode( '-', $name ) );
+}
+
+/**
  * Get archive project name
  *
  * @param  integer $blog_id Blog ID
@@ -689,6 +719,13 @@ function ai1wm_plugin_filters( $filters = array() ) {
 		$filters[] = 'plugins' . DIRECTORY_SEPARATOR . 'all-in-one-wp-migration-gdrive-extension';
 	}
 
+	// Amazon Glacier Extension
+	if ( defined( 'AI1WMRE_PLUGIN_BASENAME' ) ) {
+		$filters[] = 'plugins' . DIRECTORY_SEPARATOR . dirname( AI1WMRE_PLUGIN_BASENAME );
+	} else {
+		$filters[] = 'plugins' . DIRECTORY_SEPARATOR . 'all-in-one-wp-migration-glacier-extension';
+	}
+
 	// Mega Extension
 	if ( defined( 'AI1WMEE_PLUGIN_BASENAME' ) ) {
 		$filters[] = 'plugins' . DIRECTORY_SEPARATOR . dirname( AI1WMEE_PLUGIN_BASENAME );
@@ -783,6 +820,11 @@ function ai1wm_active_servmask_plugins( $plugins = array() ) {
 	// Google Drive Extension
 	if ( defined( 'AI1WMGE_PLUGIN_BASENAME' ) ) {
 		$plugins[] = AI1WMGE_PLUGIN_BASENAME;
+	}
+
+	// Amazon Glacier Extension
+	if ( defined( 'AI1WMRE_PLUGIN_BASENAME' ) ) {
+		$plugins[] = AI1WMRE_PLUGIN_BASENAME;
 	}
 
 	// Mega Extension
@@ -983,15 +1025,53 @@ function ai1wm_deactivate_jetpack_modules( $modules ) {
  * @return string
  */
 function ai1wm_discover_plugin_basename( $basename ) {
-	foreach ( get_plugins() as $plugin => $info ) {
-		if ( strpos( dirname( $plugin ), dirname( $basename ) ) !== false ) {
-			if ( basename( $plugin ) === basename( $basename ) ) {
-				return $plugin;
+	if ( ( $plugins = get_plugins() ) ) {
+		foreach ( $plugins as $plugin => $info ) {
+			if ( strpos( dirname( $plugin ), dirname( $basename ) ) !== false ) {
+				if ( basename( $plugin ) === basename( $basename ) ) {
+					return $plugin;
+				}
 			}
 		}
 	}
 
 	return $basename;
+}
+
+/**
+ * Validate plugin basename
+ *
+ * @param  string  $basename Plugin basename
+ * @return boolean
+ */
+function ai1wm_validate_plugin_basename( $basename ) {
+	if ( ( $plugins = get_plugins() ) ) {
+		foreach ( $plugins as $plugin => $info ) {
+			if ( $plugin === $basename ) {
+				return true;
+			}
+		}
+	}
+
+	return false;
+}
+
+/**
+ * Validate theme basename
+ *
+ * @param  string  $basename Theme basename
+ * @return boolean
+ */
+function ai1wm_validate_theme_basename( $basename ) {
+	if ( ( $themes = search_theme_directories() ) ) {
+		foreach ( $themes as $theme => $info ) {
+			if ( $info['theme_file'] === $basename ) {
+				return true;
+			}
+		}
+	}
+
+	return false;
 }
 
 /**
@@ -1016,33 +1096,13 @@ function ai1wm_cache_flush() {
 }
 
 /**
- * URL encode
- *
- * @param  mixed $value Value to encode
- * @return mixed
- */
-function ai1wm_urlencode( $value ) {
-	return is_array( $value ) ? array_map( 'ai1wm_urlencode', $value ) : urlencode( $value );
-}
-
-/**
- * URL decode
- *
- * @param  mixed $value Value to decode
- * @return mixed
- */
-function ai1wm_urldecode( $value ) {
-	return is_array( $value ) ? array_map( 'ai1wm_urldecode', $value ) : urldecode( stripslashes( $value ) );
-}
-
-/**
  * Set URL scheme
  *
  * @param  string $url    URL value
  * @param  string $scheme URL scheme
  * @return string
  */
-function ai1wm_urlscheme( $url, $scheme = '' ) {
+function ai1wm_url_scheme( $url, $scheme = '' ) {
 	if ( empty( $scheme ) ) {
 		return preg_replace( '#^\w+://#', '//', $url );
 	}

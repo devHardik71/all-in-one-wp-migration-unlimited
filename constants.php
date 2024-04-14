@@ -31,7 +31,7 @@ define( 'AI1WM_DEBUG', false );
 // ==================
 // = Plugin Version =
 // ==================
-define( 'AI1WM_VERSION', '6.74' );
+define( 'AI1WM_VERSION', '6.76' );
 
 // ===============
 // = Plugin Name =
@@ -364,6 +364,13 @@ if ( defined( 'AI1WMZE_PLUGIN_BASENAME' ) ) {
 }
 
 // ===================================
+// = Microsoft Azure Extension Title =
+// ===================================
+if ( ! defined( 'AI1WMZE_PLUGIN_TITLE' ) ) {
+	define( 'AI1WMZE_PLUGIN_TITLE', 'Microsoft Azure Storage Extension' );
+}
+
+// ===================================
 // = Microsoft Azure Extension About =
 // ===================================
 if ( ! defined( 'AI1WMZE_PLUGIN_ABOUT' ) ) {
@@ -391,6 +398,13 @@ if ( defined( 'AI1WMAE_PLUGIN_BASENAME' ) ) {
 	define( 'AI1WMAE_PLUGIN_BASEDIR', dirname( AI1WMAE_PLUGIN_BASENAME ) );
 } else {
 	define( 'AI1WMAE_PLUGIN_BASEDIR', 'all-in-one-wp-migration-b2-extension' );
+}
+
+// ================================
+// = Backblaze B2 Extension Title =
+// ================================
+if ( ! defined( 'AI1WMAE_PLUGIN_TITLE' ) ) {
+	define( 'AI1WMAE_PLUGIN_TITLE', 'Backblaze B2 Extension' );
 }
 
 // ================================
@@ -424,6 +438,13 @@ if ( defined( 'AI1WMBE_PLUGIN_BASENAME' ) ) {
 }
 
 // =======================
+// = Box Extension Title =
+// =======================
+if ( ! defined( 'AI1WMBE_PLUGIN_TITLE' ) ) {
+	define( 'AI1WMBE_PLUGIN_TITLE', 'Box Extension' );
+}
+
+// =======================
 // = Box Extension About =
 // =======================
 if ( ! defined( 'AI1WMBE_PLUGIN_ABOUT' ) ) {
@@ -451,6 +472,13 @@ if ( defined( 'AI1WMIE_PLUGIN_BASENAME' ) ) {
 	define( 'AI1WMIE_PLUGIN_BASEDIR', dirname( AI1WMIE_PLUGIN_BASENAME ) );
 } else {
 	define( 'AI1WMIE_PLUGIN_BASEDIR', 'all-in-one-wp-migration-digitalocean-extension' );
+}
+
+// ================================
+// = DigitalOcean Extension Title =
+// ================================
+if ( ! defined( 'AI1WMIE_PLUGIN_TITLE' ) ) {
+	define( 'AI1WMIE_PLUGIN_TITLE', 'DigitalOcean Spaces Extension' );
 }
 
 // ================================
@@ -484,6 +512,13 @@ if ( defined( 'AI1WMDE_PLUGIN_BASENAME' ) ) {
 }
 
 // ===========================
+// = Dropbox Extension Title =
+// ===========================
+if ( ! defined( 'AI1WMDE_PLUGIN_TITLE' ) ) {
+	define( 'AI1WMDE_PLUGIN_TITLE', 'Dropbox Extension' );
+}
+
+// ===========================
 // = Dropbox Extension About =
 // ===========================
 if ( ! defined( 'AI1WMDE_PLUGIN_ABOUT' ) ) {
@@ -511,6 +546,13 @@ if ( defined( 'AI1WMFE_PLUGIN_BASENAME' ) ) {
 	define( 'AI1WMFE_PLUGIN_BASEDIR', dirname( AI1WMFE_PLUGIN_BASENAME ) );
 } else {
 	define( 'AI1WMFE_PLUGIN_BASEDIR', 'all-in-one-wp-migration-ftp-extension' );
+}
+
+// =======================
+// = FTP Extension Title =
+// =======================
+if ( ! defined( 'AI1WMFE_PLUGIN_TITLE' ) ) {
+	define( 'AI1WMFE_PLUGIN_TITLE', 'FTP Extension' );
 }
 
 // =======================
@@ -544,6 +586,13 @@ if ( defined( 'AI1WMCE_PLUGIN_BASENAME' ) ) {
 }
 
 // ========================================
+// = Google Cloud Storage Extension Title =
+// ========================================
+if ( ! defined( 'AI1WMCE_PLUGIN_TITLE' ) ) {
+	define( 'AI1WMCE_PLUGIN_TITLE', 'Google Cloud Storage Extension' );
+}
+
+// ========================================
 // = Google Cloud Storage Extension About =
 // ========================================
 if ( ! defined( 'AI1WMCE_PLUGIN_ABOUT' ) ) {
@@ -574,6 +623,13 @@ if ( defined( 'AI1WMGE_PLUGIN_BASENAME' ) ) {
 }
 
 // ================================
+// = Google Drive Extension Title =
+// ================================
+if ( ! defined( 'AI1WMGE_PLUGIN_TITLE' ) ) {
+	define( 'AI1WMGE_PLUGIN_TITLE', 'Google Drive Extension' );
+}
+
+// ================================
 // = Google Drive Extension About =
 // ================================
 if ( ! defined( 'AI1WMGE_PLUGIN_ABOUT' ) ) {
@@ -594,6 +650,43 @@ if ( ! defined( 'AI1WMGE_PLUGIN_SHORT' ) ) {
 	define( 'AI1WMGE_PLUGIN_SHORT', 'gdrive' );
 }
 
+// =====================================
+// = Amazon Glacier Extension Base Dir =
+// =====================================
+if ( defined( 'AI1WMRE_PLUGIN_BASENAME' ) ) {
+	define( 'AI1WMRE_PLUGIN_BASEDIR', dirname( AI1WMRE_PLUGIN_BASENAME ) );
+} else {
+	define( 'AI1WMRE_PLUGIN_BASEDIR', 'all-in-one-wp-migration-glacier-extension' );
+}
+
+// ==================================
+// = Amazon Glacier Extension Title =
+// ==================================
+if ( ! defined( 'AI1WMRE_PLUGIN_TITLE' ) ) {
+	define( 'AI1WMRE_PLUGIN_TITLE', 'Amazon Glacier Extension' );
+}
+
+// ==================================
+// = Amazon Glacier Extension About =
+// ==================================
+if ( ! defined( 'AI1WMRE_PLUGIN_ABOUT' ) ) {
+	define( 'AI1WMRE_PLUGIN_ABOUT', 'https://servmask.com/products/amazon-glacier-extension/about' );
+}
+
+// ================================
+// = Amazon Glacier Extension Key =
+// ================================
+if ( ! defined( 'AI1WMRE_PLUGIN_KEY' ) ) {
+	define( 'AI1WMRE_PLUGIN_KEY', 'ai1wmre_plugin_key' );
+}
+
+// ==================================
+// = Amazon Glacier Extension Short =
+// ==================================
+if ( ! defined( 'AI1WMRE_PLUGIN_SHORT' ) ) {
+	define( 'AI1WMRE_PLUGIN_SHORT', 'glacier' );
+}
+
 // ===========================
 // = Mega Extension Base Dir =
 // ===========================
@@ -601,6 +694,13 @@ if ( defined( 'AI1WMEE_PLUGIN_BASENAME' ) ) {
 	define( 'AI1WMEE_PLUGIN_BASEDIR', dirname( AI1WMEE_PLUGIN_BASENAME ) );
 } else {
 	define( 'AI1WMEE_PLUGIN_BASEDIR', 'all-in-one-wp-migration-mega-extension' );
+}
+
+// ========================
+// = Mega Extension Title =
+// ========================
+if ( ! defined( 'AI1WMEE_PLUGIN_TITLE' ) ) {
+	define( 'AI1WMEE_PLUGIN_TITLE', 'Mega Extension' );
 }
 
 // ========================
@@ -634,6 +734,13 @@ if ( defined( 'AI1WMME_PLUGIN_BASENAME' ) ) {
 }
 
 // =============================
+// = Multisite Extension Title =
+// =============================
+if ( ! defined( 'AI1WMME_PLUGIN_TITLE' ) ) {
+	define( 'AI1WMME_PLUGIN_TITLE', 'Multisite Extension' );
+}
+
+// =============================
 // = Multisite Extension About =
 // =============================
 if ( ! defined( 'AI1WMME_PLUGIN_ABOUT' ) ) {
@@ -661,6 +768,13 @@ if ( defined( 'AI1WMOE_PLUGIN_BASENAME' ) ) {
 	define( 'AI1WMOE_PLUGIN_BASEDIR', dirname( AI1WMOE_PLUGIN_BASENAME ) );
 } else {
 	define( 'AI1WMOE_PLUGIN_BASEDIR', 'all-in-one-wp-migration-onedrive-extension' );
+}
+
+// ============================
+// = OneDrive Extension Title =
+// ============================
+if ( ! defined( 'AI1WMOE_PLUGIN_TITLE' ) ) {
+	define( 'AI1WMOE_PLUGIN_TITLE', 'OneDrive Extension' );
 }
 
 // ============================
@@ -694,6 +808,13 @@ if ( defined( 'AI1WMSE_PLUGIN_BASENAME' ) ) {
 }
 
 // =============================
+// = Amazon S3 Extension Title =
+// =============================
+if ( ! defined( 'AI1WMSE_PLUGIN_TITLE' ) ) {
+	define( 'AI1WMSE_PLUGIN_TITLE', 'Amazon S3 Extension' );
+}
+
+// =============================
 // = Amazon S3 Extension About =
 // =============================
 if ( ! defined( 'AI1WMSE_PLUGIN_ABOUT' ) ) {
@@ -724,6 +845,13 @@ if ( defined( 'AI1WMUE_PLUGIN_BASENAME' ) ) {
 }
 
 // =============================
+// = Unlimited Extension Title =
+// =============================
+if ( ! defined( 'AI1WMUE_PLUGIN_TITLE' ) ) {
+	define( 'AI1WMUE_PLUGIN_TITLE', 'Unlimited Extension' );
+}
+
+// =============================
 // = Unlimited Extension About =
 // =============================
 if ( ! defined( 'AI1WMUE_PLUGIN_ABOUT' ) ) {
@@ -751,6 +879,13 @@ if ( defined( 'AI1WMLE_PLUGIN_BASENAME' ) ) {
 	define( 'AI1WMLE_PLUGIN_BASEDIR', dirname( AI1WMLE_PLUGIN_BASENAME ) );
 } else {
 	define( 'AI1WMLE_PLUGIN_BASEDIR', 'all-in-one-wp-migration-url-extension' );
+}
+
+// =======================
+// = URL Extension Title =
+// =======================
+if ( ! defined( 'AI1WMLE_PLUGIN_TITLE' ) ) {
+	define( 'AI1WMLE_PLUGIN_TITLE', 'URL Extension' );
 }
 
 // =======================

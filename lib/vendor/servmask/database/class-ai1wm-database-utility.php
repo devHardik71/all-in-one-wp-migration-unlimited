@@ -98,7 +98,7 @@ class Ai1wm_Database_Utility {
 	/**
 	 * Escape MySQL special characters
 	 *
-	 * @param  string $data Data to replace.
+	 * @param  string $data Data to escape
 	 * @return string
 	 */
 	public static function escape_mysql( $data ) {
@@ -114,7 +114,7 @@ class Ai1wm_Database_Utility {
 	/**
 	 * Unescape MySQL special characters
 	 *
-	 * @param  string $data Data to replace.
+	 * @param  string $data Data to unescape
 	 * @return string
 	 */
 	public static function unescape_mysql( $data ) {
@@ -125,5 +125,25 @@ class Ai1wm_Database_Utility {
 				array( "\x00", "\n", "\r", '\\', "'", '"', "\x1a" )
 			)
 		);
+	}
+
+	/**
+	 * Encode base64 characters
+	 *
+	 * @param  string $data Data to encode
+	 * @return string
+	 */
+	public static function base64_encode( $data ) {
+		return base64_encode( $data );
+	}
+
+	/**
+	 * Encode base64 characters
+	 *
+	 * @param  string $data Data to decode
+	 * @return string
+	 */
+	public static function base64_decode( $data ) {
+		return base64_decode( $data );
 	}
 }

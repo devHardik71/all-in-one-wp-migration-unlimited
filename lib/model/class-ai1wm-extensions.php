@@ -37,6 +37,7 @@ class Ai1wm_Extensions {
 		if ( defined( 'AI1WMZE_PLUGIN_NAME' ) ) {
 			$extensions[ AI1WMZE_PLUGIN_NAME ] = array(
 				'key'      => AI1WMZE_PLUGIN_KEY,
+				'title'    => AI1WMZE_PLUGIN_TITLE,
 				'about'    => AI1WMZE_PLUGIN_ABOUT,
 				'basename' => AI1WMZE_PLUGIN_BASENAME,
 				'version'  => AI1WMZE_VERSION,
@@ -49,6 +50,7 @@ class Ai1wm_Extensions {
 		if ( defined( 'AI1WMAE_PLUGIN_NAME' ) ) {
 			$extensions[ AI1WMAE_PLUGIN_NAME ] = array(
 				'key'      => AI1WMAE_PLUGIN_KEY,
+				'title'    => AI1WMAE_PLUGIN_TITLE,
 				'about'    => AI1WMAE_PLUGIN_ABOUT,
 				'basename' => AI1WMAE_PLUGIN_BASENAME,
 				'version'  => AI1WMAE_VERSION,
@@ -61,6 +63,7 @@ class Ai1wm_Extensions {
 		if ( defined( 'AI1WMBE_PLUGIN_NAME' ) ) {
 			$extensions[ AI1WMBE_PLUGIN_NAME ] = array(
 				'key'      => AI1WMBE_PLUGIN_KEY,
+				'title'    => AI1WMBE_PLUGIN_TITLE,
 				'about'    => AI1WMBE_PLUGIN_ABOUT,
 				'basename' => AI1WMBE_PLUGIN_BASENAME,
 				'version'  => AI1WMBE_VERSION,
@@ -73,6 +76,7 @@ class Ai1wm_Extensions {
 		if ( defined( 'AI1WMIE_PLUGIN_NAME' ) ) {
 			$extensions[ AI1WMIE_PLUGIN_NAME ] = array(
 				'key'      => AI1WMIE_PLUGIN_KEY,
+				'title'    => AI1WMIE_PLUGIN_TITLE,
 				'about'    => AI1WMIE_PLUGIN_ABOUT,
 				'basename' => AI1WMIE_PLUGIN_BASENAME,
 				'version'  => AI1WMIE_VERSION,
@@ -85,6 +89,7 @@ class Ai1wm_Extensions {
 		if ( defined( 'AI1WMDE_PLUGIN_NAME' ) ) {
 			$extensions[ AI1WMDE_PLUGIN_NAME ] = array(
 				'key'      => AI1WMDE_PLUGIN_KEY,
+				'title'    => AI1WMDE_PLUGIN_TITLE,
 				'about'    => AI1WMDE_PLUGIN_ABOUT,
 				'basename' => AI1WMDE_PLUGIN_BASENAME,
 				'version'  => AI1WMDE_VERSION,
@@ -97,6 +102,7 @@ class Ai1wm_Extensions {
 		if ( defined( 'AI1WMFE_PLUGIN_NAME' ) ) {
 			$extensions[ AI1WMFE_PLUGIN_NAME ] = array(
 				'key'      => AI1WMFE_PLUGIN_KEY,
+				'title'    => AI1WMFE_PLUGIN_TITLE,
 				'about'    => AI1WMFE_PLUGIN_ABOUT,
 				'basename' => AI1WMFE_PLUGIN_BASENAME,
 				'version'  => AI1WMFE_VERSION,
@@ -109,6 +115,7 @@ class Ai1wm_Extensions {
 		if ( defined( 'AI1WMCE_PLUGIN_NAME' ) ) {
 			$extensions[ AI1WMCE_PLUGIN_NAME ] = array(
 				'key'      => AI1WMCE_PLUGIN_KEY,
+				'title'    => AI1WMCE_PLUGIN_TITLE,
 				'about'    => AI1WMCE_PLUGIN_ABOUT,
 				'basename' => AI1WMCE_PLUGIN_BASENAME,
 				'version'  => AI1WMCE_VERSION,
@@ -121,6 +128,7 @@ class Ai1wm_Extensions {
 		if ( defined( 'AI1WMGE_PLUGIN_NAME' ) ) {
 			$extensions[ AI1WMGE_PLUGIN_NAME ] = array(
 				'key'      => AI1WMGE_PLUGIN_KEY,
+				'title'    => AI1WMGE_PLUGIN_TITLE,
 				'about'    => AI1WMGE_PLUGIN_ABOUT,
 				'basename' => AI1WMGE_PLUGIN_BASENAME,
 				'version'  => AI1WMGE_VERSION,
@@ -129,10 +137,24 @@ class Ai1wm_Extensions {
 			);
 		}
 
+		// Add Amazon Glacier extension
+		if ( defined( 'AI1WMRE_PLUGIN_NAME' ) ) {
+			$extensions[ AI1WMRE_PLUGIN_NAME ] = array(
+				'key'      => AI1WMRE_PLUGIN_KEY,
+				'title'    => AI1WMRE_PLUGIN_TITLE,
+				'about'    => AI1WMRE_PLUGIN_ABOUT,
+				'basename' => AI1WMRE_PLUGIN_BASENAME,
+				'version'  => AI1WMRE_VERSION,
+				'requires' => '1.0',
+				'short'    => AI1WMRE_PLUGIN_SHORT,
+			);
+		}
+
 		// Add Mega Extension
 		if ( defined( 'AI1WMEE_PLUGIN_NAME' ) ) {
 			$extensions[ AI1WMEE_PLUGIN_NAME ] = array(
 				'key'      => AI1WMEE_PLUGIN_KEY,
+				'title'    => AI1WMEE_PLUGIN_TITLE,
 				'about'    => AI1WMEE_PLUGIN_ABOUT,
 				'basename' => AI1WMEE_PLUGIN_BASENAME,
 				'version'  => AI1WMEE_VERSION,
@@ -145,10 +167,11 @@ class Ai1wm_Extensions {
 		if ( defined( 'AI1WMME_PLUGIN_NAME' ) ) {
 			$extensions[ AI1WMME_PLUGIN_NAME ] = array(
 				'key'      => AI1WMME_PLUGIN_KEY,
+				'title'    => AI1WMME_PLUGIN_TITLE,
 				'about'    => AI1WMME_PLUGIN_ABOUT,
 				'basename' => AI1WMME_PLUGIN_BASENAME,
 				'version'  => AI1WMME_VERSION,
-				'requires' => '3.57',
+				'requires' => '3.58',
 				'short'    => AI1WMME_PLUGIN_SHORT,
 			);
 		}
@@ -157,6 +180,7 @@ class Ai1wm_Extensions {
 		if ( defined( 'AI1WMOE_PLUGIN_NAME' ) ) {
 			$extensions[ AI1WMOE_PLUGIN_NAME ] = array(
 				'key'      => AI1WMOE_PLUGIN_KEY,
+				'title'    => AI1WMOE_PLUGIN_TITLE,
 				'about'    => AI1WMOE_PLUGIN_ABOUT,
 				'basename' => AI1WMOE_PLUGIN_BASENAME,
 				'version'  => AI1WMOE_VERSION,
@@ -169,6 +193,7 @@ class Ai1wm_Extensions {
 		if ( defined( 'AI1WMSE_PLUGIN_NAME' ) ) {
 			$extensions[ AI1WMSE_PLUGIN_NAME ] = array(
 				'key'      => AI1WMSE_PLUGIN_KEY,
+				'title'    => AI1WMSE_PLUGIN_TITLE,
 				'about'    => AI1WMSE_PLUGIN_ABOUT,
 				'basename' => AI1WMSE_PLUGIN_BASENAME,
 				'version'  => AI1WMSE_VERSION,
@@ -181,6 +206,7 @@ class Ai1wm_Extensions {
 		if ( defined( 'AI1WMUE_PLUGIN_NAME' ) ) {
 			$extensions[ AI1WMUE_PLUGIN_NAME ] = array(
 				'key'      => AI1WMUE_PLUGIN_KEY,
+				'title'    => AI1WMUE_PLUGIN_TITLE,
 				'about'    => AI1WMUE_PLUGIN_ABOUT,
 				'basename' => AI1WMUE_PLUGIN_BASENAME,
 				'version'  => AI1WMUE_VERSION,
@@ -193,6 +219,7 @@ class Ai1wm_Extensions {
 		if ( defined( 'AI1WMLE_PLUGIN_NAME' ) ) {
 			$extensions[ AI1WMLE_PLUGIN_NAME ] = array(
 				'key'      => AI1WMLE_PLUGIN_KEY,
+				'title'    => AI1WMLE_PLUGIN_TITLE,
 				'about'    => AI1WMLE_PLUGIN_ABOUT,
 				'basename' => AI1WMLE_PLUGIN_BASENAME,
 				'version'  => AI1WMLE_VERSION,

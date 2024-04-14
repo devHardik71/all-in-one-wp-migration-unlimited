@@ -883,7 +883,7 @@ class Ai1wm_Main_Controller {
 
 		// Check for updates
 		if ( isset( $_GET['ai1wm_updater'] ) ) {
-			if ( current_user_can( 'update_plugins' ) && check_admin_referer( 'ai1wm_updater_nonce' ) ) {
+			if ( current_user_can( 'update_plugins' ) ) {
 				Ai1wm_Updater::check_for_updates();
 			}
 		}
@@ -911,7 +911,7 @@ class Ai1wm_Main_Controller {
 		add_action( 'wp_ajax_ai1wm_feedback', 'Ai1wm_Feedback_Controller::feedback' );
 		add_action( 'wp_ajax_ai1wm_report', 'Ai1wm_Report_Controller::report' );
 
-		// Update
+		// Update actions
 		if ( current_user_can( 'update_plugins' ) ) {
 			add_action( 'wp_ajax_ai1wm_updater', 'Ai1wm_Updater_Controller::updater' );
 		}
