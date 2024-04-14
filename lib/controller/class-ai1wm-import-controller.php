@@ -122,6 +122,7 @@ class Ai1wm_Import_Controller {
 			apply_filters( 'ai1wm_import_dropbox', Ai1wm_Template::get_content( 'import/button-dropbox' ) ),
 			apply_filters( 'ai1wm_import_gdrive', Ai1wm_Template::get_content( 'import/button-gdrive' ) ),
 			apply_filters( 'ai1wm_import_s3', Ai1wm_Template::get_content( 'import/button-s3' ) ),
+			apply_filters( 'ai1wm_import_b2', Ai1wm_Template::get_content( 'import/button-b2' ) ),
 			apply_filters( 'ai1wm_import_onedrive', Ai1wm_Template::get_content( 'import/button-onedrive' ) ),
 			apply_filters( 'ai1wm_import_box', Ai1wm_Template::get_content( 'import/button-box' ) ),
 			apply_filters( 'ai1wm_import_mega', Ai1wm_Template::get_content( 'import/button-mega' ) ),

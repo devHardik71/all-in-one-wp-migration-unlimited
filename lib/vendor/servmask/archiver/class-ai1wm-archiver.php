@@ -214,8 +214,10 @@ abstract class Ai1wm_Archiver {
 			throw new Ai1wm_Not_Tellable_Exception( sprintf( 'Unable to tell offset of file. File: %s', $this->file_name ) );
 		}
 
-		if ( @ftruncate( $this->file_handle, $offset ) === false ) {
-			throw new Ai1wm_Not_Truncatable_Exception( sprintf( 'Unable to truncate file. File: %s', $this->file_name ) );
+		if ( @filesize( $this->file_name ) > $offset ) {
+			if ( @ftruncate( $this->file_handle, $offset ) === false ) {
+				throw new Ai1wm_Not_Truncatable_Exception( sprintf( 'Unable to truncate file. File: %s', $this->file_name ) );
+			}
 		}
 	}
 

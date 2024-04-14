@@ -573,6 +573,13 @@ function ai1wm_plugin_filters( $filters = array() ) {
 		$filters[] = 'plugins' . DIRECTORY_SEPARATOR . 'all-in-one-wp-migration';
 	}
 
+	// Backblaze B2 Extension
+	if ( defined( 'AI1WMAE_PLUGIN_BASENAME' ) ) {
+		$filters[] = 'plugins' . DIRECTORY_SEPARATOR . dirname( AI1WMAE_PLUGIN_BASENAME );
+	} else {
+		$filters[] = 'plugins' . DIRECTORY_SEPARATOR . 'all-in-one-wp-migration-b2-extension';
+	}
+
 	// Box Extension
 	if ( defined( 'AI1WMBE_PLUGIN_BASENAME' ) ) {
 		$filters[] = 'plugins' . DIRECTORY_SEPARATOR . dirname( AI1WMBE_PLUGIN_BASENAME );
@@ -662,6 +669,11 @@ function ai1wm_active_servmask_plugins( $plugins = array() ) {
 	// WP Migration Plugin
 	if ( defined( 'AI1WM_PLUGIN_BASENAME' ) ) {
 		$plugins[] = AI1WM_PLUGIN_BASENAME;
+	}
+
+	// Backblaze B2 Extension
+	if ( defined( 'AI1WMAE_PLUGIN_BASENAME' ) ) {
+		$plugins[] = AI1WMAE_PLUGIN_BASENAME;
 	}
 
 	// Box Extension
@@ -878,6 +890,22 @@ function ai1wm_deactivate_jetpack_modules( $modules ) {
 	sort( $current );
 
 	return update_option( AI1WM_JETPACK_ACTIVE_MODULES, $current );
+}
+
+/**
+ * Discover plugin basename
+ *
+ * @param  string $basename Plugin basename
+ * @return string
+ */
+function ai1wm_discover_plugin_basename( $basename ) {
+	foreach ( get_plugins() as $plugin => $info ) {
+		if ( basename( $plugin ) === basename( $basename ) ) {
+			return $plugin;
+		}
+	}
+
+	return $basename;
 }
 
 /**
