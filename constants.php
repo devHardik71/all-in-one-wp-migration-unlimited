@@ -31,7 +31,7 @@ define( 'AI1WM_DEBUG', false );
 // ==================
 // = Plugin Version =
 // ==================
-define( 'AI1WM_VERSION', '6.71' );
+define( 'AI1WM_VERSION', '6.72' );
 
 // ===============
 // = Plugin Name =
@@ -352,6 +352,36 @@ if ( defined( 'AI1WM_PLUGIN_BASENAME' ) ) {
 	define( 'AI1WM_PLUGIN_BASEDIR', dirname( AI1WM_PLUGIN_BASENAME ) );
 } else {
 	define( 'AI1WM_PLUGIN_BASEDIR', 'all-in-one-wp-migration' );
+}
+
+// ======================================
+// = Microsoft Azure Extension Base Dir =
+// ======================================
+if ( defined( 'AI1WMZE_PLUGIN_BASENAME' ) ) {
+	define( 'AI1WMZE_PLUGIN_BASEDIR', dirname( AI1WMZE_PLUGIN_BASENAME ) );
+} else {
+	define( 'AI1WMZE_PLUGIN_BASEDIR', 'all-in-one-wp-migration-azure-storage-extension' );
+}
+
+// ===================================
+// = Microsoft Azure Extension About =
+// ===================================
+if ( ! defined( 'AI1WMZE_PLUGIN_ABOUT' ) ) {
+	define( 'AI1WMZE_PLUGIN_ABOUT', 'https://servmask.com/products/microsoft-azure-storage-extension/about' );
+}
+
+// =================================
+// = Microsoft Azure Extension Key =
+// =================================
+if ( ! defined( 'AI1WMZE_PLUGIN_KEY' ) ) {
+	define( 'AI1WMZE_PLUGIN_KEY', 'ai1wmze_plugin_key' );
+}
+
+// ===================================
+// = Microsoft Azure Extension Short =
+// ===================================
+if ( ! defined( 'AI1WMZE_PLUGIN_SHORT' ) ) {
+	define( 'AI1WMZE_PLUGIN_SHORT', 'azure-storage' );
 }
 
 // ===================================

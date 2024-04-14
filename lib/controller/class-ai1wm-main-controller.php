@@ -78,7 +78,7 @@ class Ai1wm_Main_Controller {
 		add_action( 'admin_init', array( $this, 'create_folders' ) );
 
 		// All in One WP Migration
-		add_action( 'plugins_loaded', array( $this, 'ai1wm_loaded' ), 20 );
+		add_action( 'plugins_loaded', array( $this, 'ai1wm_loaded' ), 10 );
 
 		// Export and import commands
 		add_action( 'plugins_loaded', array( $this, 'ai1wm_commands' ), 10 );
@@ -183,14 +183,18 @@ class Ai1wm_Main_Controller {
 	 * @return void
 	 */
 	public function ai1wm_loaded() {
-		if ( is_multisite() ) {
-			if ( apply_filters( 'ai1wm_multisite_menu', false ) ) {
-				add_action( 'network_admin_menu', array( $this, 'admin_menu' ) );
-			} else {
+		if ( ! defined( 'AI1WMME_PLUGIN_NAME' ) ) {
+			if ( is_multisite() ) {
 				add_action( 'network_admin_notices', array( $this, 'multisite_notice' ) );
+			} else {
+				add_action( 'admin_menu', array( $this, 'admin_menu' ) );
 			}
 		} else {
-			add_action( 'admin_menu', array( $this, 'admin_menu' ) );
+			if ( is_multisite() ) {
+				add_action( 'network_admin_menu', array( $this, 'admin_menu' ) );
+			} else {
+				add_action( 'admin_menu', array( $this, 'admin_menu' ) );
+			}
 		}
 
 		// Add automatic plugins update

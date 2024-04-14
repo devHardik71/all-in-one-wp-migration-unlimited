@@ -440,6 +440,36 @@ function ai1wm_archive_project( $blog_id = null ) {
 }
 
 /**
+ * Get archive share name
+ *
+ * @param  integer $blog_id Blog ID
+ * @return string
+ */
+function ai1wm_archive_share( $blog_id = null ) {
+	$name = array();
+
+	// Add domain
+	if ( ( $domain = explode( '.', parse_url( get_site_url( $blog_id ), PHP_URL_HOST ) ) ) ) {
+		foreach ( $domain as $subdomain ) {
+			if ( $subdomain ) {
+				$name[] = $subdomain;
+			}
+		}
+	}
+
+	// Add path
+	if ( ( $path = explode( '/', parse_url( get_site_url( $blog_id ), PHP_URL_PATH ) ) ) ) {
+		foreach ( $path as $directory ) {
+			if ( $directory ) {
+				$name[] = $directory;
+			}
+		}
+	}
+
+	return strtolower( implode( '-', $name ) );
+}
+
+/**
  * Get storage folder name
  *
  * @return string
@@ -603,6 +633,13 @@ function ai1wm_plugin_filters( $filters = array() ) {
 		$filters[] = 'plugins' . DIRECTORY_SEPARATOR . 'all-in-one-wp-migration';
 	}
 
+	// Microsoft Azure Extension
+	if ( defined( 'AI1WMZE_PLUGIN_BASENAME' ) ) {
+		$filters[] = 'plugins' . DIRECTORY_SEPARATOR . dirname( AI1WMZE_PLUGIN_BASENAME );
+	} else {
+		$filters[] = 'plugins' . DIRECTORY_SEPARATOR . 'all-in-one-wp-migration-azure-storage-extension';
+	}
+
 	// Backblaze B2 Extension
 	if ( defined( 'AI1WMAE_PLUGIN_BASENAME' ) ) {
 		$filters[] = 'plugins' . DIRECTORY_SEPARATOR . dirname( AI1WMAE_PLUGIN_BASENAME );
@@ -706,6 +743,11 @@ function ai1wm_active_servmask_plugins( $plugins = array() ) {
 	// WP Migration Plugin
 	if ( defined( 'AI1WM_PLUGIN_BASENAME' ) ) {
 		$plugins[] = AI1WM_PLUGIN_BASENAME;
+	}
+
+	// Microsoft Azure Extension
+	if ( defined( 'AI1WMZE_PLUGIN_BASENAME' ) ) {
+		$plugins[] = AI1WMZE_PLUGIN_BASENAME;
 	}
 
 	// Backblaze B2 Extension
@@ -1300,6 +1342,11 @@ function ai1wm_setup_environment() {
 
 	// Set maximum backtracking steps
 	@ini_set( 'pcre.backtrack_limit', PHP_INT_MAX );
+
+	// Set binary safe encoding
+	if ( @function_exists( 'mb_internal_encoding' ) && ( @ini_get( 'mbstring.func_overload' ) & 2 ) ) {
+		@mb_internal_encoding( 'ISO-8859-1' );
+	}
 
 	// Set error handler
 	@set_error_handler( 'Ai1wm_Handler::error' );

@@ -128,6 +128,7 @@ class Ai1wm_Import_Controller {
 			apply_filters( 'ai1wm_import_mega', Ai1wm_Template::get_content( 'import/button-mega' ) ),
 			apply_filters( 'ai1wm_import_digitalocean', Ai1wm_Template::get_content( 'import/button-digitalocean' ) ),
 			apply_filters( 'ai1wm_import_gcloud_storage', Ai1wm_Template::get_content( 'import/button-gcloud-storage' ) ),
+			apply_filters( 'ai1wm_import_azure_storage', Ai1wm_Template::get_content( 'import/button-azure-storage' ) ),
 		);
 	}
 
