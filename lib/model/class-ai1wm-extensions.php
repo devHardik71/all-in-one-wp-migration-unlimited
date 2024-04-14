@@ -76,7 +76,7 @@ class Ai1wm_Extensions {
 				'about'    => AI1WMME_PLUGIN_ABOUT,
 				'basename' => AI1WMME_PLUGIN_BASENAME,
 				'version'  => AI1WMME_VERSION,
-				'requires' => '3.48',
+				'requires' => '3.49',
 				'short'    => AI1WMME_PLUGIN_SHORT,
 			);
 		}

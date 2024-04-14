@@ -67,14 +67,10 @@ class Ai1wm_Export_Database {
 			$mysql = new Ai1wm_Database_Mysqli( $wpdb );
 		}
 
-		// Replace table prefix on columns
-		$mysql->set_table_prefix_columns( ai1wm_table_prefix() . 'options', array( 'option_name' ) )
-			->set_table_prefix_columns( ai1wm_table_prefix() . 'usermeta', array( 'meta_key' ) );
-
 		// Spam comments
 		if ( isset( $params['options']['no_spam_comments'] ) ) {
-			$mysql->set_table_where_clauses( ai1wm_table_prefix() . 'comments', array( "`comment_approved` != 'spam'" ) );
-			$mysql->set_table_where_clauses( ai1wm_table_prefix() . 'commentmeta', array( sprintf( "`comment_ID` IN ( SELECT `comment_ID` FROM `%s` WHERE `comment_approved` != 'spam' )", ai1wm_table_prefix() . 'comments' ) ) );
+			$mysql->set_table_where_clauses( ai1wm_table_prefix() . 'comments', array( "`comment_approved` != 'spam'" ) )
+				->set_table_where_clauses( ai1wm_table_prefix() . 'commentmeta', array( sprintf( "`comment_ID` IN ( SELECT `comment_ID` FROM `%s` WHERE `comment_approved` != 'spam' )", ai1wm_table_prefix() . 'comments' ) ) );
 		}
 
 		// Post revisions
@@ -97,7 +93,7 @@ class Ai1wm_Export_Database {
 			}
 
 			// Set table prefixes based on user meta
-			foreach ( array( 'capabilities', 'user_level', 'user_roles' ) as $user_meta ) {
+			foreach ( array( 'capabilities', 'user_level', 'user_roles', 'dashboard_quick_press_last_post_id', 'user-settings', 'user-settings-time' ) as $user_meta ) {
 				$old_table_prefixes[] = $user_meta;
 				$new_table_prefixes[] = ai1wm_servmask_prefix() . $user_meta;
 			}
@@ -121,8 +117,12 @@ class Ai1wm_Export_Database {
 			->set_include_table_prefixes( $include_table_prefixes )
 			->set_exclude_table_prefixes( $exclude_table_prefixes );
 
-		// Exclude active plugins and status options
+		// Exclude table options
 		$mysql->set_table_where_clauses( ai1wm_table_prefix() . 'options', array( sprintf( "`option_name` NOT IN ('%s', '%s', '%s', '%s')", AI1WM_ACTIVE_PLUGINS, AI1WM_ACTIVE_TEMPLATE, AI1WM_ACTIVE_STYLESHEET, AI1WM_STATUS ) ) );
+
+		// Replace table prefix on columns
+		$mysql->set_table_prefix_columns( ai1wm_table_prefix() . 'options', array( 'option_name' ) )
+			->set_table_prefix_columns( ai1wm_table_prefix() . 'usermeta', array( 'meta_key' ) );
 
 		// Export database
 		if ( $mysql->export( ai1wm_database_path( $params ), $table_index, $table_offset, 10 ) ) {
