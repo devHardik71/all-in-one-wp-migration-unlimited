@@ -475,11 +475,10 @@ abstract class Ai1wm_Database {
 	 * @param  string $file_name    Name of file
 	 * @param  int    $table_index  Table index
 	 * @param  int    $table_offset Table offset
-	 * @param  array  $table_keys   Table keys
 	 * @param  int    $timeout      Process timeout
 	 * @return bool
 	 */
-	public function export( $file_name, &$table_index = 0, &$table_offset = 0, &$table_keys = array(), $timeout = 0 ) {
+	public function export( $file_name, &$table_index = 0, &$table_offset = 0, $timeout = 0 ) {
 		// Set file handler
 		$file_handler = ai1wm_open( $file_name, 'ab' );
 
@@ -534,41 +533,39 @@ abstract class Ai1wm_Database {
 				ai1wm_write( $file_handler, ";\n\n" );
 			}
 
-			// Get primary or unique keys
-			$primary_keys = ( $primary_keys = $this->get_primary_keys( $table_name ) ) ? $primary_keys : $this->get_unique_keys( $table_name );
+			// Get primary keys
+			$primary_keys = $this->get_primary_keys( $table_name );
 
 			do {
 
 				// Set query
 				if ( $primary_keys ) {
 
-					// Set table where by keys
-					$table_where = array( 1 );
-					foreach ( $table_keys as $key => $value ) {
-						$table_where[] = sprintf( "`%s` > '%s'", $key, $value );
+					// Set table keys
+					$table_keys = array();
+					foreach ( $primary_keys as $key ) {
+						$table_keys[] = sprintf( '`%s`', $key );
 					}
 
-					// Set table where by clauses
+					$table_keys = implode( ', ', $table_keys );
+
+					// Set table where clauses
+					$table_where = array( 1 );
 					foreach ( $this->get_table_where_clauses( $table_name ) as $clause ) {
 						$table_where[] = $clause;
 					}
 
 					$table_where = implode( ' AND ', $table_where );
 
-					// Set table order (by primary or unique keys)
-					$table_order = array();
-					foreach ( $primary_keys as $key ) {
-						$table_order[] = sprintf( '`%s`', $key );
-					}
-
-					$table_order = implode( ', ', $table_order );
-
-					// Set query with rows count
-					$query = sprintf( 'SELECT * FROM `%s` WHERE %s ORDER BY %s LIMIT %d', $table_name, $table_where, $table_order, 1000 );
+					// Set query with offset and rows count
+					$query = sprintf( 'SELECT t1.* FROM `%s` AS t1 JOIN (SELECT %s FROM `%s` ORDER BY %s LIMIT %d, %d) AS t2 USING (%s) WHERE %s', $table_name, $table_keys, $table_name, $table_keys, $table_offset, 1000, $table_keys, $table_where );
 
 				} else {
 
-					// Set table where by clauses
+					// Set table keys
+					$table_keys = 1;
+
+					// Set table where clauses
 					$table_where = array( 1 );
 					foreach ( $this->get_table_where_clauses( $table_name ) as $clause ) {
 						$table_where[] = $clause;
@@ -576,11 +573,8 @@ abstract class Ai1wm_Database {
 
 					$table_where = implode( ' AND ', $table_where );
 
-					// Set table order (by first column)
-					$table_order = 1;
-
 					// Set query with offset and rows count
-					$query = sprintf( 'SELECT * FROM `%s` WHERE %s ORDER BY %s LIMIT %d, %d', $table_name, $table_where, $table_order, $table_offset, 1000 );
+					$query = sprintf( 'SELECT * FROM `%s` WHERE %s ORDER BY %s LIMIT %d, %d', $table_name, $table_where, $table_keys, $table_offset, 1000 );
 				}
 
 				// Apply additional table prefix columns
@@ -620,11 +614,6 @@ abstract class Ai1wm_Database {
 						// Write insert statement
 						ai1wm_write( $file_handler, $table_insert );
 
-						// Set current table keys
-						foreach ( $primary_keys as $key ) {
-							$table_keys[ $key ] = $row[ $key ];
-						}
-
 						// Set current table rows
 						$table_offset++;
 
@@ -639,9 +628,6 @@ abstract class Ai1wm_Database {
 						ai1wm_write( $file_handler, "COMMIT;\n" );
 					}
 				} else {
-
-					// Set current table keys
-					$table_keys = array();
 
 					// Set current table offset
 					$table_offset = 0;
@@ -845,7 +831,7 @@ abstract class Ai1wm_Database {
 		$primary_keys = array();
 
 		// Get primary keys
-		$result = $this->query( "SHOW KEYS FROM `{$table_name}` WHERE Key_name = 'PRIMARY'" );
+		$result = $this->query( "SHOW KEYS FROM `{$table_name}` WHERE `Key_name` = 'PRIMARY'" );
 		while ( $row = $this->fetch_assoc( $result ) ) {
 			if ( isset( $row['Column_name'] ) ) {
 				$primary_keys[] = $row['Column_name'];
@@ -867,8 +853,8 @@ abstract class Ai1wm_Database {
 	protected function get_unique_keys( $table_name ) {
 		$unique_keys = array();
 
-		// Get primary keys
-		$result = $this->query( "SHOW KEYS FROM `{$table_name}` WHERE Non_unique = 0" );
+		// Get unique keys
+		$result = $this->query( "SHOW KEYS FROM `{$table_name}` WHERE `Non_unique` = 0" );
 		while ( $row = $this->fetch_assoc( $result ) ) {
 			if ( isset( $row['Column_name'] ) ) {
 				$unique_keys[] = $row['Column_name'];

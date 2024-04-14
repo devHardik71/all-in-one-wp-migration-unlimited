@@ -47,13 +47,6 @@ class Ai1wm_Export_Database {
 			$table_offset = 0;
 		}
 
-		// Set table keys
-		if ( isset( $params['table_keys'] ) ) {
-			$table_keys = (array) $params['table_keys'];
-		} else {
-			$table_keys = array();
-		}
-
 		// Set total tables count
 		if ( isset( $params['total_tables_count'] ) ) {
 			$total_tables_count = (int) $params['total_tables_count'];
@@ -132,7 +125,7 @@ class Ai1wm_Export_Database {
 		$mysql->set_table_where_clauses( ai1wm_table_prefix() . 'options', array( sprintf( "`option_name` NOT IN ('%s', '%s', '%s', '%s')", AI1WM_ACTIVE_PLUGINS, AI1WM_ACTIVE_TEMPLATE, AI1WM_ACTIVE_STYLESHEET, AI1WM_STATUS ) ) );
 
 		// Export database
-		if ( $mysql->export( ai1wm_database_path( $params ), $table_index, $table_offset, $table_keys, 10 ) ) {
+		if ( $mysql->export( ai1wm_database_path( $params ), $table_index, $table_offset, 10 ) ) {
 
 			// Get archive file
 			$archive = new Ai1wm_Compressor( ai1wm_archive_path( $params ) );
@@ -149,9 +142,6 @@ class Ai1wm_Export_Database {
 
 			// Unset table offset
 			unset( $params['table_offset'] );
-
-			// Unset table keys
-			unset( $params['table_keys'] );
 
 			// Unset total tables count
 			unset( $params['total_tables_count'] );
@@ -175,9 +165,6 @@ class Ai1wm_Export_Database {
 
 			// Set table offset
 			$params['table_offset'] = $table_offset;
-
-			// Set table keys
-			$params['table_keys'] = $table_keys;
 
 			// Set total tables count
 			$params['total_tables_count'] = $total_tables_count;
