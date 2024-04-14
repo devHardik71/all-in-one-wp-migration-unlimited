@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (C) 2014-2017 ServMask Inc.
+ * Copyright (C) 2014-2018 ServMask Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -960,7 +960,7 @@ function ai1wm_chmod( $file, $mode ) {
  * @param  string $destination_file File to copy the contents to
  */
 function ai1wm_copy( $source_file, $destination_file ) {
-	$source_handle = ai1wm_open( $source_file, 'rb' );
+	$source_handle      = ai1wm_open( $source_file, 'rb' );
 	$destination_handle = ai1wm_open( $destination_file, 'ab' );
 	while ( $buffer = ai1wm_read( $source_handle, 4096 ) ) {
 		ai1wm_write( $destination_handle, $buffer );

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (C) 2014-2017 ServMask Inc.
+ * Copyright (C) 2014-2018 ServMask Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -779,7 +779,7 @@ abstract class Ai1wm_Database {
 	 */
 	protected function get_version() {
 		$result = $this->query( "SHOW VARIABLES LIKE 'version'" );
-		$row = $this->fetch_assoc( $result );
+		$row    = $this->fetch_assoc( $result );
 
 		// Close result cursor
 		$this->free_result( $result );
@@ -797,7 +797,7 @@ abstract class Ai1wm_Database {
 	 */
 	protected function get_max_allowed_packet() {
 		$result = $this->query( "SHOW VARIABLES LIKE 'max_allowed_packet'" );
-		$row = $this->fetch_assoc( $result );
+		$row    = $this->fetch_assoc( $result );
 
 		// Close result cursor
 		$this->free_result( $result );
@@ -816,7 +816,7 @@ abstract class Ai1wm_Database {
 	 */
 	protected function get_collation( $collation_name ) {
 		$result = $this->query( "SHOW COLLATION LIKE '{$collation_name}'" );
-		$row = $this->fetch_assoc( $result );
+		$row    = $this->fetch_assoc( $result );
 
 		// Close result cursor
 		$this->free_result( $result );
@@ -835,7 +835,7 @@ abstract class Ai1wm_Database {
 	 */
 	protected function get_create_table( $table_name ) {
 		$result = $this->query( "SHOW CREATE TABLE `{$table_name}`" );
-		$row = $this->fetch_assoc( $result );
+		$row    = $this->fetch_assoc( $result );
 
 		// Close result cursor
 		$this->free_result( $result );
@@ -901,7 +901,7 @@ abstract class Ai1wm_Database {
 	 */
 	protected function replace_table_prefixes( $input, $position = false ) {
 		// Get table prefixes
-		$search = $this->get_old_table_prefixes();
+		$search  = $this->get_old_table_prefixes();
 		$replace = $this->get_new_table_prefixes();
 
 		// Replace first occurance at a specified position
@@ -984,7 +984,7 @@ abstract class Ai1wm_Database {
 	 * @return string
 	 */
 	protected function replace_table_collations( $input ) {
-		static $search = array();
+		static $search  = array();
 		static $replace = array();
 
 		// Replace table collations
@@ -1118,7 +1118,7 @@ abstract class Ai1wm_Database {
 	 */
 	protected function replace_table_options( $input ) {
 		// Set table replace options
-		$search = array(
+		$search  = array(
 			'TYPE=InnoDB',
 			'TYPE=MyISAM',
 			'ENGINE=Aria',
@@ -1158,7 +1158,7 @@ abstract class Ai1wm_Database {
 	 */
 	protected function replace_table_engines( $input ) {
 		// Set table replace engines
-		$search = array(
+		$search  = array(
 			'ENGINE=MyISAM',
 			'ENGINE=Aria',
 		);

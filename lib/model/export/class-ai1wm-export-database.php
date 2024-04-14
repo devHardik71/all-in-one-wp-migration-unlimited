@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (C) 2014-2017 ServMask Inc.
+ * Copyright (C) 2014-2018 ServMask Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -69,7 +69,7 @@ class Ai1wm_Export_Database {
 
 		// Replace table prefix on columns
 		$mysql->set_table_prefix_columns( ai1wm_table_prefix() . 'options', array( 'option_name' ) )
-			  ->set_table_prefix_columns( ai1wm_table_prefix() . 'usermeta', array( 'meta_key' ) );
+			->set_table_prefix_columns( ai1wm_table_prefix() . 'usermeta', array( 'meta_key' ) );
 
 		// Spam comments
 		if ( isset( $params['options']['no_spam_comments'] ) ) {
@@ -117,9 +117,9 @@ class Ai1wm_Export_Database {
 
 		// Set database options
 		$mysql->set_old_table_prefixes( $old_table_prefixes )
-			  ->set_new_table_prefixes( $new_table_prefixes )
-			  ->set_include_table_prefixes( $include_table_prefixes )
-			  ->set_exclude_table_prefixes( $exclude_table_prefixes );
+			->set_new_table_prefixes( $new_table_prefixes )
+			->set_include_table_prefixes( $include_table_prefixes )
+			->set_exclude_table_prefixes( $exclude_table_prefixes );
 
 		// Exclude active plugins and status options
 		$mysql->set_table_where_clauses( ai1wm_table_prefix() . 'options', array( sprintf( "`option_name` NOT IN ('%s', '%s', '%s', '%s')", AI1WM_ACTIVE_PLUGINS, AI1WM_ACTIVE_TEMPLATE, AI1WM_ACTIVE_STYLESHEET, AI1WM_STATUS ) ) );

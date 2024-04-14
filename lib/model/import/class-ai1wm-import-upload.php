@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (C) 2014-2017 ServMask Inc.
+ * Copyright (C) 2014-2018 ServMask Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,8 +51,8 @@ class Ai1wm_Import_Upload {
 	public static function execute( $params ) {
 		self::validate();
 
-		$error = $_FILES['upload-file']['error'];
-		$upload = $_FILES['upload-file']['tmp_name'];
+		$error   = $_FILES['upload-file']['error'];
+		$upload  = $_FILES['upload-file']['tmp_name'];
 		$archive = ai1wm_archive_path( $params );
 
 		switch ( $error ) {

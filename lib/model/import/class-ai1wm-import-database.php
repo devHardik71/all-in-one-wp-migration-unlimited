@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (C) 2014-2017 ServMask Inc.
+ * Copyright (C) 2014-2018 ServMask Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -595,11 +595,11 @@ class Ai1wm_Import_Database {
 
 		// Set database options
 		$mysql->set_old_table_prefixes( $old_prefixes )
-			  ->set_new_table_prefixes( $new_prefixes )
-			  ->set_old_replace_values( $old_values )
-			  ->set_new_replace_values( $new_values )
-			  ->set_old_replace_raw_values( $old_raw_values )
-			  ->set_new_replace_raw_values( $new_raw_values );
+			->set_new_table_prefixes( $new_prefixes )
+			->set_old_replace_values( $old_values )
+			->set_new_replace_values( $new_values )
+			->set_old_replace_raw_values( $old_raw_values )
+			->set_new_replace_raw_values( $new_raw_values );
 
 		// Flush database
 		if ( isset( $config['Plugin']['Version'] ) && ( $version = $config['Plugin']['Version'] ) ) {

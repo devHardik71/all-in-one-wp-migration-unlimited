@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (C) 2014-2017 ServMask Inc.
+ * Copyright (C) 2014-2018 ServMask Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -85,7 +85,7 @@ class Ai1wm_Export_Config {
 		$config['Database'] = array( 'Version' => $mysql->version() );
 
 		// Set PHP version
-		$config['PHP'] = array( 'Version' => phpversion() );
+		$config['PHP'] = array( 'Version' => PHP_VERSION );
 
 		// Set active plugins
 		$config['Plugins'] = array_values( array_diff( ai1wm_active_plugins(), ai1wm_active_servmask_plugins() ) );

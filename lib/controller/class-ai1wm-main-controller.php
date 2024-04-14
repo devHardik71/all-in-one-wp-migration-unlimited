@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (C) 2014-2017 ServMask Inc.
+ * Copyright (C) 2014-2018 ServMask Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,8 +35,8 @@ class Ai1wm_Main_Controller {
 
 		// Activate hooks
 		$this->activate_actions()
-			 ->activate_filters()
-			 ->activate_textdomain();
+			->activate_filters()
+			->activate_textdomain();
 	}
 
 	/**
@@ -111,7 +111,7 @@ class Ai1wm_Main_Controller {
 		add_filter( 'plugin_row_meta', array( $this, 'plugin_row_meta' ), 10, 2 );
 
 		// Add custom schedules
-		add_filter( 'cron_schedules', array( $this, 'add_cron_schedules' ) );
+		add_filter( 'cron_schedules', array( $this, 'add_cron_schedules' ), 9999 );
 
 		return $this;
 	}
@@ -433,22 +433,22 @@ class Ai1wm_Main_Controller {
 			array( 'jquery' )
 		);
 		wp_localize_script( 'ai1wm-js-export', 'ai1wm_feedback', array(
-			'ajax' => array(
+			'ajax'       => array(
 				'url' => wp_make_link_relative( admin_url( 'admin-ajax.php?action=ai1wm_feedback' ) ),
 			),
 			'secret_key' => get_option( AI1WM_SECRET_KEY ),
 		) );
 		wp_localize_script( 'ai1wm-js-export', 'ai1wm_report', array(
-			'ajax' => array(
+			'ajax'       => array(
 				'url' => wp_make_link_relative( admin_url( 'admin-ajax.php?action=ai1wm_report' ) ),
 			),
 			'secret_key' => get_option( AI1WM_SECRET_KEY ),
 		) );
 		wp_localize_script( 'ai1wm-js-export', 'ai1wm_export', array(
-			'ajax' => array(
+			'ajax'       => array(
 				'url' => wp_make_link_relative( admin_url( 'admin-ajax.php?action=ai1wm_export' ) ),
 			),
-			'status' => array(
+			'status'     => array(
 				'url' => wp_make_link_relative( add_query_arg( array( 'secret_key' => get_option( AI1WM_SECRET_KEY ) ), admin_url( 'admin-ajax.php?action=ai1wm_status' ) ) ),
 			),
 			'secret_key' => get_option( AI1WM_SECRET_KEY ),
@@ -496,26 +496,26 @@ class Ai1wm_Main_Controller {
 			),
 		) );
 		wp_localize_script( 'ai1wm-js-import', 'ai1wm_feedback', array(
-			'ajax' => array(
+			'ajax'       => array(
 				'url' => wp_make_link_relative( admin_url( 'admin-ajax.php?action=ai1wm_feedback' ) ),
 			),
 			'secret_key' => get_option( AI1WM_SECRET_KEY ),
 		) );
 		wp_localize_script( 'ai1wm-js-import', 'ai1wm_report', array(
-			'ajax' => array(
+			'ajax'       => array(
 				'url' => wp_make_link_relative( admin_url( 'admin-ajax.php?action=ai1wm_report' ) ),
 			),
 			'secret_key' => get_option( AI1WM_SECRET_KEY ),
 		) );
 		wp_localize_script( 'ai1wm-js-import', 'ai1wm_import', array(
-			'ajax' => array(
+			'ajax'              => array(
 				'url' => wp_make_link_relative( admin_url( 'admin-ajax.php?action=ai1wm_import' ) ),
 			),
-			'status' => array(
+			'status'            => array(
 				'url' => wp_make_link_relative( add_query_arg( array( 'secret_key' => get_option( AI1WM_SECRET_KEY ) ), admin_url( 'admin-ajax.php?action=ai1wm_status' ) ) ),
 			),
-			'secret_key' => get_option( AI1WM_SECRET_KEY ),
-			'oversize'   => sprintf(
+			'secret_key'        => get_option( AI1WM_SECRET_KEY ),
+			'oversize'          => sprintf(
 				__(
 					'The file that you are trying to import is over the maximum upload file size limit of <strong>%s</strong>.<br />' .
 					'You can remove this restriction by purchasing our ' .
@@ -568,28 +568,28 @@ class Ai1wm_Main_Controller {
 			array( 'jquery' )
 		);
 		wp_localize_script( 'ai1wm-js-backups', 'ai1wm_feedback', array(
-			'ajax' => array(
+			'ajax'       => array(
 				'url' => wp_make_link_relative( admin_url( 'admin-ajax.php?action=ai1wm_feedback' ) ),
 			),
 			'secret_key' => get_option( AI1WM_SECRET_KEY ),
 		) );
 		wp_localize_script( 'ai1wm-js-backups', 'ai1wm_report', array(
-			'ajax' => array(
+			'ajax'       => array(
 				'url' => wp_make_link_relative( admin_url( 'admin-ajax.php?action=ai1wm_report' ) ),
 			),
 			'secret_key' => get_option( AI1WM_SECRET_KEY ),
 		) );
 		wp_localize_script( 'ai1wm-js-backups', 'ai1wm_backups', array(
-			'ajax' => array(
+			'ajax'       => array(
 				'url' => wp_make_link_relative( admin_url( 'admin-ajax.php?action=ai1wm_backups' ) ),
 			),
 			'secret_key' => get_option( AI1WM_SECRET_KEY ),
 		) );
 		wp_localize_script( 'ai1wm-js-backups', 'ai1wm_import', array(
-			'ajax' => array(
+			'ajax'       => array(
 				'url' => wp_make_link_relative( admin_url( 'admin-ajax.php?action=ai1wm_import' ) ),
 			),
-			'status' => array(
+			'status'     => array(
 				'url' => wp_make_link_relative( add_query_arg( array( 'secret_key' => get_option( AI1WM_SECRET_KEY ) ), admin_url( 'admin-ajax.php?action=ai1wm_status' ) ) ),
 			),
 			'secret_key' => get_option( AI1WM_SECRET_KEY ),
@@ -704,7 +704,7 @@ class Ai1wm_Main_Controller {
 	 * @return array
 	 */
 	public function add_cron_schedules( $schedules ) {
-		$schedules['weekly'] = array(
+		$schedules['weekly']  = array(
 			'display'  => __( 'Weekly', AI1WM_PLUGIN_NAME ),
 			'interval' => 60 * 60 * 24 * 7,
 		);

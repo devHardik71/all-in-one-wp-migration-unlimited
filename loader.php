@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (C) 2014-2017 ServMask Inc.
+ * Copyright (C) 2014-2018 ServMask Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -98,7 +98,7 @@ require_once AI1WM_VENDOR_PATH .
 			'servmask' .
 			DIRECTORY_SEPARATOR .
 			'iterator' .
-			 DIRECTORY_SEPARATOR .
+			DIRECTORY_SEPARATOR .
 			'class-ai1wm-recursive-directory-iterator.php';
 
 require_once AI1WM_VENDOR_PATH .

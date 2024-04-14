@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (C) 2014-2017 ServMask Inc.
+ * Copyright (C) 2014-2018 ServMask Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -78,7 +78,7 @@ class Ai1wm_Http_Stream extends Ai1wm_Http_Abstract {
 		}
 
 		// Ensure the stream is ready to write to
-		$no_streams = array();
+		$no_streams    = array();
 		$write_streams = array( $handle );
 		stream_select( $no_streams, $write_streams, $no_streams, 0, 200000 );
 

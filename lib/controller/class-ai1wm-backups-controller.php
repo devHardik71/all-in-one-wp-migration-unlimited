@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (C) 2014-2017 ServMask Inc.
+ * Copyright (C) 2014-2018 ServMask Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,9 +31,9 @@ class Ai1wm_Backups_Controller {
 		Ai1wm_Template::render(
 			'backups/index',
 			array(
-				'backups'     => $model->get_files(),
-				'username'    => get_option( AI1WM_AUTH_USER ),
-				'password'    => get_option( AI1WM_AUTH_PASSWORD ),
+				'backups'  => $model->get_files(),
+				'username' => get_option( AI1WM_AUTH_USER ),
+				'password' => get_option( AI1WM_AUTH_PASSWORD ),
 			)
 		);
 	}
