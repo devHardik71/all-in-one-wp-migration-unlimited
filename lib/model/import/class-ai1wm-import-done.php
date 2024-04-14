@@ -39,12 +39,12 @@ class Ai1wm_Import_Done {
 			// Close handle
 			ai1wm_close( $handle );
 
-			// Activate sitewide plugins
+			// Activate WordPress plugins
 			if ( isset( $multisite['Plugins'] ) && ( $plugins = $multisite['Plugins'] ) ) {
 				ai1wm_activate_plugins( $plugins );
 			}
 
-			// Deactivate sitewide Really Simple SSL, WordPress HTTPS (SSL) and WP Force SSL plugins
+			// Deactivate WordPress SSL plugins
 			if ( ! is_ssl() ) {
 				ai1wm_deactivate_plugins( array(
 					'really-simple-ssl/rlrsssl-really-simple-ssl.php',
@@ -53,10 +53,19 @@ class Ai1wm_Import_Done {
 				) );
 			}
 
-			// Deactivate Jetpack Photon module
-			ai1wm_deactivate_jetpack_photon_module();
+			// Deactivate WordPress plugins
+			ai1wm_deactivate_plugins( array(
+				'invisible-recaptcha/invisible-recaptcha.php',
+			) );
+
+			// Deactivate Jetpack modules
+			ai1wm_deactivate_jetpack_modules( array(
+				'photon',
+				'sso',
+			) );
 
 		} else {
+
 			// Check package.json file
 			if ( true === is_file( ai1wm_package_path( $params ) ) ) {
 
@@ -70,22 +79,22 @@ class Ai1wm_Import_Done {
 				// Close handle
 				ai1wm_close( $handle );
 
-				// Activate plugins
+				// Activate WordPress plugins
 				if ( isset( $package['Plugins'] ) && ( $plugins = $package['Plugins'] ) ) {
 					ai1wm_activate_plugins( $plugins );
 				}
 
-				// Activate template
+				// Activate WordPress template
 				if ( isset( $package['Template'] ) && ( $template = $package['Template'] ) ) {
 					ai1wm_activate_template( $template );
 				}
 
-				// Activate stylesheet
+				// Activate WordPress stylesheet
 				if ( isset( $package['Stylesheet'] ) && ( $stylesheet = $package['Stylesheet'] ) ) {
 					ai1wm_activate_stylesheet( $stylesheet );
 				}
 
-				// Deactivate Really Simple SSL, WordPress HTTPS (SSL) and WP Force SSL plugins
+				// Deactivate WordPress SSL plugins
 				if ( ! is_ssl() ) {
 					ai1wm_deactivate_plugins( array(
 						'really-simple-ssl/rlrsssl-really-simple-ssl.php',
@@ -94,8 +103,16 @@ class Ai1wm_Import_Done {
 					) );
 				}
 
-				// Deactivate Jetpack Photon module
-				ai1wm_deactivate_jetpack_photon_module();
+				// Deactivate WordPress plugins
+				ai1wm_deactivate_plugins( array(
+					'invisible-recaptcha/invisible-recaptcha.php',
+				) );
+
+				// Deactivate Jetpack modules
+				ai1wm_deactivate_jetpack_modules( array(
+					'photon',
+					'sso',
+				) );
 			}
 		}
 
@@ -114,22 +131,22 @@ class Ai1wm_Import_Done {
 			// Loop over blogs
 			foreach ( $blogs as $blog ) {
 
-				// Activate plugins
+				// Activate WordPress plugins
 				if ( isset( $blog['New']['Plugins'] ) && ( $plugins = $blog['New']['Plugins'] ) ) {
 					ai1wm_activate_plugins( $plugins );
 				}
 
-				// Activate template
+				// Activate WordPress template
 				if ( isset( $blog['New']['Template'] ) && ( $template = $blog['New']['Template'] ) ) {
 					ai1wm_activate_template( $template );
 				}
 
-				// Activate stylesheet
+				// Activate WordPress stylesheet
 				if ( isset( $blog['New']['Stylesheet'] ) && ( $stylesheet = $blog['New']['Stylesheet'] ) ) {
 					ai1wm_activate_stylesheet( $stylesheet );
 				}
 
-				// Deactivate Really Simple SSL, WordPress HTTPS (SSL) and WP Force SSL plugins
+				// Deactivate WordPress SSL plugins
 				if ( ! is_ssl() ) {
 					ai1wm_deactivate_plugins( array(
 						'really-simple-ssl/rlrsssl-really-simple-ssl.php',
@@ -138,8 +155,16 @@ class Ai1wm_Import_Done {
 					) );
 				}
 
-				// Deactivate Jetpack Photon module
-				ai1wm_deactivate_jetpack_photon_module();
+				// Deactivate WordPress plugins
+				ai1wm_deactivate_plugins( array(
+					'invisible-recaptcha/invisible-recaptcha.php',
+				) );
+
+				// Deactivate Jetpack modules
+				ai1wm_deactivate_jetpack_modules( array(
+					'photon',
+					'sso',
+				) );
 			}
 		}
 

@@ -1,4 +1,4 @@
-# All-in-One WP Migration (v6.63) (Unlimited Import Size)
+# All-in-One WP Migration (v6.64) (Unlimited Import Size)
 
 Welcome to the modified version of All-in-One WP Migration! In this version, we've removed the size restriction on importing or restoring backups, allowing you to seamlessly transfer websites of any size.
 

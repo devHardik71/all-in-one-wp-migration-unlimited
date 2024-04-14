@@ -778,6 +778,27 @@ function ai1wm_deactivate_plugins( $plugins ) {
 }
 
 /**
+ * Deactivate Jetpack modules
+ *
+ * @param  array   $modules List of modules
+ * @return boolean
+ */
+function ai1wm_deactivate_jetpack_modules( $modules ) {
+	$current = get_option( AI1WM_JETPACK_ACTIVE_MODULES, array() );
+
+	// Remove modules
+	foreach ( $modules as $module ) {
+		if ( ( $key = array_search( $module, $current ) ) !== false ) {
+			unset( $current[ $key ] );
+		}
+	}
+
+	sort( $current );
+
+	return update_option( AI1WM_JETPACK_ACTIVE_MODULES, $current );
+}
+
+/**
  * Flush WP options cache
  *
  * @return void
@@ -1055,17 +1076,6 @@ function ai1wm_fseek( $file_handle, Math_BigInteger $offset ) {
 		$bytes      = ai1wm_read( $file_handle, $chunk_size->toInteger() );
 		$offset     = $offset->subtract( new Math_BigInteger( strlen( $bytes ) ) );
 		$chunk_size = ai1wm_find_smaller_number( $chunk_size, $offset );
-	}
-}
-
-/**
- * Deactivate Jetpack Photon module
- *
- * @return mixed
- */
-function ai1wm_deactivate_jetpack_photon_module() {
-	if ( ( $jetpack = get_option( AI1WM_JETPACK_ACTIVE_MODULES, array() ) ) ) {
-		return update_option( AI1WM_JETPACK_ACTIVE_MODULES, array_values( array_diff( $jetpack, array( 'photon' ) ) ) );
 	}
 }
 
