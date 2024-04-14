@@ -43,6 +43,15 @@ class Ai1wm_Import_Done {
 			if ( isset( $multisite['Plugins'] ) && ( $plugins = $multisite['Plugins'] ) ) {
 				ai1wm_activate_plugins( $plugins );
 			}
+
+			// Deactivate sitewide Really Simple SSL plugin
+			if ( ! is_ssl() ) {
+				ai1wm_deactivate_plugins( array( 'really-simple-ssl/rlrsssl-really-simple-ssl.php' ) );
+			}
+
+			// Deactivate Jetpack Photon module
+			ai1wm_deactivate_jetpack_photon_module();
+
 		} else {
 			// Check package.json file
 			if ( true === is_file( ai1wm_package_path( $params ) ) ) {
@@ -72,8 +81,13 @@ class Ai1wm_Import_Done {
 					ai1wm_activate_stylesheet( $stylesheet );
 				}
 
-				// Disable Jetpack Photon module
-				ai1wm_disable_jetpack_photon();
+				// Deactivate Really Simple SSL plugin
+				if ( ! is_ssl() ) {
+					ai1wm_deactivate_plugins( array( 'really-simple-ssl/rlrsssl-really-simple-ssl.php' ) );
+				}
+
+				// Deactivate Jetpack Photon module
+				ai1wm_deactivate_jetpack_photon_module();
 			}
 		}
 
@@ -107,8 +121,13 @@ class Ai1wm_Import_Done {
 					ai1wm_activate_stylesheet( $stylesheet );
 				}
 
-				// Disable Jetpack Photon module
-				ai1wm_disable_jetpack_photon();
+				// Deactivate Really Simple SSL plugin
+				if ( ! is_ssl() ) {
+					ai1wm_deactivate_plugins( array( 'really-simple-ssl/rlrsssl-really-simple-ssl.php' ) );
+				}
+
+				// Deactivate Jetpack Photon module
+				ai1wm_deactivate_jetpack_photon_module();
 			}
 		}
 

@@ -725,6 +725,47 @@ function ai1wm_activate_stylesheet( $stylesheet ) {
 }
 
 /**
+ * Set inactive sitewide plugins (inspired by WordPress deactivate_plugins() function)
+ *
+ * @param  array   $plugins List of plugins
+ * @return boolean
+ */
+function ai1wm_deactivate_sitewide_plugins( $plugins ) {
+	$current = get_site_option( AI1WM_ACTIVE_SITEWIDE_PLUGINS, array() );
+
+	// Add plugins
+	foreach ( $plugins as $plugin ) {
+		if ( isset( $current[ $plugin ] ) ) {
+			unset( $current[ $plugin ] );
+		}
+	}
+
+	return update_site_option( AI1WM_ACTIVE_SITEWIDE_PLUGINS, $current );
+}
+
+
+/**
+ * Set inactive plugins (inspired by WordPress deactivate_plugins() function)
+ *
+ * @param  array   $plugins List of plugins
+ * @return boolean
+ */
+function ai1wm_deactivate_plugins( $plugins ) {
+	$current = get_option( AI1WM_ACTIVE_PLUGINS, array() );
+
+	// Remove plugins
+	foreach ( $plugins as $plugin ) {
+		if ( ( $key = array_search( $plugin, $current ) ) !== false ) {
+			unset( $current[ $key ] );
+		}
+	}
+
+	sort( $current );
+
+	return update_option( AI1WM_ACTIVE_PLUGINS, $current );
+}
+
+/**
  * Flush WP options cache
  *
  * @return void
@@ -1006,13 +1047,13 @@ function ai1wm_fseek( $file_handle, Math_BigInteger $offset ) {
 }
 
 /**
- * Disable Jetpack Photon module
+ * Deactivate Jetpack Photon module
  *
- * @return void
+ * @return mixed
  */
-function ai1wm_disable_jetpack_photon() {
+function ai1wm_deactivate_jetpack_photon_module() {
 	if ( ( $jetpack = get_option( AI1WM_JETPACK_ACTIVE_MODULES, array() ) ) ) {
-		update_option( AI1WM_JETPACK_ACTIVE_MODULES, array_values( array_diff( $jetpack, array( 'photon' ) ) ) );
+		return update_option( AI1WM_JETPACK_ACTIVE_MODULES, array_values( array_diff( $jetpack, array( 'photon' ) ) ) );
 	}
 }
 
