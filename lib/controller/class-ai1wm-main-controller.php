@@ -217,30 +217,57 @@ class Ai1wm_Main_Controller {
 	}
 
 	/**
-	 * Display storage directory notice
+	 * Display notice for storage directory
 	 *
 	 * @return void
 	 */
-	public function storage_notice() {
-		Ai1wm_Template::render( 'main/storage-notice' );
+	public function storage_path_notice() {
+		Ai1wm_Template::render( 'main/storage-path-notice' );
 	}
 
 	/**
-	 * Display index file notice
+	 * Display notice for index file in storage directory
 	 *
 	 * @return void
 	 */
-	public function index_notice() {
-		Ai1wm_Template::render( 'main/index-notice' );
+	public function storage_index_notice() {
+		Ai1wm_Template::render( 'main/storage-index-notice' );
 	}
 
 	/**
-	 * Display backups directory notice
+	 * Display notice for backups directory
 	 *
 	 * @return void
 	 */
-	public function backups_notice() {
-		Ai1wm_Template::render( 'main/backups-notice' );
+	public function backups_path_notice() {
+		Ai1wm_Template::render( 'main/backups-path-notice' );
+	}
+
+	/**
+	 * Display notice for .htaccess file in backups directory
+	 *
+	 * @return void
+	 */
+	public function backups_htaccess_notice() {
+		Ai1wm_Template::render( 'main/backups-htaccess-notice' );
+	}
+
+	/**
+	 * Display notice for web.config file in backups directory
+	 *
+	 * @return void
+	 */
+	public function backups_webconfig_notice() {
+		Ai1wm_Template::render( 'main/backups-webconfig-notice' );
+	}
+
+	/**
+	 * Display notice for index file in backups directory
+	 *
+	 * @return void
+	 */
+	public function backups_index_notice() {
+		Ai1wm_Template::render( 'main/backups-index-notice' );
 	}
 
 	/**
@@ -262,47 +289,71 @@ class Ai1wm_Main_Controller {
 	 * @return void
 	 */
 	public function create_folders() {
-		// Check if storage folder exist
+		// Check if storage folder is created
 		if ( ! is_dir( AI1WM_STORAGE_PATH ) ) {
-
-			// Folder doesn't exist, attempt to create it
 			if ( ! mkdir( AI1WM_STORAGE_PATH ) ) {
-
-				// We couldn't create the folder, so let's tell the user
 				if ( is_multisite() ) {
-					return add_action( 'network_admin_notices', array( $this, 'storage_notice' ) );
+					return add_action( 'network_admin_notices', array( $this, 'storage_path_notice' ) );
 				} else {
-					return add_action( 'admin_notices', array( $this, 'storage_notice' ) );
+					return add_action( 'admin_notices', array( $this, 'storage_path_notice' ) );
 				}
 			}
 		}
 
-		// Create index.php in storage folder
-		Ai1wm_File_Index::create( AI1WM_STORAGE_INDEX );
+		// Check if index.php is created in storage folder
+		if ( ! is_file( AI1WM_STORAGE_INDEX ) ) {
+			if ( ! Ai1wm_File_Index::create( AI1WM_STORAGE_INDEX ) ) {
+				if ( is_multisite() ) {
+					return add_action( 'network_admin_notices', array( $this, 'storage_index_notice' ) );
+				} else {
+					return add_action( 'admin_notices', array( $this, 'storage_index_notice' ) );
+				}
+			}
+		}
 
-		// Check if backups folder exist
+		// Check if ai1wm-backups folder is created
 		if ( ! is_dir( AI1WM_BACKUPS_PATH ) ) {
-
-			// Folder doesn't exist, attempt to create it
 			if ( ! mkdir( AI1WM_BACKUPS_PATH ) ) {
-
-				// We couldn't create the folder, so let's tell the user
 				if ( is_multisite() ) {
-					return add_action( 'network_admin_notices', array( $this, 'backups_notice' ) );
+					return add_action( 'network_admin_notices', array( $this, 'backups_path_notice' ) );
 				} else {
-					return add_action( 'admin_notices', array( $this, 'backups_notice' ) );
+					return add_action( 'admin_notices', array( $this, 'backups_path_notice' ) );
 				}
 			}
 		}
 
-		// Create index.php in backups folder
-		Ai1wm_File_Index::create( AI1WM_BACKUPS_INDEX );
+		// Check if .htaccess is created in backups folder
+		if ( ! is_file( AI1WM_BACKUPS_HTACCESS ) ) {
+			if ( ! Ai1wm_File_Htaccess::create( AI1WM_BACKUPS_HTACCESS ) ) {
+				if ( is_multisite() ) {
+					return add_action( 'network_admin_notices', array( $this, 'backups_htaccess_notice' ) );
+				} else {
+					return add_action( 'admin_notices', array( $this, 'backups_htaccess_notice' ) );
+				}
+			}
+		}
 
-		// Create .htaccess in backups folder
-		Ai1wm_File_Htaccess::create( AI1WM_BACKUPS_HTACCESS );
+		// Check if web.config is created in backups folder
+		if ( ! is_file( AI1WM_BACKUPS_WEBCONFIG ) ) {
+			if ( ! Ai1wm_File_Webconfig::create( AI1WM_BACKUPS_WEBCONFIG ) ) {
+				if ( is_multisite() ) {
+					return add_action( 'network_admin_notices', array( $this, 'backups_webconfig_notice' ) );
+				} else {
+					return add_action( 'admin_notices', array( $this, 'backups_webconfig_notice' ) );
+				}
+			}
+		}
 
-		// Create web.config in backups folder
-		Ai1wm_File_Webconfig::create( AI1WM_BACKUPS_WEBCONFIG );
+		// Check if index.php is created in backups folder
+		if ( ! is_file( AI1WM_BACKUPS_INDEX ) ) {
+			if ( ! Ai1wm_File_Index::create( AI1WM_BACKUPS_INDEX ) ) {
+				if ( is_multisite() ) {
+					return add_action( 'network_admin_notices', array( $this, 'backups_index_notice' ) );
+				} else {
+					return add_action( 'admin_notices', array( $this, 'backups_index_notice' ) );
+				}
+			}
+		}
 	}
 
 	/**
@@ -567,7 +618,7 @@ class Ai1wm_Main_Controller {
 		);
 		wp_localize_script( 'ai1wm-js-updater', 'ai1wm_updater', array(
 			'ajax' => array(
-				'url' => admin_url( 'admin-ajax.php?action=ai1wm_updater' ),
+				'url' => wp_make_link_relative( admin_url( 'admin-ajax.php?action=ai1wm_updater' ) ),
 			),
 		) );
 	}

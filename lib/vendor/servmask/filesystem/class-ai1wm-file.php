@@ -28,21 +28,21 @@ class Ai1wm_File {
 	/**
 	 * Create a file with contents
 	 *
-	 * The method will only create the file if it doesn't already exist.
-	 *
 	 * @param string $path     Path to the file
 	 * @param string $contents Contents of the file
 	 *
-	 * @return boolean|null
+	 * @return boolean
 	 */
 	public static function create( $path, $contents ) {
-		if ( ! is_file( $path ) ) {
-			$handle = ai1wm_open( $path, 'w' );
-			if ( false === $handle ) {
-				return false;
+		$is_written = false;
+		if ( ( $handle = @fopen( $path, 'w' ) ) !== false ) {
+			if ( @fwrite( $handle, $contents ) !== false ) {
+				$is_written = true;
 			}
-			ai1wm_write( $handle, $contents );
-			ai1wm_close( $handle );
+
+			@fclose( $handle );
 		}
+
+		return $is_written;
 	}
 }

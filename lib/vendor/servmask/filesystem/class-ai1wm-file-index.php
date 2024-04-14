@@ -32,10 +32,11 @@ class Ai1wm_File_Index {
 	 * at the path specified by the argument.
 	 *
 	 * @param  string  $path Path to the index.php file
-	 * @return boolean|null
+	 * @return boolean
 	 */
 	public static function create( $path ) {
 		$contents = '<?php // silence is golden';
+
 		return Ai1wm_File::create( $path, $contents );
 	}
 }

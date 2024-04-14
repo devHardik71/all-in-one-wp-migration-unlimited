@@ -31,7 +31,7 @@ class Ai1wm_File_Webconfig {
 	 * The method will create web.config file with contents '<mimeMap fileExtension=".wpress" mimeType="application/octet-stream" />'
 	 *
 	 * @param  string  $path Path to the web.config file
-	 * @return boolean|null
+	 * @return boolean
 	 */
 	public static function create( $path ) {
 		$contents = "<configuration>\n" .

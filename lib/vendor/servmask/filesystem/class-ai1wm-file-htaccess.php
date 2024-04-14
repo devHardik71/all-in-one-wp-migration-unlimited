@@ -24,14 +24,13 @@
  */
 
 class Ai1wm_File_Htaccess {
-
 	/**
 	 * Create .htaccess file
 	 *
 	 * The method will create .htaccess file with contents 'AddType application/octet-stream .wpress'
 	 *
-	 * @param  string  $path Path to the .htaccess file
-	 * @return boolean|null
+	 * @param string $path Path to the backups directory
+	 * @return boolean
 	 */
 	public static function create( $path ) {
 		$contents = "<IfModule mod_mime.c>\n" .

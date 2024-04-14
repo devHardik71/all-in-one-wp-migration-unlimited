@@ -73,12 +73,12 @@ abstract class Ai1wm_Database {
 	protected $new_replace_values = array();
 
 	/**
-	 * Table query clauses
+	 * Table where clauses
 	 *
 	 * @access protected
 	 * @var array
 	 */
-	protected $table_query_clauses = array();
+	protected $table_where_clauses = array();
 
 	/**
 	 * Table prefix columns
@@ -271,28 +271,30 @@ abstract class Ai1wm_Database {
 	}
 
 	/**
-	 * Set table query clauses
+	 * Set table where clauses
 	 *
 	 * @param  string $table   Table name
 	 * @param  array  $clauses Table clauses
 	 * @return Ai1wm_Database
 	 */
-	public function set_table_query_clauses( $table, $clauses ) {
-		$this->table_query_clauses[ strtolower( $table ) ] = $clauses;
+	public function set_table_where_clauses( $table, $clauses ) {
+		$this->table_where_clauses[ strtolower( $table ) ] = $clauses;
 
 		return $this;
 	}
 
 	/**
-	 * Get table query clauses
+	 * Get table where clauses
 	 *
 	 * @param  string $table Table name
-	 * @return mixed
+	 * @return array
 	 */
-	public function get_table_query_clauses( $table ) {
-		if ( isset( $this->table_query_clauses[ strtolower( $table ) ] ) ) {
-			return $this->table_query_clauses[ strtolower( $table ) ];
+	public function get_table_where_clauses( $table ) {
+		if ( isset( $this->table_where_clauses[ strtolower( $table ) ] ) ) {
+			return $this->table_where_clauses[ strtolower( $table ) ];
 		}
+
+		return array();
 	}
 
 	/**
@@ -314,12 +316,14 @@ abstract class Ai1wm_Database {
 	 * Get table prefix columns
 	 *
 	 * @param  string $table Table name
-	 * @return mixed
+	 * @return array
 	 */
 	public function get_table_prefix_columns( $table ) {
 		if ( isset( $this->table_prefix_columns[ strtolower( $table ) ] ) ) {
 			return $this->table_prefix_columns[ strtolower( $table ) ];
 		}
+
+		return array();
 	}
 
 	/**
@@ -469,16 +473,18 @@ abstract class Ai1wm_Database {
 	 * Export database into a file
 	 *
 	 * @param  string $file_name    Name of file
-	 * @param  string $table_offset Table offset
+	 * @param  int    $table_index  Table index
+	 * @param  int    $table_offset Table offset
+	 * @param  array  $table_keys   Table keys
 	 * @param  int    $timeout      Process timeout
 	 * @return bool
 	 */
-	public function export( $file_name, &$table_offset = 0, $timeout = 0 ) {
+	public function export( $file_name, &$table_index = 0, &$table_offset = 0, &$table_keys = array(), $timeout = 0 ) {
 		// Set file handler
 		$file_handler = ai1wm_open( $file_name, 'ab' );
 
 		// Write headers
-		if ( $table_offset === 0 ) {
+		if ( $table_index === 0 ) {
 			ai1wm_write( $file_handler, $this->get_header() );
 		}
 
@@ -492,23 +498,16 @@ abstract class Ai1wm_Database {
 		$tables = $this->get_tables();
 
 		// Export tables
-		for ( ; $table_offset < count( $tables ); ) {
+		for ( ; $table_index < count( $tables ); $table_index++ ) {
 
 			// Get table name
-			$table_name = $tables[ $table_offset ];
+			$table_name = $tables[ $table_index ];
 
 			// Replace table name prefixes
 			$new_table_name = $this->replace_table_prefixes( $table_name, 0 );
 
-			// Get table structure
-			$structure = $this->query( "SHOW CREATE TABLE `{$table_name}`" );
-			$table = $this->fetch_assoc( $structure );
-
-			// Close structure cursor
-			$this->free_result( $structure );
-
-			// Get create table
-			if ( isset( $table['Create Table'] ) ) {
+			// Get create table statement
+			if ( $table_offset === 0 ) {
 
 				// Write table drop statement
 				$drop_table = "\nDROP TABLE IF EXISTS `{$new_table_name}`;\n";
@@ -516,8 +515,11 @@ abstract class Ai1wm_Database {
 				// Write table statement
 				ai1wm_write( $file_handler, $drop_table );
 
+				// Get create table statement
+				$create_table = $this->get_create_table( $table_name );
+
 				// Replace create table prefixes
-				$create_table = $this->replace_table_prefixes( $table['Create Table'], 14 );
+				$create_table = $this->replace_table_prefixes( $create_table, 14 );
 
 				// Replace table constraints
 				$create_table = $this->replace_table_constraints( $create_table );
@@ -525,76 +527,137 @@ abstract class Ai1wm_Database {
 				// Replace create table options
 				$create_table = $this->replace_table_options( $create_table );
 
-				// Write table structure
+				// Write table statement
 				ai1wm_write( $file_handler, $create_table );
 
 				// Write end of statement
 				ai1wm_write( $file_handler, ";\n\n" );
 			}
 
-			$count = 0;
+			// Get primary or unique keys
+			$primary_keys = ( $primary_keys = $this->get_primary_keys( $table_name ) ) ? $primary_keys : $this->get_unique_keys( $table_name );
 
-			// Set query
-			$query = sprintf( 'SELECT * FROM `%s` %s', $table_name, $this->get_table_query_clauses( $table_name ) );
+			do {
 
-			// Apply additional table prefix columns
-			$columns = $this->get_table_prefix_columns( $table_name );
+				// Set query
+				if ( $primary_keys ) {
 
-			// Get results
-			$result = $this->query( $query );
-
-			// Generate insert statements
-			while ( $row = $this->fetch_assoc( $result ) ) {
-				if ( $count % Ai1wm_Database::QUERIES_PER_TRANSACTION === 0 ) {
-					// Write start transaction
-					ai1wm_write( $file_handler, "START TRANSACTION;\n" );
-				}
-
-				$items = array();
-				foreach ( $row as $key => $value ) {
-					// Replace table prefix columns
-					if ( isset( $columns[ strtolower( $key ) ] ) ) {
-						$value = $this->replace_table_prefixes( $value, 0 );
+					// Set table where by keys
+					$table_where = array( 1 );
+					foreach ( $table_keys as $key => $value ) {
+						$table_where[] = sprintf( "`%s` > '%s'", $key, $value );
 					}
 
-					// Replace table values
-					$items[] = is_null( $value ) ? 'NULL' : "'" . $this->escape( $value ) . "'";
+					// Set table where by clauses
+					foreach ( $this->get_table_where_clauses( $table_name ) as $clause ) {
+						$table_where[] = $clause;
+					}
+
+					$table_where = implode( ' AND ', $table_where );
+
+					// Set table order (by primary or unique keys)
+					$table_order = array();
+					foreach ( $primary_keys as $key ) {
+						$table_order[] = sprintf( '`%s`', $key );
+					}
+
+					$table_order = implode( ', ', $table_order );
+
+					// Set query with rows count
+					$query = sprintf( 'SELECT * FROM `%s` WHERE %s ORDER BY %s LIMIT %d', $table_name, $table_where, $table_order, 1000 );
+
+				} else {
+
+					// Set table where by clauses
+					$table_where = array( 1 );
+					foreach ( $this->get_table_where_clauses( $table_name ) as $clause ) {
+						$table_where[] = $clause;
+					}
+
+					$table_where = implode( ' AND ', $table_where );
+
+					// Set table order (by first column)
+					$table_order = 1;
+
+					// Set query with offset and rows count
+					$query = sprintf( 'SELECT * FROM `%s` WHERE %s ORDER BY %s LIMIT %d, %d', $table_name, $table_where, $table_order, $table_offset, 1000 );
 				}
 
-				// Set table values
-				$table_values = implode( ',', $items );
+				// Apply additional table prefix columns
+				$columns = $this->get_table_prefix_columns( $table_name );
 
-				// Set insert statement
-				$table_insert = "INSERT INTO `{$new_table_name}` VALUES ({$table_values});\n";
+				// Get results
+				$result = $this->query( $query );
 
-				// Write insert statement
-				ai1wm_write( $file_handler, $table_insert );
+				// Generate insert statements
+				if ( $num_rows = $this->num_rows( $result ) ) {
 
-				$count++;
+					// Loop over table rows
+					while ( $row = $this->fetch_assoc( $result ) ) {
 
-				// Write end of transaction
-				if ( $count % Ai1wm_Database::QUERIES_PER_TRANSACTION === 0 ) {
-					ai1wm_write( $file_handler, "COMMIT;\n" );
+						// Write start transaction
+						if ( $table_offset % Ai1wm_Database::QUERIES_PER_TRANSACTION === 0 ) {
+							ai1wm_write( $file_handler, "START TRANSACTION;\n" );
+						}
+
+						$items = array();
+						foreach ( $row as $key => $value ) {
+							// Replace table prefix columns
+							if ( isset( $columns[ strtolower( $key ) ] ) ) {
+								$value = $this->replace_table_prefixes( $value, 0 );
+							}
+
+							// Replace table values
+							$items[] = is_null( $value ) ? 'NULL' : "'" . $this->escape( $value ) . "'";
+						}
+
+						// Set table values
+						$table_values = implode( ',', $items );
+
+						// Set insert statement
+						$table_insert = "INSERT INTO `{$new_table_name}` VALUES ({$table_values});\n";
+
+						// Write insert statement
+						ai1wm_write( $file_handler, $table_insert );
+
+						// Set current table keys
+						foreach ( $primary_keys as $key ) {
+							$table_keys[ $key ] = $row[ $key ];
+						}
+
+						// Set current table rows
+						$table_offset++;
+
+						// Write end of transaction
+						if ( $table_offset % Ai1wm_Database::QUERIES_PER_TRANSACTION === 0 ) {
+							ai1wm_write( $file_handler, "COMMIT;\n" );
+						}
+					}
+
+					// Write end of transaction
+					if ( $table_offset % Ai1wm_Database::QUERIES_PER_TRANSACTION !== 0 ) {
+						ai1wm_write( $file_handler, "COMMIT;\n" );
+					}
+				} else {
+
+					// Set current table keys
+					$table_keys = array();
+
+					// Set current table offset
+					$table_offset = 0;
 				}
-			}
 
-			// Write end of transaction
-			if ( $count % Ai1wm_Database::QUERIES_PER_TRANSACTION !== 0 ) {
-				ai1wm_write( $file_handler, "COMMIT;\n" );
-			}
+				// Close result cursor
+				$this->free_result( $result );
 
-			$table_offset++;
-
-			// Close result cursor
-			$this->free_result( $result );
-
-			// Time elapsed
-			if ( $timeout ) {
-				if ( ( microtime( true ) - $start ) > $timeout ) {
-					$completed = false;
-					break;
+				// Time elapsed
+				if ( $timeout ) {
+					if ( ( microtime( true ) - $start ) > $timeout ) {
+						$completed = false;
+						break 2;
+					}
 				}
-			}
+			} while ( $num_rows > 0 );
 		}
 
 		// Close file handler
@@ -704,20 +767,16 @@ abstract class Ai1wm_Database {
 	 * @return string
 	 */
 	protected function get_version() {
-		$version = null;
-
 		$result = $this->query( "SHOW VARIABLES LIKE 'version'" );
-		while ( $row = $this->fetch_row( $result ) ) {
-			if ( isset( $row[1] ) ) {
-				$version = $row[1];
-				break;
-			}
-		}
+		$row = $this->fetch_assoc( $result );
 
 		// Close result cursor
 		$this->free_result( $result );
 
-		return $version;
+		// Get version
+		if ( isset( $row['Value'] ) ) {
+			return $row['Value'];
+		}
 	}
 
 	/**
@@ -726,20 +785,16 @@ abstract class Ai1wm_Database {
 	 * @return int
 	 */
 	protected function get_max_allowed_packet() {
-		$max_allowed_packet = null;
-
 		$result = $this->query( "SHOW VARIABLES LIKE 'max_allowed_packet'" );
-		while ( $row = $this->fetch_row( $result ) ) {
-			if ( isset( $row[1] ) ) {
-				$max_allowed_packet = $row[1];
-				break;
-			}
-		}
+		$row = $this->fetch_assoc( $result );
 
 		// Close result cursor
 		$this->free_result( $result );
 
-		return $max_allowed_packet;
+		// Get max allowed packet
+		if ( isset( $row['Value'] ) ) {
+			return $row['Value'];
+		}
 	}
 
 	/**
@@ -749,20 +804,81 @@ abstract class Ai1wm_Database {
 	 * @return string
 	 */
 	protected function get_collation( $collation_name ) {
-		$collation_result = null;
-
 		$result = $this->query( "SHOW COLLATION LIKE '{$collation_name}'" );
-		while ( $row = $this->fetch_row( $result ) ) {
-			if ( isset( $row[0] ) ) {
-				$collation_result = $row[0];
-				break;
+		$row = $this->fetch_assoc( $result );
+
+		// Close result cursor
+		$this->free_result( $result );
+
+		// Get collation name
+		if ( isset( $row['Collation'] ) ) {
+			return $row['Collation'];
+		}
+	}
+
+	/**
+	 * Get MySQL create table
+	 *
+	 * @param  string $table_name Table name
+	 * @return string
+	 */
+	protected function get_create_table( $table_name ) {
+		$result = $this->query( "SHOW CREATE TABLE `{$table_name}`" );
+		$row = $this->fetch_assoc( $result );
+
+		// Close result cursor
+		$this->free_result( $result );
+
+		// Get create table
+		if ( isset( $row['Create Table'] ) ) {
+			return $row['Create Table'];
+		}
+	}
+
+	/**
+	 * Get MySQL primary keys
+	 *
+	 * @param  string $table_name Table name
+	 * @return array
+	 */
+	protected function get_primary_keys( $table_name ) {
+		$primary_keys = array();
+
+		// Get primary keys
+		$result = $this->query( "SHOW KEYS FROM `{$table_name}` WHERE Key_name = 'PRIMARY'" );
+		while ( $row = $this->fetch_assoc( $result ) ) {
+			if ( isset( $row['Column_name'] ) ) {
+				$primary_keys[] = $row['Column_name'];
 			}
 		}
 
 		// Close result cursor
 		$this->free_result( $result );
 
-		return $collation_result;
+		return $primary_keys;
+	}
+
+	/**
+	 * Get MySQL unique keys
+	 *
+	 * @param  string $table_name Table name
+	 * @return array
+	 */
+	protected function get_unique_keys( $table_name ) {
+		$unique_keys = array();
+
+		// Get primary keys
+		$result = $this->query( "SHOW KEYS FROM `{$table_name}` WHERE Non_unique = 0" );
+		while ( $row = $this->fetch_assoc( $result ) ) {
+			if ( isset( $row['Column_name'] ) ) {
+				$unique_keys[] = $row['Column_name'];
+			}
+		}
+
+		// Close result cursor
+		$this->free_result( $result );
+
+		return $unique_keys;
 	}
 
 	/**
@@ -1099,6 +1215,14 @@ abstract class Ai1wm_Database {
 	 * @return array
 	 */
 	abstract public function fetch_row( $result );
+
+	/**
+	 * Return the number for rows from MySQL results
+	 *
+	 * @param  resource $result MySQL resource
+	 * @return int
+	 */
+	abstract public function num_rows( $result );
 
 	/**
 	 * Free MySQL result memory
