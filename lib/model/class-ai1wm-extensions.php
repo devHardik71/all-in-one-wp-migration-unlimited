@@ -93,6 +93,18 @@ class Ai1wm_Extensions {
 			);
 		}
 
+		// Add Google Cloud Storage Extension
+		if ( defined( 'AI1WMCE_PLUGIN_NAME' ) ) {
+			$extensions[ AI1WMCE_PLUGIN_NAME ] = array(
+				'key'      => AI1WMCE_PLUGIN_KEY,
+				'about'    => AI1WMCE_PLUGIN_ABOUT,
+				'basename' => AI1WMCE_PLUGIN_BASENAME,
+				'version'  => AI1WMCE_VERSION,
+				'requires' => '1.0',
+				'short'    => AI1WMCE_PLUGIN_SHORT,
+			);
+		}
+
 		// Add Google Drive Extension
 		if ( defined( 'AI1WMGE_PLUGIN_NAME' ) ) {
 			$extensions[ AI1WMGE_PLUGIN_NAME ] = array(

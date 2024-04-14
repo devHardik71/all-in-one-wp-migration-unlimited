@@ -36,7 +36,7 @@ class Ai1wm_Import_Controller {
 
 		// Set params
 		if ( empty( $params ) ) {
-			$params = stripslashes_deep( $_REQUEST );
+			$params = stripslashes_deep( array_merge( $_GET, $_POST ) );
 		}
 
 		// Set priority
@@ -127,6 +127,7 @@ class Ai1wm_Import_Controller {
 			apply_filters( 'ai1wm_import_box', Ai1wm_Template::get_content( 'import/button-box' ) ),
 			apply_filters( 'ai1wm_import_mega', Ai1wm_Template::get_content( 'import/button-mega' ) ),
 			apply_filters( 'ai1wm_import_digitalocean', Ai1wm_Template::get_content( 'import/button-digitalocean' ) ),
+			apply_filters( 'ai1wm_import_gcloud_storage', Ai1wm_Template::get_content( 'import/button-gcloud-storage' ) ),
 		);
 	}
 

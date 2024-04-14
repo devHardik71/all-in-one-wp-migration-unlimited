@@ -582,8 +582,18 @@ abstract class Ai1wm_Database {
 				// Apply additional table prefix columns
 				$columns = $this->get_table_prefix_columns( $table_name );
 
-				// Get results
+				// Run SQL query
 				$result = $this->query( $query );
+
+				// Repair table data
+				if ( $this->errno() === 1194 ) {
+
+					// Current table is marked as crashed and should be repaired
+					$this->repair_table( $table_name );
+
+					// Run SQL query
+					$result = $this->query( $query );
+				}
 
 				// Generate insert statements
 				if ( $num_rows = $this->num_rows( $result ) ) {
@@ -832,6 +842,16 @@ abstract class Ai1wm_Database {
 		if ( isset( $row['Create Table'] ) ) {
 			return $row['Create Table'];
 		}
+	}
+
+	/**
+	 * Repair MySQL table
+	 *
+	 * @param  string $table_name Table name
+	 * @return void
+	 */
+	protected function repair_table( $table_name ) {
+		$this->query( "REPAIR TABLE `{$table_name}`" );
 	}
 
 	/**

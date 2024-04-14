@@ -29,7 +29,7 @@ class Ai1wm_Resolve_Controller {
 
 		// Set params
 		if ( empty( $params ) ) {
-			$params = stripslashes_deep( $_REQUEST );
+			$params = stripslashes_deep( $_GET );
 		}
 
 		// Set secret key
