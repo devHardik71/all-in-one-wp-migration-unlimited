@@ -39,8 +39,8 @@
 				</label>
 			</li>
 			<li>
-				<label for="ai1wm-no-revisions">
-					<input type="checkbox" id="ai1wm-no-revisions" name="options[no_revisions]" />
+				<label for="ai1wm-no-post-revisions">
+					<input type="checkbox" id="ai1wm-no-post-revisions" name="options[no_post_revisions]" />
 					<?php _e( 'Do <strong>not</strong> export post revisions', AI1WM_PLUGIN_NAME ); ?>
 				</label>
 			</li>

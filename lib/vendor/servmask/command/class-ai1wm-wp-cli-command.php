@@ -41,7 +41,7 @@ if ( class_exists( 'WP_CLI_Command' ) ) {
 		 * [--exclude-spam-comments]
 		 * Do not export spam comments
 		 *
-		 * [--exclude-revisions]
+		 * [--exclude-post-revisions]
 		 * Do not export post revisions
 		 *
 		 * [--exclude-media]
@@ -134,8 +134,8 @@ if ( class_exists( 'WP_CLI_Command' ) ) {
 				$params['options']['no_spam_comments'] = true;
 			}
 
-			if ( isset( $assoc_args['exclude-revisions'] ) ) {
-				$params['options']['no_revisions'] = true;
+			if ( isset( $assoc_args['exclude-post-revisions'] ) ) {
+				$params['options']['no_post_revisions'] = true;
 			}
 
 			if ( isset( $assoc_args['exclude-media'] ) ) {

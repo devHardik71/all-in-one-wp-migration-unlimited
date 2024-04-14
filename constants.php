@@ -31,7 +31,7 @@ define( 'AI1WM_DEBUG', false );
 // ==================
 // = Plugin Version =
 // ==================
-define( 'AI1WM_VERSION', '6.76' );
+define( 'AI1WM_VERSION', '6.77' );
 
 // ===============
 // = Plugin Name =
@@ -796,6 +796,43 @@ if ( ! defined( 'AI1WMOE_PLUGIN_KEY' ) ) {
 // ============================
 if ( ! defined( 'AI1WMOE_PLUGIN_SHORT' ) ) {
 	define( 'AI1WMOE_PLUGIN_SHORT', 'onedrive' );
+}
+
+// =============================
+// = pCloud Extension Base Dir =
+// =============================
+if ( defined( 'AI1WMPE_PLUGIN_BASENAME' ) ) {
+	define( 'AI1WMPE_PLUGIN_BASEDIR', dirname( AI1WMPE_PLUGIN_BASENAME ) );
+} else {
+	define( 'AI1WMPE_PLUGIN_BASEDIR', 'all-in-one-wp-migration-pcloud-extension' );
+}
+
+// ==========================
+// = pCloud Extension Title =
+// ==========================
+if ( ! defined( 'AI1WMPE_PLUGIN_TITLE' ) ) {
+	define( 'AI1WMPE_PLUGIN_TITLE', 'pCloud Extension' );
+}
+
+// ==========================
+// = pCloud Extension About =
+// ==========================
+if ( ! defined( 'AI1WMPE_PLUGIN_ABOUT' ) ) {
+	define( 'AI1WMPE_PLUGIN_ABOUT', 'https://servmask.com/products/pcloud-extension/about' );
+}
+
+// ========================
+// = pCloud Extension Key =
+// ========================
+if ( ! defined( 'AI1WMPE_PLUGIN_KEY' ) ) {
+	define( 'AI1WMPE_PLUGIN_KEY', 'ai1wmpe_plugin_key' );
+}
+
+// ==========================
+// = pCloud Extension short =
+// ==========================
+if ( ! defined( 'AI1WMPE_PLUGIN_SHORT' ) ) {
+	define( 'AI1WMPE_PLUGIN_SHORT', 'pcloud' );
 }
 
 // ================================

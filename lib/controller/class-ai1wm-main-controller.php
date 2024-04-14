@@ -36,7 +36,6 @@ class Ai1wm_Main_Controller {
 		// Activate hooks
 		$this->activate_actions();
 		$this->activate_filters();
-		$this->activate_textdomain();
 	}
 
 	/**
@@ -61,7 +60,7 @@ class Ai1wm_Main_Controller {
 	 *
 	 * @return void
 	 */
-	private function activate_textdomain() {
+	public function load_text_domain() {
 		load_plugin_textdomain( AI1WM_PLUGIN_NAME, false, false );
 	}
 
@@ -79,6 +78,9 @@ class Ai1wm_Main_Controller {
 
 		// Setup folders
 		add_action( 'admin_init', array( $this, 'setup_folders' ) );
+
+		// Load text domain
+		add_action( 'admin_init', array( $this, 'load_text_domain' ) );
 
 		// Admin header
 		add_action( 'admin_head', array( $this, 'admin_head' ) );
@@ -864,6 +866,7 @@ class Ai1wm_Main_Controller {
 	 * @return void
 	 */
 	public function init() {
+
 		// Set secret key
 		if ( ! get_option( AI1WM_SECRET_KEY ) ) {
 			update_option( AI1WM_SECRET_KEY, wp_generate_password( 12, false ) );

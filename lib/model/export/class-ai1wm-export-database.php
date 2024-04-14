@@ -74,7 +74,7 @@ class Ai1wm_Export_Database {
 		}
 
 		// Exclude post revisions
-		if ( isset( $params['options']['no_revisions'] ) ) {
+		if ( isset( $params['options']['no_post_revisions'] ) ) {
 			$mysql->set_table_where_clauses( ai1wm_table_prefix() . 'posts', array( "`post_type` != 'revision'" ) );
 		}
 

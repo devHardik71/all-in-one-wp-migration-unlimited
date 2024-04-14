@@ -171,7 +171,7 @@ class Ai1wm_Extensions {
 				'about'    => AI1WMME_PLUGIN_ABOUT,
 				'basename' => AI1WMME_PLUGIN_BASENAME,
 				'version'  => AI1WMME_VERSION,
-				'requires' => '3.58',
+				'requires' => '3.59',
 				'short'    => AI1WMME_PLUGIN_SHORT,
 			);
 		}
@@ -186,6 +186,19 @@ class Ai1wm_Extensions {
 				'version'  => AI1WMOE_VERSION,
 				'requires' => '1.23',
 				'short'    => AI1WMOE_PLUGIN_SHORT,
+			);
+		}
+
+		// Add pCloud Extension
+		if ( defined( 'AI1WMPE_PLUGIN_NAME' ) ) {
+			$extensions[ AI1WMPE_PLUGIN_NAME ] = array(
+				'key'      => AI1WMPE_PLUGIN_KEY,
+				'title'    => AI1WMPE_PLUGIN_TITLE,
+				'about'    => AI1WMPE_PLUGIN_ABOUT,
+				'basename' => AI1WMPE_PLUGIN_BASENAME,
+				'version'  => AI1WMPE_VERSION,
+				'requires' => '1.0',
+				'short'    => AI1WMPE_PLUGIN_SHORT,
 			);
 		}
 

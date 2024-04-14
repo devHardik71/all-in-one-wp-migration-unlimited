@@ -747,6 +747,13 @@ function ai1wm_plugin_filters( $filters = array() ) {
 		$filters[] = 'plugins' . DIRECTORY_SEPARATOR . 'all-in-one-wp-migration-onedrive-extension';
 	}
 
+	// pCloud Extension
+	if ( defined( 'AI1WMPE_PLUGIN_BASENAME' ) ) {
+		$filters[] = 'plugins' . DIRECTORY_SEPARATOR . dirname( AI1WMPE_PLUGIN_BASENAME );
+	} else {
+		$filters[] = 'plugins' . DIRECTORY_SEPARATOR . 'all-in-one-wp-migration-pcloud-extension';
+	}
+
 	// Amazon S3 Extension
 	if ( defined( 'AI1WMSE_PLUGIN_BASENAME' ) ) {
 		$filters[] = 'plugins' . DIRECTORY_SEPARATOR . dirname( AI1WMSE_PLUGIN_BASENAME );
@@ -840,6 +847,11 @@ function ai1wm_active_servmask_plugins( $plugins = array() ) {
 	// OneDrive Extension
 	if ( defined( 'AI1WMOE_PLUGIN_BASENAME' ) ) {
 		$plugins[] = AI1WMOE_PLUGIN_BASENAME;
+	}
+
+	// pCloud Extension
+	if ( defined( 'AI1WMPE_PLUGIN_BASENAME' ) ) {
+		$plugins[] = AI1WMPE_PLUGIN_BASENAME;
 	}
 
 	// Amazon S3 Extension
@@ -1093,6 +1105,10 @@ function ai1wm_cache_flush() {
 	// Delete WP cache
 	wp_cache_delete( 'alloptions', 'options' );
 	wp_cache_delete( 'notoptions', 'options' );
+
+	// Remove WP filters
+	remove_all_filters( 'sanitize_option_siteurl' );
+	remove_all_filters( 'sanitize_option_home' );
 }
 
 /**
