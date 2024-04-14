@@ -31,16 +31,16 @@ define( 'AI1WM_DEBUG', false );
 // ==================
 // = Plugin Version =
 // ==================
-define( 'AI1WM_VERSION', '6.73' );
+define( 'AI1WM_VERSION', '6.74' );
 
 // ===============
 // = Plugin Name =
 // ===============
 define( 'AI1WM_PLUGIN_NAME', 'all-in-one-wp-migration' );
 
-// ===================
-// = Directory Index =
-// ===================
+// ============================
+// = Directory index.php File =
+// ============================
 define( 'AI1WM_DIRECTORY_INDEX', 'index.php' );
 
 // ================
@@ -82,11 +82,6 @@ define( 'AI1WM_EXPORT_PATH', AI1WM_MODEL_PATH . DIRECTORY_SEPARATOR . 'export' )
 // = Import Path =
 // ===============
 define( 'AI1WM_IMPORT_PATH', AI1WM_MODEL_PATH . DIRECTORY_SEPARATOR . 'import' );
-
-// =============
-// = Http Path =
-// =============
-define( 'AI1WM_HTTP_PATH', AI1WM_MODEL_PATH . DIRECTORY_SEPARATOR . 'http' );
 
 // =============
 // = View Path =
@@ -159,7 +154,7 @@ define( 'AI1WM_SETTINGS_NAME', 'settings.json' );
 define( 'AI1WM_MULTIPART_NAME', 'multipart.list' );
 
 // ========================
-// = Archive FileMap Name =
+// = Archive Filemap Name =
 // ========================
 define( 'AI1WM_FILEMAP_NAME', 'filemap.list' );
 
@@ -203,16 +198,6 @@ define( 'AI1WM_IMPORT_NAME', 'import.log' );
 // ==================
 define( 'AI1WM_ERROR_NAME', 'error.log' );
 
-// ==========
-// = URL IP =
-// ==========
-define( 'AI1WM_URL_IP', 'ai1wm_url_ip' );
-
-// ===============
-// = URL Adapter =
-// ===============
-define( 'AI1WM_URL_ADAPTER', 'ai1wm_url_adapter' );
-
 // ==============
 // = Secret Key =
 // ==============
@@ -227,6 +212,16 @@ define( 'AI1WM_AUTH_USER', 'ai1wm_auth_user' );
 // = Auth Password =
 // =================
 define( 'AI1WM_AUTH_PASSWORD', 'ai1wm_auth_password' );
+
+// ============
+// = Site URL =
+// ============
+define( 'AI1WM_SITE_URL', 'siteurl' );
+
+// ============
+// = Home URL =
+// ============
+define( 'AI1WM_HOME_URL', 'home' );
 
 // ==================
 // = Active Plugins =
@@ -325,25 +320,30 @@ define( 'AI1WM_SITES_PATH', AI1WM_UPLOADS_PATH . DIRECTORY_SEPARATOR . 'sites' )
 // ================
 define( 'AI1WM_BACKUPS_PATH', WP_CONTENT_DIR . DIRECTORY_SEPARATOR . 'ai1wm-backups' );
 
-// ======================
-// = Storage Index File =
-// ======================
+// ==========================
+// = Storage index.php File =
+// ==========================
 define( 'AI1WM_STORAGE_INDEX', AI1WM_STORAGE_PATH . DIRECTORY_SEPARATOR . 'index.php' );
 
-// ======================
-// = Backups Index File =
-// ======================
+// ==========================
+// = Backups index.php File =
+// ==========================
 define( 'AI1WM_BACKUPS_INDEX', AI1WM_BACKUPS_PATH . DIRECTORY_SEPARATOR . 'index.php' );
 
-// =========================
-// = Backups Htaccess File =
-// =========================
+// ==========================
+// = Backups .htaccess File =
+// ==========================
 define( 'AI1WM_BACKUPS_HTACCESS', AI1WM_BACKUPS_PATH . DIRECTORY_SEPARATOR . '.htaccess' );
 
-// ==========================
-// = Backups Webconfig File =
-// ==========================
+// ===========================
+// = Backups web.config File =
+// ===========================
 define( 'AI1WM_BACKUPS_WEBCONFIG', AI1WM_BACKUPS_PATH . DIRECTORY_SEPARATOR . 'web.config' );
+
+// ============================
+// = WordPress .htaccess File =
+// ============================
+define( 'AI1WM_WORDPRESS_HTACCESS', ABSPATH . DIRECTORY_SEPARATOR . '.htaccess' );
 
 // ================================
 // = WP Migration Plugin Base Dir =

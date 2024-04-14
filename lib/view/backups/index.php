@@ -61,7 +61,7 @@
 											<?php echo esc_html( basename( $backup['filename'] ) ); ?>
 										</td>
 										<td class="ai1wm-column-date">
-											<?php echo human_time_diff( $backup['mtime'] ); ?> <?php _e( 'ago', AI1WM_PLUGIN_NAME ); ?>
+											<?php echo esc_html( sprintf( __( '%s ago', AI1WM_PLUGIN_NAME ), human_time_diff( $backup['mtime'] ) ) ); ?>
 										</td>
 										<td class="ai1wm-column-size">
 											<?php if ( is_null( $backup['size'] ) ) : ?>

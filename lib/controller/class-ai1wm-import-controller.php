@@ -105,7 +105,14 @@ class Ai1wm_Import_Controller {
 							exit;
 						}
 
-						return Ai1wm_Http::get( admin_url( 'admin-ajax.php?action=ai1wm_import' ), $params );
+						wp_remote_post( apply_filters( 'ai1wm_http_import_url', admin_url( 'admin-ajax.php?action=ai1wm_import' ) ), array(
+							'timeout'   => apply_filters( 'ai1wm_http_import_timeout', 5 ),
+							'blocking'  => apply_filters( 'ai1wm_http_import_blocking', false ),
+							'sslverify' => apply_filters( 'ai1wm_http_import_sslverify', false ),
+							'headers'   => apply_filters( 'ai1wm_http_import_headers', array() ),
+							'body'      => apply_filters( 'ai1wm_http_import_body', $params ),
+						) );
+						exit;
 					}
 				}
 
@@ -130,6 +137,16 @@ class Ai1wm_Import_Controller {
 			apply_filters( 'ai1wm_import_gcloud_storage', Ai1wm_Template::get_content( 'import/button-gcloud-storage' ) ),
 			apply_filters( 'ai1wm_import_azure_storage', Ai1wm_Template::get_content( 'import/button-azure-storage' ) ),
 		);
+	}
+
+	public static function http_import_headers( $headers = array() ) {
+		if ( ( $user = get_option( AI1WM_AUTH_USER ) ) && ( $password = get_option( AI1WM_AUTH_PASSWORD ) ) ) {
+			if ( ( $hash = base64_encode( sprintf( '%s:%s', $user, $password ) ) ) ) {
+				$headers['Authorization'] = sprintf( 'Basic %s', $hash );
+			}
+		}
+
+		return $headers;
 	}
 
 	public static function max_chunk_size() {

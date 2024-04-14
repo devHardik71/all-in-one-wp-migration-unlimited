@@ -23,15 +23,6 @@
  * ╚══════╝╚══════╝╚═╝  ╚═╝  ╚═══╝  ╚═╝     ╚═╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝
  */
 
-class Ai1wm_File_Index {
+class Ai1wm_Recursive_Iterator_Iterator extends RecursiveIteratorIterator {
 
-	/**
-	 * Create index.php file
-	 *
-	 * @param  string  $path Path to file
-	 * @return boolean
-	 */
-	public static function create( $path ) {
-		return Ai1wm_File::create( $path, '<?php // silence is golden' );
-	}
 }

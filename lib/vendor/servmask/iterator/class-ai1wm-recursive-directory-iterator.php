@@ -25,8 +25,6 @@
 
 class Ai1wm_Recursive_Directory_Iterator extends RecursiveDirectoryIterator {
 
-	protected $exclude = array();
-
 	public function __construct( $path ) {
 		parent::__construct( $path );
 

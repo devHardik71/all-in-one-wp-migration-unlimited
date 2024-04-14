@@ -31,7 +31,7 @@
  */
 function ai1wm_storage_path( $params ) {
 	if ( empty( $params['storage'] ) ) {
-		throw new Ai1wm_Storage_Exception( __( 'Unable to locate storage path', AI1WM_PLUGIN_NAME ) );
+		throw new Ai1wm_Storage_Exception( __( 'Unable to locate storage path. <a href="https://help.servmask.com/knowledgebase/invalid-storage-path/" target="_blank">Technical details</a>', AI1WM_PLUGIN_NAME ) );
 	}
 
 	// Get storage path
@@ -51,12 +51,12 @@ function ai1wm_storage_path( $params ) {
  */
 function ai1wm_backup_path( $params ) {
 	if ( empty( $params['archive'] ) ) {
-		throw new Ai1wm_Archive_Exception( __( 'Unable to locate archive path', AI1WM_PLUGIN_NAME ) );
+		throw new Ai1wm_Archive_Exception( __( 'Unable to locate archive path. <a href="https://help.servmask.com/knowledgebase/invalid-archive-path/" target="_blank">Technical details</a>', AI1WM_PLUGIN_NAME ) );
 	}
 
 	// Validate archive path
 	if ( validate_file( $params['archive'] ) !== 0 ) {
-		throw new Ai1wm_Archive_Exception( __( 'Invalid archive path', AI1WM_PLUGIN_NAME ) );
+		throw new Ai1wm_Archive_Exception( __( 'Invalid archive path. <a href="https://help.servmask.com/knowledgebase/invalid-archive-path/" target="_blank">Technical details</a>', AI1WM_PLUGIN_NAME ) );
 	}
 
 	return AI1WM_BACKUPS_PATH . DIRECTORY_SEPARATOR . $params['archive'];
@@ -70,12 +70,12 @@ function ai1wm_backup_path( $params ) {
  */
 function ai1wm_archive_path( $params ) {
 	if ( empty( $params['archive'] ) ) {
-		throw new Ai1wm_Archive_Exception( __( 'Unable to locate archive path', AI1WM_PLUGIN_NAME ) );
+		throw new Ai1wm_Archive_Exception( __( 'Unable to locate archive path. <a href="https://help.servmask.com/knowledgebase/invalid-archive-path/" target="_blank">Technical details</a>', AI1WM_PLUGIN_NAME ) );
 	}
 
 	// Validate archive path
 	if ( validate_file( $params['archive'] ) !== 0 ) {
-		throw new Ai1wm_Archive_Exception( __( 'Invalid archive path', AI1WM_PLUGIN_NAME ) );
+		throw new Ai1wm_Archive_Exception( __( 'Invalid archive path. <a href="https://help.servmask.com/knowledgebase/invalid-archive-path/" target="_blank">Technical details</a>', AI1WM_PLUGIN_NAME ) );
 	}
 
 	// Get archive path
@@ -1061,7 +1061,7 @@ function ai1wm_urlscheme( $url, $scheme = '' ) {
 function ai1wm_open( $file, $mode ) {
 	$file_handle = @fopen( $file, $mode );
 	if ( false === $file_handle ) {
-		throw new Ai1wm_Not_Accessible_Exception( sprintf( __( 'Unable to open %s with mode %s', AI1WM_PLUGIN_NAME ), $file, $mode ) );
+		throw new Ai1wm_Not_Accessible_Exception( sprintf( __( 'Unable to open %s with mode %s. <a href="https://help.servmask.com/knowledgebase/invalid-file-permissions/" target="_blank">Technical details</a>', AI1WM_PLUGIN_NAME ), $file, $mode ) );
 	}
 
 	return $file_handle;
@@ -1080,10 +1080,12 @@ function ai1wm_write( $handle, $content ) {
 	$write_result = @fwrite( $handle, $content );
 	if ( false === $write_result ) {
 		if ( ( $meta = stream_get_meta_data( $handle ) ) ) {
-			throw new Ai1wm_Not_Writable_Exception( sprintf( __( 'Unable to write to: %s', AI1WM_PLUGIN_NAME ), $meta['uri'] ) );
+			throw new Ai1wm_Not_Writable_Exception( sprintf( __( 'Unable to write to: %s. <a href="https://help.servmask.com/knowledgebase/invalid-file-permissions/" target="_blank">Technical details</a>', AI1WM_PLUGIN_NAME ), $meta['uri'] ) );
 		}
 	} elseif ( strlen( $content ) !== $write_result ) {
-		throw new Ai1wm_Quota_Exceeded_Exception( __( 'Out of disk space.', AI1WM_PLUGIN_NAME ) );
+		if ( ( $meta = stream_get_meta_data( $handle ) ) ) {
+			throw new Ai1wm_Quota_Exceeded_Exception( sprintf( __( 'Out of disk space. Unable to write to: %s. <a href="https://help.servmask.com/knowledgebase/out-of-disk-space/" target="_blank">Technical details</a>', AI1WM_PLUGIN_NAME ), $meta['uri'] ) );
+		}
 	}
 
 	return $write_result;
@@ -1101,7 +1103,7 @@ function ai1wm_read( $handle, $filesize ) {
 	$read_result = @fread( $handle, $filesize );
 	if ( false === $read_result ) {
 		if ( ( $meta = stream_get_meta_data( $handle ) ) ) {
-			throw new Ai1wm_Not_Readable_Exception( sprintf( __( 'Unable to read file: %s', AI1WM_PLUGIN_NAME ), $meta['uri'] ) );
+			throw new Ai1wm_Not_Readable_Exception( sprintf( __( 'Unable to read file: %s. <a href="https://help.servmask.com/knowledgebase/invalid-file-permissions/" target="_blank">Technical details</a>', AI1WM_PLUGIN_NAME ), $meta['uri'] ) );
 		}
 	}
 
@@ -1118,7 +1120,7 @@ function ai1wm_seek( $handle, $offset, $mode = SEEK_SET ) {
 	$seek_result = @fseek( $handle, $offset, $mode );
 	if ( -1 === $seek_result ) {
 		if ( ( $meta = stream_get_meta_data( $handle ) ) ) {
-			throw new Ai1wm_Not_Seekable_Exception( sprintf( __( 'Unable to seek to offset %d on %s', AI1WM_PLUGIN_NAME ), $offset, $meta['uri'] ) );
+			throw new Ai1wm_Not_Seekable_Exception( sprintf( __( 'Unable to seek to offset %d on %s. <a href="https://help.servmask.com/knowledgebase/php-32bit/" target="_blank">Technical details</a>', AI1WM_PLUGIN_NAME ), $offset, $meta['uri'] ) );
 		}
 	}
 
@@ -1135,7 +1137,7 @@ function ai1wm_tell( $handle ) {
 	$tell_result = @ftell( $handle );
 	if ( false === $tell_result ) {
 		if ( ( $meta = stream_get_meta_data( $handle ) ) ) {
-			throw new Ai1wm_Not_Tellable_Exception( sprintf( __( 'Unable to get current pointer position of %s', AI1WM_PLUGIN_NAME ), $meta['uri'] ) );
+			throw new Ai1wm_Not_Tellable_Exception( sprintf( __( 'Unable to get current pointer position of %s. <a href="https://help.servmask.com/knowledgebase/php-32bit/" target="_blank">Technical details</a>', AI1WM_PLUGIN_NAME ), $meta['uri'] ) );
 		}
 	}
 
@@ -1298,7 +1300,7 @@ function ai1wm_fseek( $file_handle, Math_BigInteger $offset ) {
  */
 function ai1wm_verify_secret_key( $secret_key ) {
 	if ( $secret_key !== get_option( AI1WM_SECRET_KEY ) ) {
-		throw new Ai1wm_Not_Valid_Secret_Key_Exception( __( 'Unable to authenticate the secret key.', AI1WM_PLUGIN_NAME ) );
+		throw new Ai1wm_Not_Valid_Secret_Key_Exception( __( 'Unable to authenticate the secret key. <a href="https://help.servmask.com/knowledgebase/invalid-secret-key/" target="_blank">Technical details</a>', AI1WM_PLUGIN_NAME ) );
 	}
 
 	return true;

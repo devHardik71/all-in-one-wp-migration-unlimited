@@ -23,15 +23,28 @@
  * ╚══════╝╚══════╝╚═╝  ╚═╝  ╚═══╝  ╚═╝     ╚═╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝
  */
 
-class Ai1wm_File_Index {
+class Ai1wm_Recursive_Extension_Filter extends RecursiveFilterIterator {
 
-	/**
-	 * Create index.php file
-	 *
-	 * @param  string  $path Path to file
-	 * @return boolean
-	 */
-	public static function create( $path ) {
-		return Ai1wm_File::create( $path, '<?php // silence is golden' );
+	protected $include = array();
+
+	public function __construct( RecursiveIterator $iterator, $include = array() ) {
+		parent::__construct( $iterator );
+
+		// Set include filter
+		$this->include = $include;
+	}
+
+	public function accept() {
+		if ( $this->getInnerIterator()->isFile() ) {
+			if ( ! in_array( pathinfo( $this->getInnerIterator()->getFilename(), PATHINFO_EXTENSION ), $this->include ) ) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	public function getChildren() {
+		return new self( $this->getInnerIterator()->getChildren(), $this->include );
 	}
 }
