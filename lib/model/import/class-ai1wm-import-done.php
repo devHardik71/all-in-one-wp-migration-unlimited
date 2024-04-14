@@ -56,6 +56,8 @@ class Ai1wm_Import_Done {
 			// Deactivate WordPress plugins
 			ai1wm_deactivate_plugins( array(
 				'invisible-recaptcha/invisible-recaptcha.php',
+				'wps-hide-login/wps-hide-login.php',
+				'mycustomwidget/my_custom_widget.php',
 			) );
 
 			// Deactivate Jetpack modules
@@ -106,6 +108,8 @@ class Ai1wm_Import_Done {
 				// Deactivate WordPress plugins
 				ai1wm_deactivate_plugins( array(
 					'invisible-recaptcha/invisible-recaptcha.php',
+					'wps-hide-login/wps-hide-login.php',
+					'mycustomwidget/my_custom_widget.php',
 				) );
 
 				// Deactivate Jetpack modules
@@ -158,6 +162,8 @@ class Ai1wm_Import_Done {
 				// Deactivate WordPress plugins
 				ai1wm_deactivate_plugins( array(
 					'invisible-recaptcha/invisible-recaptcha.php',
+					'wps-hide-login/wps-hide-login.php',
+					'mycustomwidget/my_custom_widget.php',
 				) );
 
 				// Deactivate Jetpack modules

@@ -38,13 +38,6 @@ class Ai1wm_Import_Validate {
 			);
 		}
 
-		// Set file bytes offset
-		if ( isset( $params['file_bytes_offset'] ) ) {
-			$file_bytes_offset = (int) $params['file_bytes_offset'];
-		} else {
-			$file_bytes_offset = 0;
-		}
-
 		// Set archive bytes offset
 		if ( isset( $params['archive_bytes_offset'] ) ) {
 			$archive_bytes_offset = (int) $params['archive_bytes_offset'];
@@ -52,11 +45,22 @@ class Ai1wm_Import_Validate {
 			$archive_bytes_offset = 0;
 		}
 
-		// Obtain the size of the archive
-		$total_files_size = ai1wm_archive_bytes( $params );
+		// Set file bytes offset
+		if ( isset( $params['file_bytes_offset'] ) ) {
+			$file_bytes_offset = (int) $params['file_bytes_offset'];
+		} else {
+			$file_bytes_offset = 0;
+		}
 
-		// What percent of files have we processed?
-		$progress = (int) min( ( $archive_bytes_offset / $total_files_size ) * 100, 100 );
+		// Get total archive size
+		if ( isset( $params['total_archive_size'] ) ) {
+			$total_archive_size = (int) $params['total_archive_size'];
+		} else {
+			$total_archive_size = ai1wm_archive_bytes( $params );
+		}
+
+		// What percent of archive have we processed?
+		$progress = (int) min( ( $archive_bytes_offset / $total_archive_size ) * 100, 100 );
 
 		// Set progress
 		Ai1wm_Status::info( sprintf( __( 'Unpacking archive...<br />%d%% complete', AI1WM_PLUGIN_NAME ), $progress ) );
@@ -81,7 +85,7 @@ class Ai1wm_Import_Validate {
 		$allowed_size = apply_filters( 'ai1wm_max_file_size', AI1WM_MAX_FILE_SIZE );
 
 		// Let's check the size of the file to make sure it is less than the maximum allowed
-		if ( ( $allowed_size > 0 ) && ( $total_files_size > $allowed_size ) ) {
+		if ( ( $allowed_size > 0 ) && ( $total_archive_size > $allowed_size ) ) {
 			throw new Ai1wm_Import_Exception(
 				sprintf(
 					__(
@@ -102,11 +106,11 @@ class Ai1wm_Import_Validate {
 			$file_bytes_written = 0;
 
 			// Unpack package.json, multisite.json and database.sql files
-			if ( ( $completed = $archive->extract_by_files_array( ai1wm_storage_path( $params ), array( AI1WM_PACKAGE_NAME, AI1WM_MULTISITE_NAME, AI1WM_DATABASE_NAME ), $file_bytes_written, $file_bytes_offset, 10 ) ) ) {
+			if ( ( $completed = $archive->extract_by_files_array( ai1wm_storage_path( $params ), array( AI1WM_PACKAGE_NAME, AI1WM_MULTISITE_NAME, AI1WM_DATABASE_NAME ), array(), $file_bytes_written, $file_bytes_offset, 10 ) ) ) {
 				$file_bytes_offset = 0;
 			}
 
-			// Set archive bytes offset
+			// Get archive bytes offset
 			$archive_bytes_offset = $archive->get_file_pointer();
 		}
 
@@ -127,28 +131,34 @@ class Ai1wm_Import_Validate {
 			// Set progress
 			Ai1wm_Status::info( __( 'Done unpacking archive.', AI1WM_PLUGIN_NAME ) );
 
+			// Unset archive bytes offset
+			unset( $params['archive_bytes_offset'] );
+
 			// Unset file bytes offset
 			unset( $params['file_bytes_offset'] );
 
-			// Unset archive bytes offset
-			unset( $params['archive_bytes_offset'] );
+			// Unset total archive size
+			unset( $params['total_archive_size'] );
 
 			// Unset completed flag
 			unset( $params['completed'] );
 
 		} else {
 
-			// What percent of files have we processed?
-			$progress = (int) min( ( $archive_bytes_offset / $total_files_size ) * 100, 100 );
+			// What percent of archive have we processed?
+			$progress = (int) min( ( $archive_bytes_offset / $total_archive_size ) * 100, 100 );
 
 			// Set progress
 			Ai1wm_Status::info( sprintf( __( 'Unpacking archive...<br />%d%% complete', AI1WM_PLUGIN_NAME ), $progress ) );
 
+			// Set archive bytes offset
+			$params['archive_bytes_offset'] = $archive_bytes_offset;
+
 			// Set file bytes offset
 			$params['file_bytes_offset'] = $file_bytes_offset;
 
-			// Set archive bytes offset
-			$params['archive_bytes_offset'] = $archive_bytes_offset;
+			// Set total archive size
+			$params['total_archive_size'] = $total_archive_size;
 
 			// Set completed flag
 			$params['completed'] = $completed;

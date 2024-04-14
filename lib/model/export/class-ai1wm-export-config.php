@@ -29,13 +29,10 @@ class Ai1wm_Export_Config {
 		global $wp_version, $wpdb;
 
 		// Set progress
-		Ai1wm_Status::info( __( 'Adding configuration to archive...', AI1WM_PLUGIN_NAME ) );
+		Ai1wm_Status::info( __( 'Preparing configuration file...', AI1WM_PLUGIN_NAME ) );
 
 		// Get options
 		$options = wp_load_alloptions();
-
-		// Set config
-		$config = array();
 
 		// Get database client
 		if ( empty( $wpdb->use_mysqli ) ) {
@@ -43,6 +40,8 @@ class Ai1wm_Export_Config {
 		} else {
 			$mysql = new Ai1wm_Database_Mysqli( $wpdb );
 		}
+
+		$config = array();
 
 		// Set site URL
 		$config['SiteURL'] = site_url();
@@ -101,13 +100,8 @@ class Ai1wm_Export_Config {
 		ai1wm_write( $handle, json_encode( $config ) );
 		ai1wm_close( $handle );
 
-		// Add package.json file
-		$archive = new Ai1wm_Compressor( ai1wm_archive_path( $params ) );
-		$archive->add_file( ai1wm_package_path( $params ), AI1WM_PACKAGE_NAME );
-		$archive->close();
-
 		// Set progress
-		Ai1wm_Status::info( __( 'Done adding configuration to archive.', AI1WM_PLUGIN_NAME ) );
+		Ai1wm_Status::info( __( 'Done preparing configuration file.', AI1WM_PLUGIN_NAME ) );
 
 		return $params;
 	}

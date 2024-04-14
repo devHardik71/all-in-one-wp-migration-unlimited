@@ -30,7 +30,7 @@ class Ai1wm_Export_Download {
 		// Set progress
 		Ai1wm_Status::info( __( 'Renaming exported file...', AI1WM_PLUGIN_NAME ) );
 
-		// Close achive file
+		// Open the archive file for writing
 		$archive = new Ai1wm_Compressor( ai1wm_archive_path( $params ) );
 
 		// Append EOF block

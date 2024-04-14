@@ -25,7 +25,7 @@
 
 class Ai1wm_Cron {
 
-	/*
+	/**
 	 * Schedules a hook which will be executed by the WordPress
 	 * actions core on a specific interval
 	 *
@@ -43,30 +43,30 @@ class Ai1wm_Cron {
 		}
 	}
 
-	/*
+	/**
 	 * Un-schedules all previously-scheduled cron jobs using a particular
 	 * hook name or a specific combination of hook name and arguments.
 	 *
-	 * @param  string $hook Event hook
-	 * @return void
+	 * @param  string  $hook Event hook
+	 * @return boolean
 	 */
 	public static function clear( $hook ) {
-		$crons = _get_cron_array();
-		if ( empty( $crons ) ) {
-			return;
+		$cron = get_option( AI1WM_CRON, array() );
+		if ( empty( $cron ) ) {
+			return false;
 		}
 
-		foreach ( $crons as $timestamp => $cron ) {
-			if ( ! empty( $cron[ $hook ] ) ) {
-				unset( $crons[ $timestamp ][ $hook ] );
+		foreach ( $cron as $timestamp => $hooks ) {
+			if ( isset( $hooks[ $hook ] ) ) {
+				unset( $cron[ $timestamp ][ $hook ] );
 
 				// Unset empty timestamps
-				if ( empty( $crons[ $timestamp ] ) ) {
-					unset( $crons[ $timestamp ] );
+				if ( empty( $cron[ $timestamp ] ) ) {
+					unset( $cron[ $timestamp ] );
 				}
 			}
 		}
 
-		return _set_cron_array( $crons );
+		return update_option( AI1WM_CRON, $cron );
 	}
 }

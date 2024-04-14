@@ -1,3 +1,29 @@
+<?php
+/**
+ * Copyright (C) 2014-2018 ServMask Inc.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * ███████╗███████╗██████╗ ██╗   ██╗███╗   ███╗ █████╗ ███████╗██╗  ██╗
+ * ██╔════╝██╔════╝██╔══██╗██║   ██║████╗ ████║██╔══██╗██╔════╝██║ ██╔╝
+ * ███████╗█████╗  ██████╔╝██║   ██║██╔████╔██║███████║███████╗█████╔╝
+ * ╚════██║██╔══╝  ██╔══██╗╚██╗ ██╔╝██║╚██╔╝██║██╔══██║╚════██║██╔═██╗
+ * ███████║███████╗██║  ██║ ╚████╔╝ ██║ ╚═╝ ██║██║  ██║███████║██║  ██╗
+ * ╚══════╝╚══════╝╚═╝  ╚═╝  ╚═══╝  ╚═╝     ╚═╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝
+ */
+?>
+
 <style type="text/css" media="all">
 	@font-face {
 		font-family: 'servmask';
@@ -49,11 +75,11 @@
 	}
 
 	<?php if ( version_compare( $version, '3.8', '<' ) ) : ?>
-	.toplevel_page_site-migration-export > div.wp-menu-image {
+	.toplevel_page_ai1wm_export > div.wp-menu-image {
 		background: none !important;
 	}
 
-	.toplevel_page_site-migration-export > div.wp-menu-image:before {
+	.toplevel_page_ai1wm_export > div.wp-menu-image:before {
 		line-height: 27px !important;
 		content: '';
 		background: url('<?php echo wp_make_link_relative( AI1WM_URL ); ?>/lib/view/assets/img/logo-20x20.png') no-repeat center center;
@@ -69,7 +95,7 @@
 	}
 
 	<?php else : ?>
-	.toplevel_page_site-migration-export > div.wp-menu-image:before {
+	.toplevel_page_ai1wm_export > div.wp-menu-image:before {
 		position: relative;
 		display: inline-block;
 		content: '';
@@ -85,8 +111,8 @@
 		-moz-osx-font-smoothing: grayscale !important;
 	}
 
-	.wp-menu-open.toplevel_page_site-migration-export,
-	.wp-menu-open.toplevel_page_site-migration-export > a {
+	.wp-menu-open.toplevel_page_ai1wm_export,
+	.wp-menu-open.toplevel_page_ai1wm_export > a {
 		background-color: #111 !important;
 	}
 	<?php endif; ?>

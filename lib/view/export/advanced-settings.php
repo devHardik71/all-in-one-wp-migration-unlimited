@@ -1,3 +1,29 @@
+<?php
+/**
+ * Copyright (C) 2014-2018 ServMask Inc.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * ███████╗███████╗██████╗ ██╗   ██╗███╗   ███╗ █████╗ ███████╗██╗  ██╗
+ * ██╔════╝██╔════╝██╔══██╗██║   ██║████╗ ████║██╔══██╗██╔════╝██║ ██╔╝
+ * ███████╗█████╗  ██████╔╝██║   ██║██╔████╔██║███████║███████╗█████╔╝
+ * ╚════██║██╔══╝  ██╔══██╗╚██╗ ██╔╝██║╚██╔╝██║██╔══██║╚════██║██╔═██╗
+ * ███████║███████╗██║  ██║ ╚████╔╝ ██║ ╚═╝ ██║██║  ██║███████║██║  ██╗
+ * ╚══════╝╚══════╝╚═╝  ╚═╝  ╚═══╝  ╚═╝     ╚═╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝
+ */
+?>
+
 <div class="ai1wm-field-set">
 	<div class="ai1wm-accordion ai1wm-expandable">
 		<h4>
@@ -36,8 +62,8 @@
 					<label for="ai1wm-no-inactive-themes">
 						<input type="checkbox" id="ai1wm-no-inactive-themes" name="options[no_inactive_themes]" />
 						<?php _e( 'Do <strong>not</strong> export inactive themes (files)', AI1WM_PLUGIN_NAME ); ?>
+						<small style="color: red;"><?php _e( 'new', AI1WM_PLUGIN_NAME ); ?></small>
 					</label>
-					<small style="color:red"><?php _e( 'new', AI1WM_PLUGIN_NAME ); ?></small>
 				</li>
 			<?php endif; ?>
 
@@ -46,7 +72,6 @@
 					<input type="checkbox" id="ai1wm-no-muplugins" name="options[no_muplugins]" />
 					<?php _e( 'Do <strong>not</strong> export must-use plugins (files)', AI1WM_PLUGIN_NAME ); ?>
 				</label>
-				<small style="color:red"><?php _e( 'new', AI1WM_PLUGIN_NAME ); ?></small>
 			</li>
 
 			<li>
@@ -61,15 +86,15 @@
 					<label for="ai1wm-no-inactive-plugins">
 						<input type="checkbox" id="ai1wm-no-inactive-plugins" name="options[no_inactive_plugins]" />
 						<?php _e( 'Do <strong>not</strong> export inactive plugins (files)', AI1WM_PLUGIN_NAME ); ?>
+						<small style="color: red;"><?php _e( 'new', AI1WM_PLUGIN_NAME ); ?></small>
 					</label>
-					<small style="color:red"><?php _e( 'new', AI1WM_PLUGIN_NAME ); ?></small>
 				</li>
 				<li>
 					<label for="ai1wm-no-cache">
 						<input type="checkbox" id="ai1wm-no-cache" name="options[no_cache]" />
 						<?php _e( 'Do <strong>not</strong> export cache (files)', AI1WM_PLUGIN_NAME ); ?>
+						<small style="color: red;"><?php _e( 'new', AI1WM_PLUGIN_NAME ); ?></small>
 					</label>
-					<small style="color:red"><?php _e( 'new', AI1WM_PLUGIN_NAME ); ?></small>
 				</li>
 			<?php endif; ?>
 
@@ -84,7 +109,6 @@
 					<input type="checkbox" id="ai1wm-no-email-replace" name="options[no_email_replace]" />
 					<?php _e( 'Do <strong>not</strong> replace email domain (sql)', AI1WM_PLUGIN_NAME ); ?>
 				</label>
-				<small style="color:red"><?php _e( 'new', AI1WM_PLUGIN_NAME ); ?></small>
 			</li>
 
 			<?php do_action( 'ai1wm_export_advanced_settings' ); ?>

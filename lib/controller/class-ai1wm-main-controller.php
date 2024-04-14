@@ -86,17 +86,20 @@ class Ai1wm_Main_Controller {
 		// Export and import buttons
 		add_action( 'plugins_loaded', array( $this, 'ai1wm_buttons' ), 10 );
 
-		// Add export scripts and styles
-		add_action( 'admin_enqueue_scripts', array( $this, 'register_export_scripts_and_styles' ), 5 );
+		// Register scripts and styles
+		add_action( 'admin_enqueue_scripts', array( $this, 'register_scripts_and_styles' ), 5 );
 
-		// Add import scripts and styles
-		add_action( 'admin_enqueue_scripts', array( $this, 'register_import_scripts_and_styles' ), 5 );
+		// Enqueue export scripts and styles
+		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_export_scripts_and_styles' ), 5 );
 
-		// Add backups scripts and styles
-		add_action( 'admin_enqueue_scripts', array( $this, 'register_backups_scripts_and_styles' ), 5 );
+		// Enqueue import scripts and styles
+		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_import_scripts_and_styles' ), 5 );
 
-		// Add updater scripts and styles
-		add_action( 'admin_enqueue_scripts', array( $this, 'register_updater_scripts_and_styles' ), 5 );
+		// Enqueue backups scripts and styles
+		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_backups_scripts_and_styles' ), 5 );
+
+		// Enqueue updater scripts and styles
+		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_updater_scripts_and_styles' ), 5 );
 
 		return $this;
 	}
@@ -133,6 +136,7 @@ class Ai1wm_Main_Controller {
 
 		add_filter( 'ai1wm_export', 'Ai1wm_Export_Archive::execute', 10 );
 		add_filter( 'ai1wm_export', 'Ai1wm_Export_Config::execute', 50 );
+		add_filter( 'ai1wm_export', 'Ai1wm_Export_Config_File::execute', 60 );
 		add_filter( 'ai1wm_export', 'Ai1wm_Export_Enumerate::execute', 100 );
 		add_filter( 'ai1wm_export', 'Ai1wm_Export_Content::execute', 150 );
 		add_filter( 'ai1wm_export', 'Ai1wm_Export_Database::execute', 200 );
@@ -363,88 +367,135 @@ class Ai1wm_Main_Controller {
 	 * @return void
 	 */
 	public function admin_menu() {
-		// top level WP Migration menu
+		// Top-level WP Migration menu
 		add_menu_page(
 			'All-in-One WP Migration',
 			'All-in-One WP Migration',
 			'export',
-			'site-migration-export',
+			'ai1wm_export',
 			'Ai1wm_Export_Controller::index',
 			'',
 			'76.295'
 		);
 
-		// sublevel Export menu
+		// Sub-level Export menu
 		add_submenu_page(
-			'site-migration-export',
+			'ai1wm_export',
 			__( 'Export', AI1WM_PLUGIN_NAME ),
 			__( 'Export', AI1WM_PLUGIN_NAME ),
 			'export',
-			'site-migration-export',
+			'ai1wm_export',
 			'Ai1wm_Export_Controller::index'
 		);
 
-		// sublevel Import menu
+		// Sub-level Import menu
 		add_submenu_page(
-			'site-migration-export',
+			'ai1wm_export',
 			__( 'Import', AI1WM_PLUGIN_NAME ),
 			__( 'Import', AI1WM_PLUGIN_NAME ),
 			'import',
-			'site-migration-import',
+			'ai1wm_import',
 			'Ai1wm_Import_Controller::index'
 		);
 
-		// sublevel Backups menu
+		// Sub-level Backups menu
 		add_submenu_page(
-			'site-migration-export',
+			'ai1wm_export',
 			__( 'Backups', AI1WM_PLUGIN_NAME ),
 			__( 'Backups', AI1WM_PLUGIN_NAME ),
 			'import',
-			'site-migration-backups',
+			'ai1wm_backups',
 			'Ai1wm_Backups_Controller::index'
 		);
 	}
 
 	/**
-	 * Register scripts and styles for Export Controller
+	 * Register scripts and styles
 	 *
 	 * @return void
 	 */
-	public function register_export_scripts_and_styles( $hook ) {
-		if ( stripos( 'toplevel_page_site-migration-export', $hook ) === false ) {
+	public function register_scripts_and_styles() {
+		if ( is_rtl() ) {
+			wp_register_style(
+				'ai1wm_servmask',
+				Ai1wm_Template::asset_link( 'css/servmask.min.rtl.css' )
+			);
+		} else {
+			wp_register_style(
+				'ai1wm_servmask',
+				Ai1wm_Template::asset_link( 'css/servmask.min.css' )
+			);
+		}
+
+		wp_register_script(
+			'ai1wm_util',
+			Ai1wm_Template::asset_link( 'javascript/util.min.js' ),
+			array( 'jquery' )
+		);
+
+		wp_register_script(
+			'ai1wm_feedback',
+			Ai1wm_Template::asset_link( 'javascript/feedback.min.js' ),
+			array( 'ai1wm_util' )
+		);
+
+		wp_register_script(
+			'ai1wm_report',
+			Ai1wm_Template::asset_link( 'javascript/report.min.js' ),
+			array( 'ai1wm_util' )
+		);
+	}
+
+	/**
+	 * Enqueue scripts and styles for Export Controller
+	 *
+	 * @param  string $hook Hook suffix
+	 * @return void
+	 */
+	public function enqueue_export_scripts_and_styles( $hook ) {
+		if ( stripos( 'toplevel_page_ai1wm_export', $hook ) === false ) {
 			return;
 		}
 
-		do_action( 'ai1mw_register_export_scripts_and_styles' );
-
-		// we don't want heartbeat to occur when exporting
+		// We don't want heartbeat to occur when exporting
 		wp_deregister_script( 'heartbeat' );
 
-		// we don't want auth check for monitoring whether the user is still logged in
+		// We don't want auth check for monitoring whether the user is still logged in
 		remove_action( 'admin_enqueue_scripts', 'wp_auth_check_load' );
 
-		wp_enqueue_style(
-			'ai1wm-css-export',
-			Ai1wm_Template::asset_link( 'css/export.min.css' )
-		);
+		if ( is_rtl() ) {
+			wp_enqueue_style(
+				'ai1wm_export',
+				Ai1wm_Template::asset_link( 'css/export.min.rtl.css' )
+			);
+		} else {
+			wp_enqueue_style(
+				'ai1wm_export',
+				Ai1wm_Template::asset_link( 'css/export.min.css' )
+			);
+		}
+
 		wp_enqueue_script(
-			'ai1wm-js-export',
+			'ai1wm_export',
 			Ai1wm_Template::asset_link( 'javascript/export.min.js' ),
-			array( 'jquery' )
+			array( 'ai1wm_util' )
 		);
-		wp_localize_script( 'ai1wm-js-export', 'ai1wm_feedback', array(
+
+		wp_localize_script( 'ai1wm_export', 'ai1wm_feedback', array(
 			'ajax'       => array(
 				'url' => wp_make_link_relative( admin_url( 'admin-ajax.php?action=ai1wm_feedback' ) ),
 			),
 			'secret_key' => get_option( AI1WM_SECRET_KEY ),
 		) );
-		wp_localize_script( 'ai1wm-js-export', 'ai1wm_report', array(
+
+		wp_localize_script( 'ai1wm_export', 'ai1wm_report', array(
 			'ajax'       => array(
 				'url' => wp_make_link_relative( admin_url( 'admin-ajax.php?action=ai1wm_report' ) ),
 			),
 			'secret_key' => get_option( AI1WM_SECRET_KEY ),
 		) );
-		wp_localize_script( 'ai1wm-js-export', 'ai1wm_export', array(
+
+		wp_localize_script( 'ai1wm_export', 'ai1wm_export', array(
 			'ajax'       => array(
 				'url' => wp_make_link_relative( admin_url( 'admin-ajax.php?action=ai1wm_export' ) ),
 			),
@@ -456,33 +507,55 @@ class Ai1wm_Main_Controller {
 	}
 
 	/**
-	 * Register scripts and styles for Import Controller
+	 * Enqueue scripts and styles for Import Controller
 	 *
+	 * @param  string $hook Hook suffix
 	 * @return void
 	 */
-	public function register_import_scripts_and_styles( $hook ) {
-		if ( stripos( 'all-in-one-wp-migration_page_site-migration-import', $hook ) === false ) {
+	public function enqueue_import_scripts_and_styles( $hook ) {
+		if ( stripos( 'all-in-one-wp-migration_page_ai1wm_import', $hook ) === false ) {
 			return;
 		}
 
-		do_action( 'ai1mw_register_import_scripts_and_styles' );
-
-		// we don't want heartbeat to occur when importing
+		// We don't want heartbeat to occur when importing
 		wp_deregister_script( 'heartbeat' );
 
-		// we don't want auth check for monitoring whether the user is still logged in
+		// We don't want auth check for monitoring whether the user is still logged in
 		remove_action( 'admin_enqueue_scripts', 'wp_auth_check_load' );
 
-		wp_enqueue_style(
-			'ai1wm-css-import',
-			Ai1wm_Template::asset_link( 'css/import.min.css' )
-		);
+		if ( is_rtl() ) {
+			wp_enqueue_style(
+				'ai1wm_import',
+				Ai1wm_Template::asset_link( 'css/import.min.rtl.css' )
+			);
+		} else {
+			wp_enqueue_style(
+				'ai1wm_import',
+				Ai1wm_Template::asset_link( 'css/import.min.css' )
+			);
+		}
+
 		wp_enqueue_script(
-			'ai1wm-js-import',
+			'ai1wm_import',
 			Ai1wm_Template::asset_link( 'javascript/import.min.js' ),
-			array( 'jquery' )
+			array( 'ai1wm_util' )
 		);
-		wp_localize_script( 'ai1wm-js-import', 'ai1wm_uploader', array(
+
+		wp_localize_script( 'ai1wm_import', 'ai1wm_feedback', array(
+			'ajax'       => array(
+				'url' => wp_make_link_relative( admin_url( 'admin-ajax.php?action=ai1wm_feedback' ) ),
+			),
+			'secret_key' => get_option( AI1WM_SECRET_KEY ),
+		) );
+
+		wp_localize_script( 'ai1wm_import', 'ai1wm_report', array(
+			'ajax'       => array(
+				'url' => wp_make_link_relative( admin_url( 'admin-ajax.php?action=ai1wm_report' ) ),
+			),
+			'secret_key' => get_option( AI1WM_SECRET_KEY ),
+		) );
+
+		wp_localize_script( 'ai1wm_import', 'ai1wm_uploader', array(
 			'chunk_size'  => apply_filters( 'ai1wm_max_chunk_size', AI1WM_MAX_CHUNK_SIZE ),
 			'max_retries' => apply_filters( 'ai1wm_max_chunk_retries', AI1WM_MAX_CHUNK_RETRIES ),
 			'url'         => wp_make_link_relative( admin_url( 'admin-ajax.php?action=ai1wm_import' ) ),
@@ -495,19 +568,8 @@ class Ai1wm_Main_Controller {
 				'ai1wm_archive_size'      => apply_filters( 'ai1wm_max_file_size', AI1WM_MAX_FILE_SIZE ),
 			),
 		) );
-		wp_localize_script( 'ai1wm-js-import', 'ai1wm_feedback', array(
-			'ajax'       => array(
-				'url' => wp_make_link_relative( admin_url( 'admin-ajax.php?action=ai1wm_feedback' ) ),
-			),
-			'secret_key' => get_option( AI1WM_SECRET_KEY ),
-		) );
-		wp_localize_script( 'ai1wm-js-import', 'ai1wm_report', array(
-			'ajax'       => array(
-				'url' => wp_make_link_relative( admin_url( 'admin-ajax.php?action=ai1wm_report' ) ),
-			),
-			'secret_key' => get_option( AI1WM_SECRET_KEY ),
-		) );
-		wp_localize_script( 'ai1wm-js-import', 'ai1wm_import', array(
+
+		wp_localize_script( 'ai1wm_import', 'ai1wm_import', array(
 			'ajax'              => array(
 				'url' => wp_make_link_relative( admin_url( 'admin-ajax.php?action=ai1wm_import' ) ),
 			),
@@ -524,68 +586,65 @@ class Ai1wm_Main_Controller {
 				),
 				size_format( apply_filters( 'ai1wm_max_file_size', AI1WM_MAX_FILE_SIZE ) )
 			),
-			'invalid_extension' => sprintf(
-				__(
-					'Version 2.1.1 of All in One WP Migration introduces new compression algorithm. ' .
-					'It makes exporting and importing 10 times faster.' .
-					'<br />Unfortunately, the new format is not back compatible with backups made with earlier ' .
-					'versions of the plugin.' .
-					'<br />You can either create a new backup with the latest version of the ' .
-					'plugin, or convert the archive to the new format using our tools ' .
-					'<a href="%s" target="_blank">here</a>.',
-					AI1WM_PLUGIN_NAME
-				),
-				AI1WM_ARCHIVE_TOOLS_URL
+			'invalid_extension' => __(
+				'The file type that you have tried to upload is not compatible with this plugin. ' .
+				'Please ensure that your file is a <strong>.wpress</strong> file that was created with the All-in-One WP migration plugin. ' .
+				'<a href="https://help.servmask.com/knowledgebase/invalid-backup-file/" target="_blank">Technical details</a>',
+				AI1WM_PLUGIN_NAME
 			),
 		) );
 	}
 
 	/**
-	 * Register scripts and styles for Backups Controller
+	 * Enqueue scripts and styles for Backups Controller
 	 *
+	 * @param  string $hook Hook suffix
 	 * @return void
 	 */
-	public function register_backups_scripts_and_styles( $hook ) {
-		if ( stripos( 'all-in-one-wp-migration_page_site-migration-backups', $hook ) === false ) {
+	public function enqueue_backups_scripts_and_styles( $hook ) {
+		if ( stripos( 'all-in-one-wp-migration_page_ai1wm_backups', $hook ) === false ) {
 			return;
 		}
 
-		do_action( 'ai1mw_register_backups_scripts_and_styles' );
-
-		// we don't want heartbeat to occur when restoring
+		// We don't want heartbeat to occur when restoring
 		wp_deregister_script( 'heartbeat' );
 
-		// we don't want auth check for monitoring whether the user is still logged in
+		// We don't want auth check for monitoring whether the user is still logged in
 		remove_action( 'admin_enqueue_scripts', 'wp_auth_check_load' );
 
-		wp_enqueue_style(
-			'ai1wm-css-backups',
-			Ai1wm_Template::asset_link( 'css/backups.min.css' )
-		);
+		if ( is_rtl() ) {
+			wp_enqueue_style(
+				'ai1wm_backups',
+				Ai1wm_Template::asset_link( 'css/backups.min.rtl.css' )
+			);
+		} else {
+			wp_enqueue_style(
+				'ai1wm_backups',
+				Ai1wm_Template::asset_link( 'css/backups.min.css' )
+			);
+		}
+
 		wp_enqueue_script(
-			'ai1wm-js-backups',
+			'ai1wm_backups',
 			Ai1wm_Template::asset_link( 'javascript/backups.min.js' ),
-			array( 'jquery' )
+			array( 'ai1wm_util' )
 		);
-		wp_localize_script( 'ai1wm-js-backups', 'ai1wm_feedback', array(
+
+		wp_localize_script( 'ai1wm_backups', 'ai1wm_feedback', array(
 			'ajax'       => array(
 				'url' => wp_make_link_relative( admin_url( 'admin-ajax.php?action=ai1wm_feedback' ) ),
 			),
 			'secret_key' => get_option( AI1WM_SECRET_KEY ),
 		) );
-		wp_localize_script( 'ai1wm-js-backups', 'ai1wm_report', array(
+
+		wp_localize_script( 'ai1wm_backups', 'ai1wm_report', array(
 			'ajax'       => array(
 				'url' => wp_make_link_relative( admin_url( 'admin-ajax.php?action=ai1wm_report' ) ),
 			),
 			'secret_key' => get_option( AI1WM_SECRET_KEY ),
 		) );
-		wp_localize_script( 'ai1wm-js-backups', 'ai1wm_backups', array(
-			'ajax'       => array(
-				'url' => wp_make_link_relative( admin_url( 'admin-ajax.php?action=ai1wm_backups' ) ),
-			),
-			'secret_key' => get_option( AI1WM_SECRET_KEY ),
-		) );
-		wp_localize_script( 'ai1wm-js-backups', 'ai1wm_import', array(
+
+		wp_localize_script( 'ai1wm_backups', 'ai1wm_import', array(
 			'ajax'       => array(
 				'url' => wp_make_link_relative( admin_url( 'admin-ajax.php?action=ai1wm_import' ) ),
 			),
@@ -594,30 +653,45 @@ class Ai1wm_Main_Controller {
 			),
 			'secret_key' => get_option( AI1WM_SECRET_KEY ),
 		) );
+
+		wp_localize_script( 'ai1wm_backups', 'ai1wm_backups', array(
+			'ajax'       => array(
+				'url' => wp_make_link_relative( admin_url( 'admin-ajax.php?action=ai1wm_backups' ) ),
+			),
+			'secret_key' => get_option( AI1WM_SECRET_KEY ),
+		) );
 	}
 
 	/**
-	 * Register scripts and styles for Updater Controller
+	 * Enqueue scripts and styles for Updater Controller
 	 *
+	 * @param  string $hook Hook suffix
 	 * @return void
 	 */
-	public function register_updater_scripts_and_styles( $hook ) {
+	public function enqueue_updater_scripts_and_styles( $hook ) {
 		if ( 'plugins.php' !== strtolower( $hook ) ) {
 			return;
 		}
 
-		do_action( 'ai1mw_register_updater_scripts_and_styles' );
+		if ( is_rtl() ) {
+			wp_enqueue_style(
+				'ai1wm_updater',
+				Ai1wm_Template::asset_link( 'css/updater.min.rtl.css' )
+			);
+		} else {
+			wp_enqueue_style(
+				'ai1wm_updater',
+				Ai1wm_Template::asset_link( 'css/updater.min.css' )
+			);
+		}
 
-		wp_enqueue_style(
-			'ai1wm-css-updater',
-			Ai1wm_Template::asset_link( 'css/updater.min.css' )
-		);
 		wp_enqueue_script(
-			'ai1wm-js-updater',
+			'ai1wm_updater',
 			Ai1wm_Template::asset_link( 'javascript/updater.min.js' ),
-			array( 'jquery' )
+			array( 'ai1wm_util' )
 		);
-		wp_localize_script( 'ai1wm-js-updater', 'ai1wm_updater', array(
+
+		wp_localize_script( 'ai1wm_updater', 'ai1wm_updater', array(
 			'ajax' => array(
 				'url' => wp_make_link_relative( admin_url( 'admin-ajax.php?action=ai1wm_updater' ) ),
 			),

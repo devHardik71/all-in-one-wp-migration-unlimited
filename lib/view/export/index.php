@@ -28,7 +28,10 @@
 	<div class="ai1wm-row">
 		<div class="ai1wm-left">
 			<div class="ai1wm-holder">
-				<h1><i class="ai1wm-icon-export"></i> <?php _e( 'Export Site', AI1WM_PLUGIN_NAME ); ?></h1>
+				<h1>
+					<i class="ai1wm-icon-export"></i>
+					<?php _e( 'Export Site', AI1WM_PLUGIN_NAME ); ?>
+				</h1>
 
 				<?php include AI1WM_TEMPLATES_PATH . '/common/report-problem.php'; ?>
 

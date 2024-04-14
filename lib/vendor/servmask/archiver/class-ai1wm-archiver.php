@@ -107,8 +107,8 @@ abstract class Ai1wm_Archiver {
 	 * @return void
 	 */
 	public function set_file_pointer( $offset ) {
-		if ( @fseek( $this->file_handle, $offset, SEEK_CUR ) === -1 ) {
-			throw new Ai1wm_Not_Seekable_Exception( sprintf( 'Unable to seek to offset on file. File: %s Offset: %d', $this->file_name, $offset ) );
+		if ( @fseek( $this->file_handle, $offset, SEEK_SET ) === -1 ) {
+			throw new Ai1wm_Not_Seekable_Exception( sprintf( 'Unable to seek to offset of file. File: %s Offset: %d', $this->file_name, $offset ) );
 		}
 	}
 
@@ -120,9 +120,8 @@ abstract class Ai1wm_Archiver {
 	 * @return int
 	 */
 	public function get_file_pointer() {
-		$offset = 0;
 		if ( ( $offset = @ftell( $this->file_handle ) ) === false ) {
-			throw new Ai1wm_Not_Tellable_Exception( sprintf( 'Unable to tell offset on file. File: %s', $this->file_name ) );
+			throw new Ai1wm_Not_Tellable_Exception( sprintf( 'Unable to tell offset of file. File: %s', $this->file_name ) );
 		}
 
 		return $offset;
@@ -206,9 +205,24 @@ abstract class Ai1wm_Archiver {
 	}
 
 	/**
+	 * Truncates the archive file
+	 *
+	 * @return void
+	 */
+	public function truncate() {
+		if ( ( $offset = @ftell( $this->file_handle ) ) === false ) {
+			throw new Ai1wm_Not_Tellable_Exception( sprintf( 'Unable to tell offset of file. File: %s', $this->file_name ) );
+		}
+
+		if ( @ftruncate( $this->file_handle, $offset ) === false ) {
+			throw new Ai1wm_Not_Truncatable_Exception( sprintf( 'Unable to truncate file. File: %s', $this->file_name ) );
+		}
+	}
+
+	/**
 	 * Closes the archive file
 	 *
-	 * We either close the file or append the end of file block if complete argument is set to tru
+	 * We either close the file or append the end of file block if complete argument is set to true
 	 *
 	 * @param  bool $complete Flag to append end of file block
 	 *
@@ -220,7 +234,8 @@ abstract class Ai1wm_Archiver {
 			$this->append_eof();
 		}
 
-		// Close the file
-		@fclose( $this->file_handle );
+		if ( @fclose( $this->file_handle ) === false ) {
+			throw new Ai1wm_Not_Closable_Exception( sprintf( 'Unable to close file. File: %s', $this->file_name ) );
+		}
 	}
 }

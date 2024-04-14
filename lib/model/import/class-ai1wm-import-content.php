@@ -27,15 +27,12 @@ class Ai1wm_Import_Content {
 
 	public static function execute( $params ) {
 
-		// Read blogs.json file
-		$handle = ai1wm_open( ai1wm_blogs_path( $params ), 'r' );
-
-		// Parse blogs.json file
-		$blogs = ai1wm_read( $handle, filesize( ai1wm_blogs_path( $params ) ) );
-		$blogs = json_decode( $blogs, true );
-
-		// Close handle
-		ai1wm_close( $handle );
+		// Set archive bytes offset
+		if ( isset( $params['archive_bytes_offset'] ) ) {
+			$archive_bytes_offset = (int) $params['archive_bytes_offset'];
+		} else {
+			$archive_bytes_offset = 0;
+		}
 
 		// Set file bytes offset
 		if ( isset( $params['file_bytes_offset'] ) ) {
@@ -44,18 +41,11 @@ class Ai1wm_Import_Content {
 			$file_bytes_offset = 0;
 		}
 
-		// Set archive bytes offset
-		if ( isset( $params['archive_bytes_offset'] ) ) {
-			$archive_bytes_offset = (int) $params['archive_bytes_offset'];
+		// Get processed files size
+		if ( isset( $params['processed_files_size'] ) ) {
+			$processed_files_size = (int) $params['processed_files_size'];
 		} else {
-			$archive_bytes_offset = 0;
-		}
-
-		// Get total files count
-		if ( isset( $params['total_files_count'] ) ) {
-			$total_files_count = (int) $params['total_files_count'];
-		} else {
-			$total_files_count = 1;
+			$processed_files_size = 0;
 		}
 
 		// Get total files size
@@ -65,12 +55,22 @@ class Ai1wm_Import_Content {
 			$total_files_size = 1;
 		}
 
-		// Get processed files size
-		if ( isset( $params['processed_files_size'] ) ) {
-			$processed_files_size = (int) $params['processed_files_size'];
+		// Get total files count
+		if ( isset( $params['total_files_count'] ) ) {
+			$total_files_count = (int) $params['total_files_count'];
 		} else {
-			$processed_files_size = 0;
+			$total_files_count = 1;
 		}
+
+		// Read blogs.json file
+		$handle = ai1wm_open( ai1wm_blogs_path( $params ), 'r' );
+
+		// Parse blogs.json file
+		$blogs = ai1wm_read( $handle, filesize( ai1wm_blogs_path( $params ) ) );
+		$blogs = json_decode( $blogs, true );
+
+		// Close handle
+		ai1wm_close( $handle );
 
 		// What percent of files have we processed?
 		$progress = (int) min( ( $processed_files_size / $total_files_size ) * 100, 100 );
@@ -158,7 +158,7 @@ class Ai1wm_Import_Content {
 				$file_bytes_offset = 0;
 			}
 
-			// Set archive bytes offset
+			// Get archive bytes offset
 			$archive_bytes_offset = $archive->get_file_pointer();
 
 			// Increment processed files size
@@ -180,28 +180,40 @@ class Ai1wm_Import_Content {
 		// End of the archive?
 		if ( $archive->has_reached_eof() ) {
 
-			// Unset file bytes offset
-			unset( $params['file_bytes_offset'] );
-
 			// Unset archive bytes offset
 			unset( $params['archive_bytes_offset'] );
 
+			// Unset file bytes offset
+			unset( $params['file_bytes_offset'] );
+
 			// Unset processed files size
 			unset( $params['processed_files_size'] );
+
+			// Unset total files size
+			unset( $params['total_files_size'] );
+
+			// Unset total files count
+			unset( $params['total_files_count'] );
 
 			// Unset completed flag
 			unset( $params['completed'] );
 
 		} else {
 
-			// Set file bytes offset
-			$params['file_bytes_offset'] = $file_bytes_offset;
-
 			// Set archive bytes offset
 			$params['archive_bytes_offset'] = $archive_bytes_offset;
 
+			// Set file bytes offset
+			$params['file_bytes_offset'] = $file_bytes_offset;
+
 			// Set processed files size
 			$params['processed_files_size'] = $processed_files_size;
+
+			// Set total files size
+			$params['total_files_size'] = $total_files_size;
+
+			// Set total files count
+			$params['total_files_count'] = $total_files_count;
 
 			// Set completed flag
 			$params['completed'] = $completed;

@@ -26,6 +26,7 @@
 class Ai1wm_Import_Confirm {
 
 	public static function execute( $params ) {
+
 		$messages = array();
 
 		// Read package.json file

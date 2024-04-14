@@ -211,7 +211,7 @@ if ( class_exists( 'WP_CLI_Command' ) ) {
 				WP_CLI::error_multi_line( array(
 					__( 'A valid backup name must be provided in order to proceed with the restore process.', AI1WM_PLUGIN_NAME ),
 					__( 'Example: wp ai1wm restore migration-wp-20170913-095743-931.wpress', AI1WM_PLUGIN_NAME ),
-				));
+				) );
 				exit;
 			}
 
