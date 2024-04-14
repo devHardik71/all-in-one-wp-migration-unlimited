@@ -133,7 +133,7 @@ class Ai1wm_Export_Database {
 			->set_table_prefix_columns( ai1wm_table_prefix() . 'usermeta', array( 'meta_key' ) );
 
 		// Export database
-		if ( $mysql->export( ai1wm_database_path( $params ), $table_index, $table_offset, 10 ) ) {
+		if ( $mysql->export( ai1wm_database_path( $params ), $table_index, $table_offset ) ) {
 
 			// Set progress
 			Ai1wm_Status::info( __( 'Done exporting database.', AI1WM_PLUGIN_NAME ) );

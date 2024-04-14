@@ -152,14 +152,13 @@ class Ai1wm_Extractor extends Ai1wm_Archiver {
 	 * @param array  $new_paths    New replace paths
 	 * @param int    $file_written File written (in bytes)
 	 * @param int    $file_offset  File offset (in bytes)
-	 * @param int    $timeout      Process timeout (in seconds)
 	 *
 	 * @throws \Ai1wm_Not_Directory_Exception
 	 * @throws \Ai1wm_Not_Seekable_Exception
 	 *
 	 * @return bool
 	 */
-	public function extract_one_file_to( $location, $exclude = array(), $old_paths = array(), $new_paths = array(), &$file_written = 0, &$file_offset = 0, $timeout = 0 ) {
+	public function extract_one_file_to( $location, $exclude = array(), $old_paths = array(), $new_paths = array(), &$file_written = 0, &$file_offset = 0 ) {
 		if ( false === is_dir( $location ) ) {
 			throw new Ai1wm_Not_Directory_Exception( sprintf( 'Location is not a directory: %s', $location ) );
 		}
@@ -243,7 +242,7 @@ class Ai1wm_Extractor extends Ai1wm_Archiver {
 						$file_written = 0;
 
 						// We have a match, let's extract the file
-						if ( ( $completed = $this->extract_to( $file_name, $file_size, $file_mtime, $file_written, $file_offset, $timeout ) ) ) {
+						if ( ( $completed = $this->extract_to( $file_name, $file_size, $file_mtime, $file_written, $file_offset ) ) ) {
 							$file_offset = 0;
 						}
 					} else {
@@ -268,14 +267,13 @@ class Ai1wm_Extractor extends Ai1wm_Archiver {
 	 * @param array  $exclude      Files to exclude
 	 * @param int    $file_written File written (in bytes)
 	 * @param int    $file_offset  File offset (in bytes)
-	 * @param int    $timeout      Process timeout (in seconds)
 	 *
 	 * @throws \Ai1wm_Not_Directory_Exception
 	 * @throws \Ai1wm_Not_Seekable_Exception
 	 *
 	 * @return bool
 	 */
-	public function extract_by_files_array( $location, $files = array(), $exclude = array(), &$file_written = 0, &$file_offset = 0, $timeout = 0 ) {
+	public function extract_by_files_array( $location, $files = array(), $exclude = array(), &$file_written = 0, &$file_offset = 0 ) {
 		if ( false === is_dir( $location ) ) {
 			throw new Ai1wm_Not_Directory_Exception( sprintf( 'Location is not a directory: %s', $location ) );
 		}
@@ -361,7 +359,7 @@ class Ai1wm_Extractor extends Ai1wm_Archiver {
 						$file_written = 0;
 
 						// We have a match, let's extract the file and remove it from the array
-						if ( ( $completed = $this->extract_to( $file_name, $file_size, $file_mtime, $file_written, $file_offset, $timeout ) ) ) {
+						if ( ( $completed = $this->extract_to( $file_name, $file_size, $file_mtime, $file_written, $file_offset ) ) ) {
 							$file_offset = 0;
 						}
 					} else {
@@ -373,7 +371,7 @@ class Ai1wm_Extractor extends Ai1wm_Archiver {
 					}
 
 					// Time elapsed
-					if ( $timeout ) {
+					if ( ( $timeout = apply_filters( 'ai1wm_completed_timeout', 10 ) ) ) {
 						if ( ( microtime( true ) - $start ) > $timeout ) {
 							$completed = false;
 							break;
@@ -394,7 +392,6 @@ class Ai1wm_Extractor extends Ai1wm_Archiver {
 	 * @param array  $file_mtime   File modified time (in seconds)
 	 * @param int    $file_written File written (in bytes)
 	 * @param int    $file_offset  File offset (in bytes)
-	 * @param int    $timeout      Process timeout (in seconds)
 	 *
 	 * @throws \Ai1wm_Not_Seekable_Exception
 	 * @throws \Ai1wm_Not_Readable_Exception
@@ -402,7 +399,7 @@ class Ai1wm_Extractor extends Ai1wm_Archiver {
 	 *
 	 * @return bool
 	 */
-	private function extract_to( $file_name, $file_size, $file_mtime, &$file_written = 0, &$file_offset = 0, $timeout = 0 ) {
+	private function extract_to( $file_name, $file_size, $file_mtime, &$file_written = 0, &$file_offset = 0 ) {
 		$file_written = 0;
 
 		// Flag to hold if file data has been processed
@@ -455,7 +452,7 @@ class Ai1wm_Extractor extends Ai1wm_Archiver {
 				}
 
 				// Time elapsed
-				if ( $timeout ) {
+				if ( ( $timeout = apply_filters( 'ai1wm_completed_timeout', 10 ) ) ) {
 					if ( ( microtime( true ) - $start ) > $timeout ) {
 						$completed = false;
 						break;

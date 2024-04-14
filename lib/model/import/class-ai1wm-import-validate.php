@@ -106,7 +106,7 @@ class Ai1wm_Import_Validate {
 			$file_bytes_written = 0;
 
 			// Unpack package.json, multisite.json and database.sql files
-			if ( ( $completed = $archive->extract_by_files_array( ai1wm_storage_path( $params ), array( AI1WM_PACKAGE_NAME, AI1WM_MULTISITE_NAME, AI1WM_DATABASE_NAME ), array(), $file_bytes_written, $file_bytes_offset, 10 ) ) ) {
+			if ( ( $completed = $archive->extract_by_files_array( ai1wm_storage_path( $params ), array( AI1WM_PACKAGE_NAME, AI1WM_MULTISITE_NAME, AI1WM_DATABASE_NAME ), array(), $file_bytes_written, $file_bytes_offset ) ) ) {
 				$file_bytes_offset = 0;
 			}
 

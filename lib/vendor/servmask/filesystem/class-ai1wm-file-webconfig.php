@@ -35,6 +35,7 @@ class Ai1wm_File_Webconfig {
 		return Ai1wm_File::create( $path, implode( PHP_EOL, array(
 			'<configuration>',
 			'<system.webServer>',
+			'<staticContent>',
 			'<mimeMap fileExtension=".wpress" mimeType="application/octet-stream" />',
 			'</staticContent>',
 			'<defaultDocument>',

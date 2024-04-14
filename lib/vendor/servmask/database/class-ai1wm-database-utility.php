@@ -68,14 +68,16 @@ class Ai1wm_Database_Utility {
 				$data = $tmp;
 				unset( $tmp );
 			} elseif ( is_object( $data ) ) {
-				$tmp   = $data;
-				$props = get_object_vars( $data );
-				foreach ( $props as $key => $value ) {
-					$tmp->$key = self::replace_serialized_values( $from, $to, $value, false );
-				}
+				if ( ! ( $data instanceof __PHP_Incomplete_Class ) ) {
+					$tmp   = $data;
+					$props = get_object_vars( $data );
+					foreach ( $props as $key => $value ) {
+						$tmp->$key = self::replace_serialized_values( $from, $to, $value, false );
+					}
 
-				$data = $tmp;
-				unset( $tmp );
+					$data = $tmp;
+					unset( $tmp );
+				}
 			} else {
 				if ( is_string( $data ) ) {
 					if ( ! empty( $from ) && ! empty( $to ) ) {
@@ -88,7 +90,6 @@ class Ai1wm_Database_Utility {
 				return serialize( $data );
 			}
 		} catch ( Exception $e ) {
-			// pass
 		}
 
 		return $data;

@@ -68,7 +68,7 @@ class Ai1wm_Export_Database_File {
 		$archive->set_file_pointer( $archive_bytes_offset );
 
 		// Add database.sql to archive
-		if ( $archive->add_file( ai1wm_database_path( $params ), AI1WM_DATABASE_NAME, $database_bytes_written, $database_bytes_offset, 10 ) ) {
+		if ( $archive->add_file( ai1wm_database_path( $params ), AI1WM_DATABASE_NAME, $database_bytes_written, $database_bytes_offset ) ) {
 
 			// Set progress
 			Ai1wm_Status::info( __( 'Done archiving database.', AI1WM_PLUGIN_NAME ) );

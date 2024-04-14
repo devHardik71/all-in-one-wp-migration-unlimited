@@ -187,6 +187,9 @@ if ( class_exists( 'WP_CLI_Command' ) ) {
 
 			try {
 
+				// Disable completed timeout
+				add_filter( 'ai1wm_completed_timeout', '__return_zero' );
+
 				// Remove filters
 				remove_filter( 'ai1wm_export', 'Ai1wm_Export_Clean::execute', 300 );
 
@@ -247,6 +250,9 @@ if ( class_exists( 'WP_CLI_Command' ) ) {
 			WP_CLI::log( 'Restore in progress...' );
 
 			try {
+
+				// Disable completed timeout
+				add_filter( 'ai1wm_completed_timeout', '__return_zero' );
 
 				// Remove filters
 				remove_filter( 'ai1wm_import', 'Ai1wm_Import_Upload::execute', 5 );

@@ -709,7 +709,7 @@ class Ai1wm_Import_Database {
 		$mysql->set_visual_composer( ! is_wp_error( validate_plugin( 'js_composer/js_composer.php' ) ) );
 
 		// Import database
-		if ( $mysql->import( ai1wm_database_path( $params ), $query_offset, 10 ) ) {
+		if ( $mysql->import( ai1wm_database_path( $params ), $query_offset ) ) {
 
 			// Set progress
 			Ai1wm_Status::info( __( 'Done restoring database.', AI1WM_PLUGIN_NAME ) );

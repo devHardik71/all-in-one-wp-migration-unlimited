@@ -63,7 +63,7 @@ class Ai1wm_Export_Config_File {
 		$archive->set_file_pointer( $archive_bytes_offset );
 
 		// Add package.json to archive
-		if ( $archive->add_file( ai1wm_package_path( $params ), AI1WM_PACKAGE_NAME, $package_bytes_written, $package_bytes_offset, 10 ) ) {
+		if ( $archive->add_file( ai1wm_package_path( $params ), AI1WM_PACKAGE_NAME, $package_bytes_written, $package_bytes_offset ) ) {
 
 			// Set progress
 			Ai1wm_Status::info( __( 'Done archiving configuration file.', AI1WM_PLUGIN_NAME ) );

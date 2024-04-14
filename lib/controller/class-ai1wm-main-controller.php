@@ -840,7 +840,7 @@ class Ai1wm_Main_Controller {
 			),
 		) );
 
-		wp_localize_script( 'ai1wm_backups', 'ai1wm_locale', array(
+		wp_localize_script( 'ai1wm_updater', 'ai1wm_locale', array(
 			'check_for_updates'   => __( 'Check for updates', AI1WM_PLUGIN_NAME ),
 			'invalid_purchase_id' => __( 'Your purchase ID is invalid, please <a href="mailto:support@servmask.com">contact us</a>', AI1WM_PLUGIN_NAME ),
 		) );

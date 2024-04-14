@@ -40,7 +40,7 @@ class Ai1wm_Feedback {
 
 		// Submit feedback to ServMask
 		if ( empty( $type ) ) {
-			$errors[] = __( 'Feedback type is invalid.', AI1WM_PLUGIN_NAME );
+			$errors[] = __( 'Feedback type is not valid.', AI1WM_PLUGIN_NAME );
 		} elseif ( ! filter_var( $email, FILTER_VALIDATE_EMAIL ) ) {
 			$errors[] = __( 'Your email is not valid.', AI1WM_PLUGIN_NAME );
 		} elseif ( empty( $message ) ) {

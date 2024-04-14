@@ -530,10 +530,9 @@ abstract class Ai1wm_Database {
 	 * @param  string $file_name    Name of file
 	 * @param  int    $table_index  Table index
 	 * @param  int    $table_offset Table offset
-	 * @param  int    $timeout      Process timeout
 	 * @return bool
 	 */
-	public function export( $file_name, &$table_index = 0, &$table_offset = 0, $timeout = 0 ) {
+	public function export( $file_name, &$table_index = 0, &$table_offset = 0 ) {
 		// Set file handler
 		$file_handler = ai1wm_open( $file_name, 'ab' );
 
@@ -708,7 +707,7 @@ abstract class Ai1wm_Database {
 				$this->free_result( $result );
 
 				// Time elapsed
-				if ( $timeout ) {
+				if ( ( $timeout = apply_filters( 'ai1wm_completed_timeout', 10 ) ) ) {
 					if ( ( microtime( true ) - $start ) > $timeout ) {
 						$completed = false;
 						break 2;
@@ -728,10 +727,9 @@ abstract class Ai1wm_Database {
 	 *
 	 * @param  string $file_name    Name of file
 	 * @param  int    $query_offset Query offset
-	 * @param  int    $timeout      Process timeout
 	 * @return bool
 	 */
-	public function import( $file_name, &$query_offset = 0, $timeout = 0 ) {
+	public function import( $file_name, &$query_offset = 0 ) {
 		// Set max allowed packet
 		$max_allowed_packet = $this->get_max_allowed_packet();
 
@@ -794,7 +792,7 @@ abstract class Ai1wm_Database {
 						$query_offset = ftell( $file_handler );
 
 						// Time elapsed
-						if ( $timeout ) {
+						if ( ( $timeout = apply_filters( 'ai1wm_completed_timeout', 10 ) ) ) {
 							if ( ! $this->is_atomic_query( $query ) ) {
 								if ( ( microtime( true ) - $start ) > $timeout ) {
 									$completed = false;
