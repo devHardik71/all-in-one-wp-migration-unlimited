@@ -566,6 +566,13 @@ function ai1wm_plugin_filters( $filters = array() ) {
 		$filters[] = 'plugins' . DIRECTORY_SEPARATOR . 'all-in-one-wp-migration-box-extension';
 	}
 
+	// Mega Extension
+	if ( defined( 'AI1WMEE_PLUGIN_BASENAME' ) ) {
+		$filters[] = 'plugins' . DIRECTORY_SEPARATOR . dirname( AI1WMEE_PLUGIN_BASENAME );
+	} else {
+		$filters[] = 'plugins' . DIRECTORY_SEPARATOR . 'all-in-one-wp-migration-mega-extension';
+	}
+
 	return $filters;
 }
 
@@ -623,6 +630,11 @@ function ai1wm_active_servmask_plugins( $plugins = array() ) {
 	// Box Extension
 	if ( defined( 'AI1WMBE_PLUGIN_BASENAME' ) ) {
 		$plugins[] = AI1WMBE_PLUGIN_BASENAME;
+	}
+
+	// Mega Extension
+	if ( defined( 'AI1WMEE_PLUGIN_BASENAME' ) ) {
+		$plugins[] = AI1WMEE_PLUGIN_BASENAME;
 	}
 
 	return $plugins;

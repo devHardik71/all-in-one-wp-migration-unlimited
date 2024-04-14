@@ -31,7 +31,7 @@ define( 'AI1WM_DEBUG', false );
 // ==================
 // = Plugin Version =
 // ==================
-define( 'AI1WM_VERSION', '6.59' );
+define( 'AI1WM_VERSION', '6.61' );
 
 // ===============
 // = Plugin Name =
@@ -582,4 +582,34 @@ if ( ! defined( 'AI1WMBE_PLUGIN_KEY' ) ) {
 // =======================
 if ( ! defined( 'AI1WMBE_PLUGIN_SHORT' ) ) {
 	define( 'AI1WMBE_PLUGIN_SHORT', 'box' );
+}
+
+// ===========================
+// = Mega Extension Base Dir =
+// ===========================
+if ( defined( 'AI1WMEE_PLUGIN_BASENAME' ) ) {
+	define( 'AI1WMEE_PLUGIN_BASEDIR', dirname( AI1WMEE_PLUGIN_BASENAME ) );
+} else {
+	define( 'AI1WMEE_PLUGIN_BASEDIR', 'all-in-one-wp-migration-mega-extension' );
+}
+
+// ========================
+// = Mega Extension About =
+// ========================
+if ( ! defined( 'AI1WMEE_PLUGIN_ABOUT' ) ) {
+	define( 'AI1WMEE_PLUGIN_ABOUT', 'https://servmask.com/products/mega-extension/about' );
+}
+
+// ======================
+// = Mega Extension Key =
+// ======================
+if ( ! defined( 'AI1WMEE_PLUGIN_KEY' ) ) {
+	define( 'AI1WMEE_PLUGIN_KEY', 'ai1wmee_plugin_key' );
+}
+
+// ========================
+// = Mega Extension Short =
+// ========================
+if ( ! defined( 'AI1WMEE_PLUGIN_SHORT' ) ) {
+	define( 'AI1WMEE_PLUGIN_SHORT', 'mega' );
 }
