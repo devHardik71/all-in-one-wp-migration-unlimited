@@ -28,9 +28,9 @@ class Ai1wm_Report {
 	/**
 	 * Submit customer report to ServMask.com
 	 *
-	 * @param  string  $email   User E-mail
-	 * @param  string  $message User Message
-	 * @param  integer $terms   User Accept Terms
+	 * @param  string  $email   User e-mail
+	 * @param  string  $message User message
+	 * @param  integer $terms   User accept terms
 	 *
 	 * @return array
 	 */
@@ -60,6 +60,6 @@ class Ai1wm_Report {
 			}
 		}
 
-		return array( 'errors' => $errors );
+		return $errors;
 	}
 }

@@ -28,10 +28,10 @@ class Ai1wm_Feedback {
 	/**
 	 * Submit customer feedback to ServMask.com
 	 *
-	 * @param  string  $type    Feedback Type
-	 * @param  string  $email   User E-mail
-	 * @param  string  $message User Message
-	 * @param  integer $terms   User Accept Terms
+	 * @param  string  $type    Feedback type
+	 * @param  string  $email   User e-mail
+	 * @param  string  $message User message
+	 * @param  integer $terms   User accept terms
 	 *
 	 * @return array
 	 */
@@ -64,6 +64,6 @@ class Ai1wm_Feedback {
 			}
 		}
 
-		return array( 'errors' => $errors );
+		return $errors;
 	}
 }

@@ -52,14 +52,13 @@ class Ai1wm_Export_Controller {
 		// Set secret key
 		$secret_key = null;
 		if ( isset( $params['secret_key'] ) ) {
-			$secret_key = $params['secret_key'];
+			$secret_key = trim( $params['secret_key'] );
 		}
 
 		try {
 			// Ensure that unauthorized people cannot access export action
 			ai1wm_verify_secret_key( $secret_key );
 		} catch ( Ai1wm_Not_Valid_Secret_Key_Exception $e ) {
-			Ai1wm_Log::error( $e->getMessage() );
 			exit;
 		}
 

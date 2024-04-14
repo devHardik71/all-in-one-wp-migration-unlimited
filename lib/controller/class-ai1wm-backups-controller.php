@@ -39,11 +39,17 @@ class Ai1wm_Backups_Controller {
 	}
 
 	public static function delete( $params = array() ) {
-		$response = array( 'errors' => array() );
+		$errors = array();
 
 		// Set params
 		if ( empty( $params ) ) {
 			$params = stripslashes_deep( $_POST );
+		}
+
+		// Set secret key
+		$secret_key = null;
+		if ( isset( $params['secret_key'] ) ) {
+			$secret_key = trim( $params['secret_key'] );
 		}
 
 		// Set archive
@@ -52,16 +58,23 @@ class Ai1wm_Backups_Controller {
 			$archive = trim( $params['archive'] );
 		}
 
+		try {
+			// Ensure that unauthorized people cannot access delete action
+			ai1wm_verify_secret_key( $secret_key );
+		} catch ( Ai1wm_Not_Valid_Secret_Key_Exception $e ) {
+			exit;
+		}
+
 		$model = new Ai1wm_Backups;
 
 		try {
 			// Delete file
 			$model->delete_file( $archive );
 		} catch ( Exception $e ) {
-			$response['errors'][] = $e->getMessage();
+			$errors[] = $e->getMessage();
 		}
 
-		echo json_encode( $response );
+		echo json_encode( array( 'errors' => $errors ) );
 		exit;
 	}
 }

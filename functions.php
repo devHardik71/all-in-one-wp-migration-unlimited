@@ -275,25 +275,27 @@ function ai1wm_parse_size( $size, $default = null ) {
 /**
  * Get current site name
  *
+ * @param  integer $blog_id Blog ID
  * @return string
  */
-function ai1wm_site_name() {
-	return parse_url( site_url(), PHP_URL_HOST );
+function ai1wm_site_name( $blog_id = null ) {
+	return parse_url( get_site_url( $blog_id ), PHP_URL_HOST );
 }
 
 /**
  * Get archive file name
  *
+ * @param  integer $blog_id Blog ID
  * @return string
  */
-function ai1wm_archive_file() {
+function ai1wm_archive_file( $blog_id = null ) {
 	$name = array();
 
 	// Add domain
-	$name[] = parse_url( site_url(), PHP_URL_HOST );
+	$name[] = parse_url( get_site_url( $blog_id ), PHP_URL_HOST );
 
 	// Add path
-	if ( ( $path = explode( '/', parse_url( site_url(), PHP_URL_PATH ) ) ) ) {
+	if ( ( $path = explode( '/', parse_url( get_site_url( $blog_id ), PHP_URL_PATH ) ) ) ) {
 		foreach ( $path as $directory ) {
 			if ( $directory ) {
 				$name[] = $directory;
@@ -316,16 +318,17 @@ function ai1wm_archive_file() {
 /**
  * Get archive folder name
  *
+ * @param  integer $blog_id Blog ID
  * @return string
  */
-function ai1wm_archive_folder() {
+function ai1wm_archive_folder( $blog_id = null ) {
 	$name = array();
 
 	// Add domain
-	$name[] = parse_url( site_url(), PHP_URL_HOST );
+	$name[] = parse_url( get_site_url( $blog_id ), PHP_URL_HOST );
 
 	// Add path
-	if ( ( $path = explode( '/', parse_url( site_url(), PHP_URL_PATH ) ) ) ) {
+	if ( ( $path = explode( '/', parse_url( get_site_url( $blog_id ), PHP_URL_PATH ) ) ) ) {
 		foreach ( $path as $directory ) {
 			if ( $directory ) {
 				$name[] = $directory;
@@ -766,15 +769,15 @@ function ai1wm_urldecode( $value ) {
 /**
  * Opens a file in specified mode
  *
- * @param  string $file Path to the file to open
- * @param  string $mode Mode in which to open the file
+ * @param  string   $file Path to the file to open
+ * @param  string   $mode Mode in which to open the file
  * @return resource
- * @throws Ai1wm_Not_Accesible_Exception
+ * @throws Ai1wm_Not_Accessible_Exception
  */
 function ai1wm_open( $file, $mode ) {
-	$file_handle = fopen( $file, $mode );
+	$file_handle = @fopen( $file, $mode );
 	if ( false === $file_handle ) {
-		throw new Ai1wm_Not_Accesible_Exception( sprintf( __( 'Unable to open %s with mode %s', AI1WM_PLUGIN_NAME ), $file, $mode ) );
+		throw new Ai1wm_Not_Accessible_Exception( sprintf( __( 'Unable to open %s with mode %s', AI1WM_PLUGIN_NAME ), $file, $mode ) );
 	}
 
 	return $file_handle;
@@ -785,12 +788,12 @@ function ai1wm_open( $file, $mode ) {
  *
  * @param  resource $handle  File handle to write to
  * @param  string   $content Contents to write to the file
- * @return int
+ * @return integer
  * @throws Ai1wm_Not_Writable_Exception
  * @throws Ai1wm_Quota_Exceeded_Exception
  */
 function ai1wm_write( $handle, $content ) {
-	$write_result = fwrite( $handle, $content );
+	$write_result = @fwrite( $handle, $content );
 	if ( false === $write_result ) {
 		if ( ( $meta = stream_get_meta_data( $handle ) ) ) {
 			throw new Ai1wm_Not_Writable_Exception( sprintf( __( 'Unable to write to: %s', AI1WM_PLUGIN_NAME ), $meta['uri'] ) );
@@ -807,11 +810,11 @@ function ai1wm_write( $handle, $content ) {
  *
  * @param  resource $handle   File handle to read from
  * @param  string   $filesize File size
- * @return int
+ * @return integer
  * @throws Ai1wm_Not_Readable_Exception
  */
 function ai1wm_read( $handle, $filesize ) {
-	$read_result = fread( $handle, $filesize );
+	$read_result = @fread( $handle, $filesize );
 	if ( false === $read_result ) {
 		if ( ( $meta = stream_get_meta_data( $handle ) ) ) {
 			throw new Ai1wm_Not_Readable_Exception( sprintf( __( 'Unable to read file: %s', AI1WM_PLUGIN_NAME ), $meta['uri'] ) );
@@ -822,10 +825,44 @@ function ai1wm_read( $handle, $filesize ) {
 }
 
 /**
+ * Seeks on a file pointer
+ *
+ * @param  string  $handle File handle to seeks
+ * @return integer
+ */
+function ai1wm_seek( $handle, $offset, $mode = SEEK_SET ) {
+	$seek_result = @fseek( $handle, $offset, $mode );
+	if ( -1 === $seek_result ) {
+		if ( ( $meta = stream_get_meta_data( $handle ) ) ) {
+			throw new Ai1wm_Not_Seekable_Exception( sprintf( __( 'Unable to seek to offset %d on %s', AI1WM_PLUGIN_NAME ), $offset, $meta['uri'] ) );
+		}
+	}
+
+	return $seek_result;
+}
+
+/**
+ * Tells on a file pointer
+ *
+ * @param  string  $handle File handle to tells
+ * @return integer
+ */
+function ai1wm_tell( $handle ) {
+	$tell_result = @ftell( $handle );
+	if ( false === $tell_result ) {
+		if ( ( $meta = stream_get_meta_data( $handle ) ) ) {
+			throw new Ai1wm_Not_Tellable_Exception( sprintf( __( 'Unable to get current pointer position of %s', AI1WM_PLUGIN_NAME ), $meta['uri'] ) );
+		}
+	}
+
+	return $tell_result;
+}
+
+/**
  * Closes a file handle
  *
  * @param  resource $handle File handle to close
- * @return bool
+ * @return boolean
  */
 function ai1wm_close( $handle ) {
 	return @fclose( $handle );
@@ -834,11 +871,33 @@ function ai1wm_close( $handle ) {
 /**
  * Deletes a file
  *
- * @param  string $file Path to file to delete
- * @return bool
+ * @param  string  $file Path to file to delete
+ * @return boolean
  */
 function ai1wm_unlink( $file ) {
 	return @unlink( $file );
+}
+
+/**
+ * Sets modification time of a file
+ *
+ * @param  string  $file Path to file to change modification time
+ * @param  integer $time File modification time
+ * @return boolean
+ */
+function ai1wm_touch( $file, $mtime ) {
+	return @touch( $file, $mtime );
+}
+
+/**
+ * Changes file mode
+ *
+ * @param  string  $file Path to file to change mode
+ * @param  integer $time File mode
+ * @return boolean
+ */
+function ai1wm_chmod( $file, $mode ) {
+	return @chmod( $file, $mode );
 }
 
 /**
@@ -862,8 +921,8 @@ function ai1wm_copy( $source_file, $destination_file ) {
  *
  * This method supports files > 2GB on PHP x86
  *
- * @param string $file_path Path to the file
- * @param bool   $as_string Return the filesize as string instead of BigInteger
+ * @param string  $file_path Path to the file
+ * @param boolean $as_string Return the filesize as string instead of BigInteger
  *
  * @return mixed Math_BigInteger|string|null
  */
@@ -934,8 +993,8 @@ function ai1wm_disable_jetpack_photon() {
 /**
  * Verify secret key
  *
- * @param  string $secret_key Secret key
- * @return bool
+ * @param  string  $secret_key Secret key
+ * @return boolean
  * @throws Ai1wm_Not_Valid_Secret_Key_Exception
  */
 function ai1wm_verify_secret_key( $secret_key ) {

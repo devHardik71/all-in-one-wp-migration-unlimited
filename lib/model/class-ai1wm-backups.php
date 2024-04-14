@@ -68,18 +68,9 @@ class Ai1wm_Backups {
 	 * @return boolean
 	 */
 	public function delete_file( $file ) {
-		if ( empty( $file ) ) {
-			throw new Ai1wm_Backups_Exception( __( 'File name is not specified.', AI1WM_PLUGIN_NAME ) );
-		} else if ( ! unlink( AI1WM_BACKUPS_PATH . DIRECTORY_SEPARATOR . $file ) ) {
-			throw new Ai1wm_Backups_Exception(
-				sprintf(
-					__( 'Unable to delete <strong>"%s"</strong> file.', AI1WM_PLUGIN_NAME ),
-					AI1WM_BACKUPS_PATH . DIRECTORY_SEPARATOR . $file
-				)
-			);
+		if ( ( $basename = basename( $file ) ) ) {
+			return @unlink( AI1WM_BACKUPS_PATH . DIRECTORY_SEPARATOR . $basename );
 		}
-
-		return true;
 	}
 
 	/**

@@ -42,48 +42,54 @@ class Ai1wm_Extractor extends Ai1wm_Archiver {
 	/**
 	 * Overloaded constructor that opens the passed file for reading
 	 *
-	 * @param string $file File to use as archive
+	 * @param string $file_name File to use as archive
 	 */
-	public function __construct( $file ) {
-		// call parent, to initialize variables
-		parent::__construct( $file );
+	public function __construct( $file_name ) {
+		// Call parent, to initialize variables
+		parent::__construct( $file_name );
 	}
 
 	/**
 	 * Get the total files count in an archive
 	 *
-	 * @return int Total files count in the archive
-	 * @throws \Ai1wm_Not_Accesible_Exception
-	 * @throws \Ai1wm_Not_Readable_Exception
+	 * @return int
 	 */
 	public function get_total_files_count() {
 		if ( is_null( $this->total_files_count ) ) {
-			// set poisition to the beginning of the file
-			fseek( $this->file_handle, SEEK_SET, 0 );
 
-			// total files count
+			// Total files count
 			$this->total_files_count = 0;
 
-			// total files size
+			// Total files size
 			$this->total_files_size = 0;
 
-			while ( $block = $this->read_from_handle( $this->file_handle, 4377 ) ) {
-				// end block has been reached
+			// Seek to beginning of archive file
+			if ( @fseek( $this->file_handle, 0, SEEK_SET ) === -1 ) {
+				throw new Ai1wm_Not_Seekable_Exception( sprintf( 'Unable to seek to beginning of file. File: %s', $this->file_name ) );
+			}
+
+			// Loop over files
+			while ( $block = @fread( $this->file_handle, 4377 ) ) {
+
+				// End block has been reached
 				if ( $block === $this->eof ) {
 					continue;
 				}
 
-				// get file data from the block
-				$data = $this->get_data_from_block( $block );
+				// Get file data from the block
+				if ( ( $data = $this->get_data_from_block( $block ) ) ) {
 
-				// we have a file, increment the count
-				$this->total_files_count += 1;
+					// We have a file, increment the count
+					$this->total_files_count += 1;
 
-				// we have a file, increment the size
-				$this->total_files_size += $data['size'];
+					// We have a file, increment the size
+					$this->total_files_size += $data['size'];
 
-				// skip file content so we can move forward to the next file
-				$this->set_file_pointer( $this->file_handle, $data['size'] );
+					// Skip file content so we can move forward to the next file
+					if ( @fseek( $this->file_handle, $data['size'], SEEK_CUR ) === -1 ) {
+						throw new Ai1wm_Not_Seekable_Exception( sprintf( 'Unable to seek to offset on file. File: %s Offset: %d', $this->file_name, $data['size'] ) );
+					}
+				}
 			}
 		}
 
@@ -93,284 +99,375 @@ class Ai1wm_Extractor extends Ai1wm_Archiver {
 	/**
 	 * Get the total files size in an archive
 	 *
-	 * @return int Total files size in the archive
-	 * @throws \Ai1wm_Not_Accesible_Exception
-	 * @throws \Ai1wm_Not_Readable_Exception
+	 * @return int
 	 */
 	public function get_total_files_size() {
 		if ( is_null( $this->total_files_size ) ) {
-			// set poisition to the beginning of the file
-			fseek( $this->file_handle, SEEK_SET, 0 );
 
-			// total files count
+			// Total files count
 			$this->total_files_count = 0;
 
-			// total files size
+			// Total files size
 			$this->total_files_size = 0;
 
-			while ( $block = $this->read_from_handle( $this->file_handle, 4377 ) ) {
-				// end block has been reached
+			// Seek to beginning of archive file
+			if ( @fseek( $this->file_handle, 0, SEEK_SET ) === -1 ) {
+				throw new Ai1wm_Not_Seekable_Exception( sprintf( 'Unable to seek to beginning of file. File: %s', $this->file_name ) );
+			}
+
+			// Loop over files
+			while ( $block = @fread( $this->file_handle, 4377 ) ) {
+
+				// End block has been reached
 				if ( $block === $this->eof ) {
 					continue;
 				}
 
-				// get file data from the block
-				$data = $this->get_data_from_block( $block );
+				// Get file data from the block
+				if ( ( $data = $this->get_data_from_block( $block ) ) ) {
 
-				// we have a file, increment the count
-				$this->total_files_count += 1;
+					// We have a file, increment the count
+					$this->total_files_count += 1;
 
-				// we have a file, increment the size
-				$this->total_files_size += $data['size'];
+					// We have a file, increment the size
+					$this->total_files_size += $data['size'];
 
-				// skip file content so we can move forward to the next file
-				$this->set_file_pointer( $this->file_handle, $data['size'] );
+					// Skip file content so we can move forward to the next file
+					if ( @fseek( $this->file_handle, $data['size'], SEEK_CUR ) === -1 ) {
+						throw new Ai1wm_Not_Seekable_Exception( sprintf( 'Unable to seek to offset on file. File: %s Offset: %d', $this->file_name, $data['size'] ) );
+					}
+				}
 			}
 		}
 
 		return $this->total_files_size;
 	}
 
-	public function extract_one_file_to( $location, $exclude = array(), $old_paths = array(), $new_paths = array(), $offset = 0, $timeout = 0 ) {
+	/**
+	 * Extract one file to location
+	 *
+	 * @param string $location     Destination path
+	 * @param array  $exclude      Files to exclude
+	 * @param array  $old_paths    Old replace paths
+	 * @param array  $new_paths    New replace paths
+	 * @param int    $file_written File written (in bytes)
+	 * @param int    $file_offset  File offset (in bytes)
+	 * @param int    $timeout      Process timeout (in seconds)
+	 *
+	 * @throws \Ai1wm_Not_Directory_Exception
+	 * @throws \Ai1wm_Not_Seekable_Exception
+	 *
+	 * @return bool
+	 */
+	public function extract_one_file_to( $location, $exclude = array(), $old_paths = array(), $new_paths = array(), &$file_written = 0, &$file_offset = 0, $timeout = 0 ) {
 		if ( false === is_dir( $location ) ) {
-			throw new Ai1wm_Not_Readable_Exception( sprintf( __( '%s doesn\'t exist', AI1WM_PLUGIN_NAME ), $location ) );
+			throw new Ai1wm_Not_Directory_Exception( sprintf( 'Location is not a directory: %s', $location ) );
 		}
 
-		$block = $this->read_from_handle( $this->file_handle, 4377 );
+		// Flag to hold if file data has been processed
+		$completed = true;
 
-		// we reached end of file, set the pointer to the end of the file so that feof returns true
-		if ( $block === $this->eof ) {
-			@fseek( $this->file_handle, 1, SEEK_END );
-			@fgetc( $this->file_handle );
-			return;
-		}
-
-		// get file data from header block
-		$data = $this->get_data_from_block( $block );
-
-		// set filename
-		if ( $data['path'] === '.' ) {
-			$filename = $data['filename'];
-		} else {
-			$filename = $data['path'] . '/' . $data['filename'];
-		}
-
-		// we need to build the path
-		$path = str_replace( '/', DIRECTORY_SEPARATOR, $data['path'] );
-
-		// we need to build the path for the file
-		$filename = str_replace( '/', DIRECTORY_SEPARATOR, $filename );
-
-		// should we skip this file?
-		for ( $i = 0; $i < count( $exclude ); $i++ ) {
-			if ( strpos( $filename . DIRECTORY_SEPARATOR, $exclude[ $i ] . DIRECTORY_SEPARATOR ) === 0 ) {
-				$this->set_file_pointer( $this->file_handle, $data['size'] );
-				return;
+		// Seek to file offset to archive file
+		if ( $file_offset > 0 ) {
+			if ( @fseek( $this->file_handle, - $file_offset - 4377, SEEK_CUR ) === -1 ) {
+				throw new Ai1wm_Not_Seekable_Exception( sprintf( 'Unable to seek to offset on file. File: %s Offset: %d', $this->file_name, - $file_offset - 4377 ) );
 			}
 		}
 
-		// replace extract paths
-		for ( $i = 0; $i < count( $old_paths ); $i++ ) {
-			if ( strpos( $path . DIRECTORY_SEPARATOR, $old_paths[ $i ] . DIRECTORY_SEPARATOR ) === 0 ) {
-				$path = substr_replace( $path, $new_paths[ $i ], 0, strlen( $old_paths[ $i ] ) );
-				break;
+		// Read file header block
+		if ( ( $block = @fread( $this->file_handle, 4377 ) ) ) {
+
+			// We reached end of file, set the pointer to the end of the file so that feof returns true
+			if ( $block === $this->eof ) {
+
+				// Seek to end of archive file minus 1 byte
+				@fseek( $this->file_handle, 1, SEEK_END );
+
+				// Read 1 character
+				@fgetc( $this->file_handle );
+
+			} else {
+
+				// Get file header data from the block
+				if ( ( $data = $this->get_data_from_block( $block ) ) ) {
+
+					// Set file name
+					$file_name = $data['filename'];
+
+					// Set file size
+					$file_size = $data['size'];
+
+					// Set file mtime
+					$file_mtime = $data['mtime'];
+
+					// Set file path
+					$file_path = $data['path'];
+
+					// Set should exclude file
+					$should_exclude_file = false;
+
+					// Should we skip this file?
+					for ( $i = 0; $i < count( $exclude ); $i++ ) {
+						if ( strpos( $file_name . DIRECTORY_SEPARATOR, $exclude[ $i ] . DIRECTORY_SEPARATOR ) === 0 ) {
+							$should_exclude_file = true;
+							break;
+						}
+					}
+
+					// Do we have a match?
+					if ( $should_exclude_file === false ) {
+
+						// Replace extract paths
+						for ( $i = 0; $i < count( $old_paths ); $i++ ) {
+							if ( strpos( $file_path . DIRECTORY_SEPARATOR, $old_paths[ $i ] . DIRECTORY_SEPARATOR ) === 0 ) {
+								$file_path = substr_replace( $file_path, $new_paths[ $i ], 0, strlen( $old_paths[ $i ] ) );
+								break;
+							}
+						}
+
+						// Check if location doesn't exist, then create it
+						if ( false === is_dir( $location . DIRECTORY_SEPARATOR . $file_path ) ) {
+							@mkdir( $location . DIRECTORY_SEPARATOR . $file_path, $this->get_permissions_for_directory(), true );
+						}
+
+						$file_written = 0;
+
+						// We have a match, let's extract the file
+						if ( ( $completed = $this->extract_to( $location . DIRECTORY_SEPARATOR . $file_name, $file_size, $file_mtime, $file_written, $file_offset, $timeout ) ) ) {
+							$file_offset = 0;
+						}
+					} else {
+
+						// We don't have a match, skip file content
+						if ( @fseek( $this->file_handle, $file_size, SEEK_CUR ) === -1 ) {
+							throw new Ai1wm_Not_Seekable_Exception( sprintf( 'Unable to seek to offset on file. File: %s Offset: %d', $this->file_name, $file_size ) );
+						}
+					}
+				}
 			}
 		}
 
-		$directory = $location . DIRECTORY_SEPARATOR . $path;
-
-		// check if location doesn't exist, then create it
-		if ( false === is_dir( $directory ) ) {
-			mkdir( $directory, $this->get_permissions_for_directory(), true );
-		}
-
-		try {
-			// we have a match, let's extract the file
-			if ( ( $offset = $this->extract_to( $location . DIRECTORY_SEPARATOR . $path . DIRECTORY_SEPARATOR . basename( $filename ), $data, $offset, $timeout ) ) ) {
-				return $offset;
-			}
-		} catch ( Exception $e ) {
-			// we don't have file permissions, skip file content
-			$this->set_file_pointer( $this->file_handle, $data['size'] );
-		}
+		return $completed;
 	}
 
 	/**
 	 * Extract specific files from archive
 	 *
-	 * @param string $location Location where to extract files
-	 * @param array  $files    Files to extract
-	 * @param array  $offset   File offset
-	 * @param int    $timeout  Process timeout
+	 * @param string $location     Location where to extract files
+	 * @param array  $files        Files to extract
+	 * @param int    $file_written File written (in bytes)
+	 * @param int    $file_offset  File offset (in bytes)
+	 * @param int    $timeout      Process timeout (in seconds)
+	 *
+	 * @throws \Ai1wm_Not_Directory_Exception
+	 * @throws \Ai1wm_Not_Seekable_Exception
+	 *
+	 * @return bool
 	 */
-	public function extract_by_files_array( $location, $files = array(), $offset = 0, $timeout = 0 ) {
+	public function extract_by_files_array( $location, $files = array(), &$file_written = 0, &$file_offset = 0, $timeout = 0 ) {
 		if ( false === is_dir( $location ) ) {
-			throw new Ai1wm_Not_Readable_Exception( sprintf( __( '%s doesn\'t exist', AI1WM_PLUGIN_NAME ), $location ) );
+			throw new Ai1wm_Not_Directory_Exception( sprintf( 'Location is not a directory: %s', $location ) );
 		}
 
-		// start time
+		// Flag to hold if file data has been processed
+		$completed = true;
+
+		// Start time
 		$start = microtime( true );
 
-		// we read until we reached the end of the file, or the files we were looking for were found
-		while ( ( $block = $this->read_from_handle( $this->file_handle, 4377 ) ) ) {
-			// end block has been reached and we still have files to extract
-			// that means the files don't exist in the archive
+		// Seek to file offset to archive file
+		if ( $file_offset > 0 ) {
+			if ( @fseek( $this->file_handle, - $file_offset - 4377, SEEK_CUR ) === -1 ) {
+				throw new Ai1wm_Not_Seekable_Exception( sprintf( 'Unable to seek to offset on file. File: %s Offset: %d', $this->file_name, - $file_offset - 4377 ) );
+			}
+		}
+
+		// We read until we reached the end of the file, or the files we were looking for were found
+		while ( ( $block = @fread( $this->file_handle, 4377 ) ) ) {
+
+			// We reached end of file, set the pointer to the end of the file so that feof returns true
 			if ( $block === $this->eof ) {
-				// we reached end of file, set the pointer to the end of the file so that feof returns true
+
+				// Seek to end of archive file minus 1 byte
 				@fseek( $this->file_handle, 1, SEEK_END );
+
+				// Read 1 character
 				@fgetc( $this->file_handle );
-				return;
-			}
 
-			$data = $this->get_data_from_block( $block );
-
-			// set filename
-			if ( $data['path'] === '.' ) {
-				$filename = $data['filename'];
 			} else {
-				$filename = $data['path'] . '/' . $data['filename'];
-			}
 
-			// we need to build the path
-			$path = str_replace( '/', DIRECTORY_SEPARATOR, $data['path'] );
+				// Get file header data from the block
+				if ( ( $data = $this->get_data_from_block( $block ) ) ) {
 
-			// we need to build the path for the file
-			$filename = str_replace( '/', DIRECTORY_SEPARATOR, $filename );
+					// Set file name
+					$file_name = $data['filename'];
 
-			// set include flag
-			$include = false;
+					// Set file size
+					$file_size = $data['size'];
 
-			// files to extract
-			for ( $i = 0; $i < count( $files ); $i++ ) {
-				if ( strpos( $filename . DIRECTORY_SEPARATOR, $files[ $i ] . DIRECTORY_SEPARATOR ) === 0 ) {
-					$include = true;
-					break;
-				}
-			}
+					// Set file mtime
+					$file_mtime = $data['mtime'];
 
-			// do we have a match?
-			if ( $include ) {
-				$directory = $location . DIRECTORY_SEPARATOR . $path;
+					// Set file path
+					$file_path = $data['path'];
 
-				// check if location doesn't exist, then create it
-				if ( false === is_dir( $directory ) ) {
-					mkdir( $directory, $this->get_permissions_for_directory(), true );
-				}
+					// Set should include file
+					$should_include_file = false;
 
-				try {
-					// we have a match, let's extract the file and remove it from the array
-					if ( ( $offset = $this->extract_to( $location . DIRECTORY_SEPARATOR . $filename, $data, $offset, $timeout ) ) ) {
-						return $offset;
+					// Should be extract this file?
+					for ( $i = 0; $i < count( $files ); $i++ ) {
+						if ( strpos( $file_name . DIRECTORY_SEPARATOR, $files[ $i ] . DIRECTORY_SEPARATOR ) === 0 ) {
+							$should_include_file = true;
+							break;
+						}
 					}
-				} catch ( Exception $e ) {
-					// we don't have file permissions, skip file content
-					$this->set_file_pointer( $this->file_handle, $data['size'] );
-				}
-			} else {
-				// we don't have a match, skip file content
-				$this->set_file_pointer( $this->file_handle, $data['size'] );
-			}
 
-			// time elapsed
-			if ( $timeout ) {
-				if ( ( microtime( true ) - $start ) > $timeout ) {
-					break;
+					// Do we have a match?
+					if ( $should_include_file === true ) {
+
+						// Check if location doesn't exist, then create it
+						if ( false === is_dir( $location . DIRECTORY_SEPARATOR . $file_path ) ) {
+							@mkdir( $location . DIRECTORY_SEPARATOR . $file_path, $this->get_permissions_for_directory(), true );
+						}
+
+						$file_written = 0;
+
+						// We have a match, let's extract the file and remove it from the array
+						if ( ( $completed = $this->extract_to( $location . DIRECTORY_SEPARATOR . $file_name, $file_size, $file_mtime, $file_written, $file_offset, $timeout ) ) ) {
+							$file_offset = 0;
+						}
+					} else {
+
+						// We don't have a match, skip file content
+						if ( @fseek( $this->file_handle, $file_size, SEEK_CUR ) === -1 ) {
+							throw new Ai1wm_Not_Seekable_Exception( sprintf( 'Unable to seek to offset on file. File: %s Offset: %d', $this->file_name, $file_size ) );
+						}
+					}
+
+					// Time elapsed
+					if ( $timeout ) {
+						if ( ( microtime( true ) - $start ) > $timeout ) {
+							$completed = false;
+							break;
+						}
+					}
 				}
 			}
 		}
+
+		return $completed;
 	}
 
-	public function set_file_pointer( $handle = null, $offset = 0 ) {
-		// if null is used, we use the archive handle
-		if ( is_null( $handle ) ) {
-			$handle = $this->file_handle;
-		}
+	/**
+	 * Extract file to
+	 *
+	 * @param string $file_name    File name
+	 * @param array  $file_size    File size (in bytes)
+	 * @param array  $file_mtime   File modified time (in seconds)
+	 * @param int    $file_written File written (in bytes)
+	 * @param int    $file_offset  File offset (in bytes)
+	 * @param int    $timeout      Process timeout (in seconds)
+	 *
+	 * @throws \Ai1wm_Not_Seekable_Exception
+	 * @throws \Ai1wm_Not_Readable_Exception
+	 * @throws \Ai1wm_Quota_Exceeded_Exception
+	 *
+	 * @return bool
+	 */
+	private function extract_to( $file_name, $file_size, $file_mtime, &$file_written = 0, &$file_offset = 0, $timeout = 0 ) {
+		$file_written = 0;
 
-		// set position to current location plus offset
-		$result = fseek( $handle, $offset, SEEK_CUR );
-		if ( -1 === $result ) {
-			if ( ( $meta = stream_get_meta_data( $handle ) ) ) {
-				throw new Ai1wm_Not_Accesible_Exception( sprintf( __( 'Unable to seek to offset %d on %s', AI1WM_PLUGIN_NAME ), $offset, $meta['uri'] ) );
-			}
-		}
-	}
+		// Flag to hold if file data has been processed
+		$completed = true;
 
-	private function extract_to( $file, $data, $offset = 0, $timeout = 0 ) {
-		// should the extract overwrite the file if it exists?
-		if ( $offset ) {
-			$handle = $this->open_file_for_writing( $file );
-		} else {
-			$handle = $this->open_file_for_overwriting( $file );
-		}
-
-		// get data file pointer
-		$data_file_pointer = $this->get_file_pointer();
-
-		// set data file pointer
-		$this->set_file_pointer( $this->file_handle, $offset );
-
-		// set file size
-		$data['size'] -= $offset;
-
-		// start time
+		// Start time
 		$start = microtime( true );
 
-		// is the filesize more than 0 bytes?
-		while ( $data['size'] > 0 ) {
-			// read the file in chunks of 512KB
-			$chunk_size = $data['size'] > 512000 ? 512000 : $data['size'];
-
-			// read the file in chunks of 512KB from archiver
-			$content = $this->read_from_handle( $this->file_handle, $chunk_size );
-
-			// remove the amount of bytes we read
-			$data['size'] -= $chunk_size;
-
-			// write file contents
-			$this->write_to_handle( $handle, $content );
-
-			// time elapsed
-			if ( $timeout ) {
-				if ( ( microtime( true ) - $start ) > $timeout ) {
-					// set file offset
-					$offset = $this->get_file_pointer() - $data_file_pointer;
-
-					// set file pointer
-					$this->set_file_pointer( $this->file_handle, -$offset );
-
-					// rewind file pointer
-					$this->set_file_pointer( $this->file_handle, -4377 );
-
-					// close the handle
-					ai1wm_close( $handle );
-
-					// get file offset
-					return $offset;
-				}
+		// Seek to file offset to archive file
+		if ( $file_offset > 0 ) {
+			if ( @fseek( $this->file_handle, $file_offset, SEEK_CUR ) === -1 ) {
+				throw new Ai1wm_Not_Seekable_Exception( sprintf( 'Unable to seek to offset on file. File: %s Offset: %d', $this->file_name, $file_size ) );
 			}
 		}
 
-		// close the handle
-		ai1wm_close( $handle );
+		// Set file size
+		$file_size -= $file_offset;
 
-		// let's apply last modified date
-		$this->set_mtime_of_file( $file, $data['mtime'] );
+		// Should the extract overwrite the file if it exists?
+		if ( ( $file_handle = @fopen( $file_name, ( $file_offset === 0 ? 'wb' : 'ab' ) ) ) !== false ) {
+			$file_bytes = 0;
 
-		// all files should chmoded to 644
-		$this->set_file_mode( $file, $this->get_permissions_for_file() );
+			// Is the filesize more than 0 bytes?
+			while ( $file_size > 0 ) {
 
-		return 0;
+				// Read the file in chunks of 512KB
+				$chunk_size = $file_size > 512000 ? 512000 : $file_size;
+
+				// Read data chunk by chunk from archive file
+				if ( $chunk_size > 0 ) {
+					$file_content = null;
+
+					// Read the file in chunks of 512KB from archiver
+					if ( ( $file_content = @fread( $this->file_handle, $chunk_size ) ) === false ) {
+						throw new Ai1wm_Not_Readable_Exception( sprintf( 'Unable to read content from file. File: %s', $this->file_name ) );
+					}
+
+					// Remove the amount of bytes we read
+					$file_size -= $chunk_size;
+
+					// Write file contents
+					if ( ( $file_bytes = @fwrite( $file_handle, $file_content ) ) !== false ) {
+						if ( strlen( $file_content ) !== $file_bytes ) {
+							throw new Ai1wm_Quota_Exceeded_Exception( sprintf( 'Out of disk space. Unable to write content to file. File: %s', $file_name ) );
+						}
+					}
+
+					// Set file written
+					$file_written += $chunk_size;
+				}
+
+				// Time elapsed
+				if ( $timeout ) {
+					if ( ( microtime( true ) - $start ) > $timeout ) {
+						$completed = false;
+						break;
+					}
+				}
+			}
+
+			// Set file offset
+			$file_offset += $file_written;
+
+			// Close the handle
+			@fclose( $file_handle );
+
+			// Let's apply last modified date
+			@touch( $file_name, $file_mtime );
+
+			// All files should chmoded to 644
+			@chmod( $file_name, $this->get_permissions_for_file() );
+
+		} else {
+
+			// We don't have file permissions, skip file content
+			if ( @fseek( $this->file_handle, $file_size, SEEK_CUR ) === -1 ) {
+				throw new Ai1wm_Not_Seekable_Exception( sprintf( 'Unable to seek to offset on file. File: %s Offset: %d', $this->file_name, $file_size ) );
+			}
+		}
+
+		return $completed;
 	}
 
-	private function set_mtime_of_file( $file, $mtime ) {
-		return @touch( $file, $mtime );
-	}
-
-	private function set_file_mode( $file, $mode = 0644 ) {
-		return @chmod( $file, $mode );
-	}
-
+	/**
+	 * Get file header data from the block
+	 *
+	 * @param string $block Binary file header
+	 *
+	 * @return array
+	 */
 	private function get_data_from_block( $block ) {
+		$data = false;
+
 		// prepare our array keys to unpack
 		$format = array(
 			$this->block_format[0] . 'filename/',
@@ -380,15 +477,27 @@ class Ai1wm_Extractor extends Ai1wm_Archiver {
 		);
 		$format = implode( '', $format );
 
-		$data = unpack( $format, $block );
+		// Unpack file header data
+		if ( ( $data = unpack( $format, $block ) ) ) {
 
-		$data['filename'] = trim( $data['filename'] );
-		$data['size']     = trim( $data['size'] );
-		$data['mtime']    = trim( $data['mtime'] );
-		$data['path']     = trim( $data['path'] );
+			// Set file details
+			$data['filename'] = trim( $data['filename'] );
+			$data['size']     = trim( $data['size'] );
+			$data['mtime']    = trim( $data['mtime'] );
+			$data['path']     = trim( $data['path'] );
 
-		// current file size
-		$this->current_filesize = $data['size'];
+			// Set file name
+			$data['filename'] = ( $data['path'] === '.' ? $data['filename'] : $data['path'] . DIRECTORY_SEPARATOR . $data['filename'] );
+
+			// Set file path
+			$data['path'] = ( $data['path'] === '.' ? null : $data['path'] );
+
+			// Replace forward slash with current directory separator
+			$data['filename'] = str_replace( '/', DIRECTORY_SEPARATOR, $data['filename'] );
+
+			// Replace forward slash with current directory separator
+			$data['path'] = str_replace( '/', DIRECTORY_SEPARATOR, $data['path'] );
+		}
 
 		return $data;
 	}
@@ -400,7 +509,7 @@ class Ai1wm_Extractor extends Ai1wm_Archiver {
 	 * @return bool
 	 */
 	public function has_reached_eof() {
-		return feof( $this->file_handle );
+		return @feof( $this->file_handle );
 	}
 
 	/**
@@ -410,33 +519,13 @@ class Ai1wm_Extractor extends Ai1wm_Archiver {
 	 * @return bool
 	 */
 	public function has_not_reached_eof() {
-		return ! feof( $this->file_handle );
-	}
-
-	/**
-	 * Get current file pointer
-	 *
-	 * return int
-	 */
-	public function get_file_pointer() {
-		$result = ftell( $this->file_handle );
-
-		if ( false === $result ) {
-			throw new Ai1wm_Not_Accesible_Exception(
-				sprintf(
-					__( 'Unable to get current pointer position of %s', AI1WM_PLUGIN_NAME ),
-					$this->filename
-				)
-			);
-		}
-
-		return $result;
+		return ! @feof( $this->file_handle );
 	}
 
 	/**
 	 * Get directory permissions
 	 *
-	 * return int
+	 * @return int
 	 */
 	public function get_permissions_for_directory() {
 		if ( defined( 'FS_CHMOD_DIR' ) ) {
@@ -449,7 +538,7 @@ class Ai1wm_Extractor extends Ai1wm_Archiver {
 	/**
 	 * Get file permissions
 	 *
-	 * return int
+	 * @return int
 	 */
 	public function get_permissions_for_file() {
 		if ( defined( 'FS_CHMOD_FILE' ) ) {
@@ -458,5 +547,4 @@ class Ai1wm_Extractor extends Ai1wm_Archiver {
 
 		return 0644;
 	}
-
 }

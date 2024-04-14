@@ -32,30 +32,43 @@ class Ai1wm_Report_Controller {
 			$params = stripslashes_deep( $_POST );
 		}
 
-		// Set E-mail
+		// Set secret key
+		$secret_key = null;
+		if ( isset( $params['secret_key'] ) ) {
+			$secret_key = trim( $params['secret_key'] );
+		}
+
+		// Set e-mail
 		$email = null;
 		if ( isset( $params['ai1wm_email'] ) ) {
 			$email = trim( $params['ai1wm_email'] );
 		}
 
-		// Set Message
+		// Set message
 		$message = null;
 		if ( isset( $params['ai1wm_message'] ) ) {
 			$message = trim( $params['ai1wm_message'] );
 		}
 
-		// Set Terms
+		// Set terms
 		$terms = false;
 		if ( isset( $params['ai1wm_terms'] ) ) {
 			$terms = (bool) $params['ai1wm_terms'];
 		}
 
+		try {
+			// Ensure that unauthorized people cannot access report action
+			ai1wm_verify_secret_key( $secret_key );
+		} catch ( Ai1wm_Not_Valid_Secret_Key_Exception $e ) {
+			exit;
+		}
+
 		$model = new Ai1wm_Report;
 
-		// Send Report
-		$response = $model->add( $email, $message, $terms );
+		// Send report
+		$errors = $model->add( $email, $message, $terms );
 
-		echo json_encode( $response );
+		echo json_encode( array( 'errors' => $errors ) );
 		exit;
 	}
 }

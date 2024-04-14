@@ -26,45 +26,11 @@
 abstract class Ai1wm_Archiver {
 
 	/**
-	 * Header block format of a file
-	 *
-	 * Field Name    Offset    Length    Contents
-	 * name               0       255    filename (no path, no slash)
-	 * size             255        14    size of file contents
-	 * mtime            269        12    last modification time
-	 * prefix           281      4096    path name, no trailing slashes
-	 *
-	 * @type string
-	 */
-	protected $block_format = array(
-		'a255',  // filename
-		'a14',   // size of file contents
-		'a12',   // last time modified
-		'a4096', // path
-	);
-
-	public function get_block_format() {
-		return $this->block_format;
-	}
-
-	public function set_block_format( $block_format ) {
-		$this->block_format = $block_format;
-	}
-
-	/**
 	 * Filename including path to the file
 	 *
 	 * @type string
 	 */
-	protected $filename = null;
-
-	public function get_filename() {
-		return $this->filename;
-	}
-
-	public function set_filename( $filename ) {
-		$this->filename = $filename;
-	}
+	protected $file_name = null;
 
 	/**
 	 * Handle to the file
@@ -73,162 +39,132 @@ abstract class Ai1wm_Archiver {
 	 */
 	protected $file_handle = null;
 
-	public function get_file_handle() {
-		return $this->file_handle;
-	}
-
-	public function set_file_handle( $file_handle ) {
-		$this->file_handle = $file_handle;
-	}
-
 	/**
-	 * Current file size
+	 * Header block format of a file
 	 *
-	 * @type int
+	 * Field Name    Offset    Length    Contents
+	 * name               0       255    filename (no path, no slash)
+	 * size             255        14    size of file contents
+	 * mtime            269        12    last modification time
+	 * prefix           281      4096    path name, no trailing slashes
+	 *
+	 * @type array
 	 */
-	protected $current_filesize = null;
-
-	public function get_current_filesize() {
-		return $this->current_filesize;
-	}
-
-	public function set_current_filesize( $current_filesize ) {
-		$this->current_filesize = $current_filesize;
-	}
+	protected $block_format = array(
+		'a255',  // filename
+		'a14',   // size of file contents
+		'a12',   // last time modified
+		'a4096', // path
+	);
 
 	/**
-	 * End Of File block string
+	 * End of file block string
 	 *
 	 * @type string
 	 */
 	protected $eof = null;
-
-	public function get_eof() {
-		return $this->eof;
-	}
-
-	public function set_eof( $eof ) {
-		$this->eof = $eof;
-	}
 
 	/**
 	 * Default constructor
 	 *
 	 * Initializes filename and end of file block
 	 *
-	 * @param string $filename Archive file
+	 * @param string $file_name Archive file
+	 * @param bool   $write     Read/write mode
 	 */
-	public function __construct( $filename, $write = false ) {
-		// initialize file
-		$this->filename = $filename;
+	public function __construct( $file_name, $write = false ) {
+		$this->file_name = $file_name;
 
-		// initialize end of file
+		// Initialize end of file block
 		$this->eof = pack( 'a4377', '' );
 
-		// open file for writing or reading
+		// Open archive file
 		if ( $write ) {
-			$this->file_handle = $this->open_file_for_writing( $filename );
+			// Open archive file for writing
+			if ( ( $this->file_handle = @fopen( $file_name, 'cb' ) ) === false ) {
+				throw new Ai1wm_Not_Accessible_Exception( sprintf( 'Unable to open file for writing. File: %s', $this->file_name ) );
+			}
+
+			// Seek to end of archive file
+			if ( @fseek( $this->file_handle, 0, SEEK_END ) === -1 ) {
+				throw new Ai1wm_Not_Seekable_Exception( sprintf( 'Unable to seek to end of file. File: %s', $this->file_name ) );
+			}
 		} else {
-			$this->file_handle = $this->open_file_for_reading( $filename );
+			// Open archive file for reading
+			if ( ( $this->file_handle = @fopen( $file_name, 'rb' ) ) === false ) {
+				throw new Ai1wm_Not_Accessible_Exception( sprintf( 'Unable to open file for reading. File: %s', $this->file_name ) );
+			}
 		}
 	}
 
 	/**
-	 * Open the archive for reading
+	 * Set current file pointer
 	 *
-	 * @param string $file File to open
+	 * @param int $offset Archive offset
 	 *
-	 * @return resource
-	 * @throws \Ai1wm_Not_Accesible_Exception
+	 * @throws \Ai1wm_Not_Seekable_Exception
+	 *
+	 * @return void
 	 */
-	protected function open_file_for_reading( $file ) {
-		return $this->open_file_in_mode( $file, 'rb' );
+	public function set_file_pointer( $offset ) {
+		if ( @fseek( $this->file_handle, $offset, SEEK_CUR ) === -1 ) {
+			throw new Ai1wm_Not_Seekable_Exception( sprintf( 'Unable to seek to offset on file. File: %s Offset: %d', $this->file_name, $offset ) );
+		}
 	}
 
 	/**
-	 * Open the archive for writing/appending
+	 * Get current file pointer
 	 *
-	 * @param string $file File to open
+	 * @throws \Ai1wm_Not_Tellable_Exception
 	 *
-	 * @return resource
-	 * @throws \Ai1wm_Not_Accesible_Exception
+	 * @return int
 	 */
-	protected function open_file_for_writing( $file ) {
-		return $this->open_file_in_mode( $file, 'ab' );
+	public function get_file_pointer() {
+		$offset = 0;
+		if ( ( $offset = @ftell( $this->file_handle ) ) === false ) {
+			throw new Ai1wm_Not_Tellable_Exception( sprintf( 'Unable to tell offset on file. File: %s', $this->file_name ) );
+		}
+
+		return $offset;
 	}
 
 	/**
-	 * Open the archive for writing and truncate the file if it exist
+	 * Appends end of file block to the archive file
 	 *
-	 * @param string $file File to open
-	 *
-	 * @return resource
-	 * @throws \Ai1wm_Not_Accesible_Exception
-	 */
-	protected function open_file_for_overwriting( $file ) {
-		return $this->open_file_in_mode( $file, 'wb' );
-	}
-
-	/**
-	 * Opens file in the passed mode
-	 *
-	 * @param string $file File to be opened
-	 * @param string $mode Mode to openthe file in
-	 *
-	 * @return resource
-	 * @throws \Ai1wm_Not_Accesible_Exception
-	 */
-	protected function open_file_in_mode( $file, $mode ) {
-		return ai1wm_open( $file, $mode );
-	}
-
-	/**
-	 * Write data to a handle and check if the data has been written
-	 *
-	 * @param resource $handle File handle
-	 * @param string   $data   Data to be written - binary
-	 *
+	 * @throws \Ai1wm_Not_Seekable_Exception
 	 * @throws \Ai1wm_Not_Writable_Exception
-	 */
-	protected function write_to_handle( $handle, $data ) {
-		return ai1wm_write( $handle, $data );
-	}
-
-	/**
-	 * Read data from a handle
+	 * @throws \Ai1wm_Quota_Exceeded_Exception
 	 *
-	 * @param resource $handle File handle
-	 * @param int      $size   Size of data to be read in bytes
-	 *
-	 * @return string Content that was read
-	 * @throws \Ai1wm_Not_Readable_Exception
-	 */
-	protected function read_from_handle( $handle, $size ) {
-		return ai1wm_read( $handle, $size );
-	}
-
-	/**
-	 * Appends end of file block to the archive
-	 *
-	 * @throws \Ai1wm_Not_Writable_Exception
+	 * @return void
 	 */
 	protected function append_eof() {
-		return $this->write_to_handle( $this->file_handle, $this->eof );
+		// Seek to end of archive file
+		if ( @fseek( $this->file_handle, 0, SEEK_END ) === -1 ) {
+			throw new Ai1wm_Not_Seekable_Exception( sprintf( 'Unable to seek to end of file. File: %s', $this->file_name ) );
+		}
+
+		// Write end of file block
+		if ( ( $file_bytes = @fwrite( $this->file_handle, $this->eof ) ) !== false ) {
+			if ( strlen( $this->eof ) !== $file_bytes ) {
+				throw new Ai1wm_Quota_Exceeded_Exception( sprintf( 'Out of disk space. Unable to write end of block to file. File: %s', $this->file_name ) );
+			}
+		} else {
+			throw new Ai1wm_Not_Writable_Exception( sprintf( 'Unable to write end of block to file. File: %s', $this->file_name ) );
+		}
 	}
 
 	/**
-	 * Validate file
+	 * Validate archive file
 	 *
-	 * return bool
+	 * @return bool
 	 */
 	public function is_valid() {
-		$offset = ftell( $this->file_handle );
-
-		// set file offset
-		if ( fseek( $this->file_handle, -4377, SEEK_END ) !== -1 ) {
-			if ( ai1wm_read( $this->file_handle, 4377 ) === $this->eof ) {
-				if ( fseek( $this->file_handle, $offset, SEEK_SET ) !== -1 ) {
-					return true;
+		if ( ( $offset = @ftell( $this->file_handle ) ) !== false ) {
+			if ( @fseek( $this->file_handle, -4377, SEEK_END ) !== -1 ) {
+				if ( @fread( $this->file_handle, 4377 ) === $this->eof ) {
+					if ( @fseek( $this->file_handle, $offset, SEEK_SET ) !== -1 ) {
+						return true;
+					}
 				}
 			}
 		}
@@ -242,16 +178,16 @@ abstract class Ai1wm_Archiver {
 	 * We either close the file or append the end of file block if complete argument is set to tru
 	 *
 	 * @param  bool $complete Flag to append end of file block
-	 * @return void
 	 *
+	 * @return void
 	 */
 	public function close( $complete = false ) {
-		// are we done appending to the file?
+		// Are we done appending to the file?
 		if ( true === $complete ) {
 			$this->append_eof();
 		}
 
-		// close the file
-		ai1wm_close( $this->file_handle );
+		// Close the file
+		@fclose( $this->file_handle );
 	}
 }

@@ -384,11 +384,13 @@ class Ai1wm_Main_Controller {
 			'ajax' => array(
 				'url' => wp_make_link_relative( admin_url( 'admin-ajax.php?action=ai1wm_feedback' ) ),
 			),
+			'secret_key' => get_option( AI1WM_SECRET_KEY ),
 		) );
 		wp_localize_script( 'ai1wm-js-export', 'ai1wm_report', array(
 			'ajax' => array(
 				'url' => wp_make_link_relative( admin_url( 'admin-ajax.php?action=ai1wm_report' ) ),
 			),
+			'secret_key' => get_option( AI1WM_SECRET_KEY ),
 		) );
 		wp_localize_script( 'ai1wm-js-export', 'ai1wm_export', array(
 			'ajax' => array(
@@ -445,11 +447,13 @@ class Ai1wm_Main_Controller {
 			'ajax' => array(
 				'url' => wp_make_link_relative( admin_url( 'admin-ajax.php?action=ai1wm_feedback' ) ),
 			),
+			'secret_key' => get_option( AI1WM_SECRET_KEY ),
 		) );
 		wp_localize_script( 'ai1wm-js-import', 'ai1wm_report', array(
 			'ajax' => array(
 				'url' => wp_make_link_relative( admin_url( 'admin-ajax.php?action=ai1wm_report' ) ),
 			),
+			'secret_key' => get_option( AI1WM_SECRET_KEY ),
 		) );
 		wp_localize_script( 'ai1wm-js-import', 'ai1wm_import', array(
 			'ajax' => array(
@@ -515,16 +519,19 @@ class Ai1wm_Main_Controller {
 			'ajax' => array(
 				'url' => wp_make_link_relative( admin_url( 'admin-ajax.php?action=ai1wm_feedback' ) ),
 			),
+			'secret_key' => get_option( AI1WM_SECRET_KEY ),
 		) );
 		wp_localize_script( 'ai1wm-js-backups', 'ai1wm_report', array(
 			'ajax' => array(
 				'url' => wp_make_link_relative( admin_url( 'admin-ajax.php?action=ai1wm_report' ) ),
 			),
+			'secret_key' => get_option( AI1WM_SECRET_KEY ),
 		) );
 		wp_localize_script( 'ai1wm-js-backups', 'ai1wm_backups', array(
 			'ajax' => array(
 				'url' => wp_make_link_relative( admin_url( 'admin-ajax.php?action=ai1wm_backups' ) ),
 			),
+			'secret_key' => get_option( AI1WM_SECRET_KEY ),
 		) );
 		wp_localize_script( 'ai1wm-js-backups', 'ai1wm_import', array(
 			'ajax' => array(
@@ -619,23 +626,22 @@ class Ai1wm_Main_Controller {
 		add_action( 'wp_ajax_nopriv_ai1wm_import', 'Ai1wm_Import_Controller::import' );
 		add_action( 'wp_ajax_nopriv_ai1wm_status', 'Ai1wm_Status_Controller::status' );
 		add_action( 'wp_ajax_nopriv_ai1wm_resolve', 'Ai1wm_Resolve_Controller::resolve' );
+		add_action( 'wp_ajax_nopriv_ai1wm_backups', 'Ai1wm_Backups_Controller::delete' );
+		add_action( 'wp_ajax_nopriv_ai1wm_feedback', 'Ai1wm_Feedback_Controller::feedback' );
+		add_action( 'wp_ajax_nopriv_ai1wm_report', 'Ai1wm_Report_Controller::report' );
 
 		// Private actions
 		add_action( 'wp_ajax_ai1wm_export', 'Ai1wm_Export_Controller::export' );
 		add_action( 'wp_ajax_ai1wm_import', 'Ai1wm_Import_Controller::import' );
 		add_action( 'wp_ajax_ai1wm_status', 'Ai1wm_Status_Controller::status' );
 		add_action( 'wp_ajax_ai1wm_resolve', 'Ai1wm_Resolve_Controller::resolve' );
+		add_action( 'wp_ajax_ai1wm_backups', 'Ai1wm_Backups_Controller::delete' );
+		add_action( 'wp_ajax_ai1wm_feedback', 'Ai1wm_Feedback_Controller::feedback' );
+		add_action( 'wp_ajax_ai1wm_report', 'Ai1wm_Report_Controller::report' );
 
 		// Update
 		if ( current_user_can( 'update_plugins' ) ) {
 			add_action( 'wp_ajax_ai1wm_updater', 'Ai1wm_Updater_Controller::updater' );
-		}
-
-		// Delete backup, send feedback and report problem
-		if ( current_user_can( 'export' ) || current_user_can( 'import' ) ) {
-			add_action( 'wp_ajax_ai1wm_backups', 'Ai1wm_Backups_Controller::delete' );
-			add_action( 'wp_ajax_ai1wm_feedback', 'Ai1wm_Feedback_Controller::feedback' );
-			add_action( 'wp_ajax_ai1wm_report', 'Ai1wm_Report_Controller::report' );
 		}
 	}
 

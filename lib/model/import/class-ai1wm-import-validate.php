@@ -27,18 +27,18 @@ class Ai1wm_Import_Validate {
 
 	public static function execute( $params ) {
 
-		// Set content offset
-		if ( isset( $params['content_offset'] ) ) {
-			$content_offset = (int) $params['content_offset'];
+		// Set file bytes offset
+		if ( isset( $params['file_bytes_offset'] ) ) {
+			$file_bytes_offset = (int) $params['file_bytes_offset'];
 		} else {
-			$content_offset = 0;
+			$file_bytes_offset = 0;
 		}
 
-		// Set archive offset
-		if ( isset( $params['archive_offset'] ) ) {
-			$archive_offset = (int) $params['archive_offset'];
+		// Set archive bytes offset
+		if ( isset( $params['archive_bytes_offset'] ) ) {
+			$archive_bytes_offset = (int) $params['archive_bytes_offset'];
 		} else {
-			$archive_offset = 0;
+			$archive_bytes_offset = 0;
 		}
 
 		// Set progress
@@ -48,7 +48,7 @@ class Ai1wm_Import_Validate {
 		$archive = new Ai1wm_Extractor( ai1wm_archive_path( $params ) );
 
 		// Set the file pointer to the one that we have saved
-		$archive->set_file_pointer( null, $archive_offset );
+		$archive->set_file_pointer( $archive_bytes_offset );
 
 		// Validate the archive file consistency
 		if ( ! $archive->is_valid() ) {
@@ -69,7 +69,7 @@ class Ai1wm_Import_Validate {
 
 		// Check file size of the archive
 		if ( false === $size ) {
-			throw new Ai1wm_Not_Accesible_Exception(
+			throw new Ai1wm_Not_Accessible_Exception(
 				sprintf( __( 'Unable to get the file size of <strong>%s</strong>', AI1WM_PLUGIN_NAME ), $name )
 			);
 		}
@@ -91,25 +91,19 @@ class Ai1wm_Import_Validate {
 			);
 		}
 
+		// Flag to hold if file data has been processed
+		$completed = true;
+
 		if ( $archive->has_not_reached_eof() ) {
+			$file_bytes_written = 0;
 
 			// Unpack package.json, multisite.json and database.sql files
-			if ( ( $current_offset = $archive->extract_by_files_array( ai1wm_storage_path( $params ), array( AI1WM_PACKAGE_NAME, AI1WM_MULTISITE_NAME, AI1WM_DATABASE_NAME ), $content_offset, 10 ) ) ) {
-
-				// Set content offset
-				$content_offset = $current_offset;
-
-				// Set archive offset
-				$archive_offset = $archive->get_file_pointer();
-
-			} else {
-
-				// Set content offset
-				$content_offset = 0;
-
-				// Set archive offset
-				$archive_offset = $archive->get_file_pointer();
+			if ( ( $completed = $archive->extract_by_files_array( ai1wm_storage_path( $params ), array( AI1WM_PACKAGE_NAME, AI1WM_MULTISITE_NAME, AI1WM_DATABASE_NAME ), $file_bytes_written, $file_bytes_offset, 10 ) ) ) {
+				$file_bytes_offset = 0;
 			}
+
+			// Set archive bytes offset
+			$archive_bytes_offset = $archive->get_file_pointer();
 		}
 
 		// End of the archive?
@@ -122,25 +116,25 @@ class Ai1wm_Import_Validate {
 				);
 			}
 
-			// Unset content offset
-			unset( $params['content_offset'] );
+			// Unset file bytes offset
+			unset( $params['file_bytes_offset'] );
 
-			// Unset archive offset
-			unset( $params['archive_offset'] );
+			// Unset archive bytes offset
+			unset( $params['archive_bytes_offset'] );
 
 			// Unset completed flag
 			unset( $params['completed'] );
 
 		} else {
 
-			// Set content offset
-			$params['content_offset'] = $content_offset;
+			// Set file bytes offset
+			$params['file_bytes_offset'] = $file_bytes_offset;
 
-			// Set archive offset
-			$params['archive_offset'] = $archive_offset;
+			// Set archive bytes offset
+			$params['archive_bytes_offset'] = $archive_bytes_offset;
 
 			// Set completed flag
-			$params['completed'] = false;
+			$params['completed'] = $completed;
 		}
 
 		// Close the archive file

@@ -37,18 +37,18 @@ class Ai1wm_Import_Content {
 		// Close handle
 		ai1wm_close( $handle );
 
-		// Set content offset
-		if ( isset( $params['content_offset'] ) ) {
-			$content_offset = (int) $params['content_offset'];
+		// Set file bytes offset
+		if ( isset( $params['file_bytes_offset'] ) ) {
+			$file_bytes_offset = (int) $params['file_bytes_offset'];
 		} else {
-			$content_offset = 0;
+			$file_bytes_offset = 0;
 		}
 
-		// Set archive offset
-		if ( isset( $params['archive_offset'] ) ) {
-			$archive_offset = (int) $params['archive_offset'];
+		// Set archive bytes offset
+		if ( isset( $params['archive_bytes_offset'] ) ) {
+			$archive_bytes_offset = (int) $params['archive_bytes_offset'];
 		} else {
-			$archive_offset = 0;
+			$archive_bytes_offset = 0;
 		}
 
 		// Get total files count
@@ -65,20 +65,21 @@ class Ai1wm_Import_Content {
 			$total_files_size = 1;
 		}
 
-		// Get processed files
-		if ( isset( $params['processed'] ) ) {
-			$processed = (int) $params['processed'];
+		// Get processed files size
+		if ( isset( $params['processed_files_size'] ) ) {
+			$processed_files_size = (int) $params['processed_files_size'];
 		} else {
-			$processed = 0;
+			$processed_files_size = 0;
 		}
 
 		// What percent of files have we processed?
-		$progress = (int) ( ( $processed / $total_files_size ) * 100 );
+		$progress = (int) min( ( $processed_files_size / $total_files_size ) * 100, 100 );
 
 		// Set progress
-		if ( empty( $content_offset ) ) {
-			Ai1wm_Status::info( sprintf( __( 'Restoring %d files...<br />%d%% complete', AI1WM_PLUGIN_NAME ), $total_files_count, $progress ) );
-		}
+		Ai1wm_Status::info( sprintf( __( 'Restoring %d files...<br />%d%% complete', AI1WM_PLUGIN_NAME ), $total_files_count, $progress ) );
+
+		// Flag to hold if file data has been processed
+		$completed = true;
 
 		// Start time
 		$start = microtime( true );
@@ -87,7 +88,7 @@ class Ai1wm_Import_Content {
 		$archive = new Ai1wm_Extractor( ai1wm_archive_path( $params ) );
 
 		// Set the file pointer to the one that we have saved
-		$archive->set_file_pointer( null, $archive_offset );
+		$archive->set_file_pointer( $archive_bytes_offset );
 
 		$old_paths = array();
 		$new_paths = array();
@@ -139,58 +140,39 @@ class Ai1wm_Import_Content {
 		}
 
 		while ( $archive->has_not_reached_eof() ) {
-			try {
+			$file_bytes_written = 0;
 
-				// Exclude WordPress files
-				$exclude_files = array_keys( _get_dropins() );
+			// Exclude WordPress files
+			$exclude_files = array_keys( _get_dropins() );
 
-				// Exclude plugin files
-				$exclude_files = array_merge( $exclude_files, array(
-					AI1WM_PACKAGE_NAME,
-					AI1WM_MULTISITE_NAME,
-					AI1WM_DATABASE_NAME,
-					AI1WM_MUPLUGINS_NAME,
-				) );
+			// Exclude plugin files
+			$exclude_files = array_merge( $exclude_files, array(
+				AI1WM_PACKAGE_NAME,
+				AI1WM_MULTISITE_NAME,
+				AI1WM_DATABASE_NAME,
+				AI1WM_MUPLUGINS_NAME,
+			) );
 
-				// Extract a file from archive to WP_CONTENT_DIR
-				if ( ( $current_offset = $archive->extract_one_file_to( WP_CONTENT_DIR, $exclude_files, $old_paths, $new_paths, $content_offset, 10 ) ) ) {
-
-					// What percent of files have we processed?
-					if ( ( $processed += ( $current_offset - $content_offset ) ) ) {
-						$progress = (int) ( ( $processed / $total_files_size ) * 100 );
-					}
-
-					// Set progress
-					Ai1wm_Status::info( sprintf( __( 'Restoring %d files...<br />%d%% complete', AI1WM_PLUGIN_NAME ), $total_files_count, $progress ) );
-
-					// Set content offset
-					$content_offset = $current_offset;
-
-					// Set archive offset
-					$archive_offset = $archive->get_file_pointer();
-
-					break;
-				}
-
-				// Increment processed files
-				if ( empty( $content_offset ) ) {
-					$processed += $archive->get_current_filesize();
-				}
-
-				// Set content offset
-				$content_offset = 0;
-
-				// Set archive offset
-				$archive_offset = $archive->get_file_pointer();
-
-			} catch ( Ai1wm_Quota_Exceeded_Exception $e ) {
-				throw new Exception( 'Out of disk space.' );
-			} catch ( Exception $e ) {
-				// Skip bad file permissions
+			// Extract a file from archive to WP_CONTENT_DIR
+			if ( ( $completed = $archive->extract_one_file_to( WP_CONTENT_DIR, $exclude_files, $old_paths, $new_paths, $file_bytes_written, $file_bytes_offset, 10 ) ) ) {
+				$file_bytes_offset = 0;
 			}
+
+			// Set archive bytes offset
+			$archive_bytes_offset = $archive->get_file_pointer();
+
+			// Increment processed files size
+			$processed_files_size += $file_bytes_written;
+
+			// What percent of files have we processed?
+			$progress = (int) min( ( $processed_files_size / $total_files_size ) * 100, 100 );
+
+			// Set progress
+			Ai1wm_Status::info( sprintf( __( 'Restoring %d files...<br />%d%% complete', AI1WM_PLUGIN_NAME ), $total_files_count, $progress ) );
 
 			// More than 10 seconds have passed, break and do another request
 			if ( ( microtime( true ) - $start ) > 10 ) {
+				$completed = false;
 				break;
 			}
 		}
@@ -198,31 +180,31 @@ class Ai1wm_Import_Content {
 		// End of the archive?
 		if ( $archive->has_reached_eof() ) {
 
-			// Unset content offset
-			unset( $params['content_offset'] );
+			// Unset file bytes offset
+			unset( $params['file_bytes_offset'] );
 
-			// Unset archive offset
-			unset( $params['archive_offset'] );
+			// Unset archive bytes offset
+			unset( $params['archive_bytes_offset'] );
 
-			// Unset processed files
-			unset( $params['processed'] );
+			// Unset processed files size
+			unset( $params['processed_files_size'] );
 
 			// Unset completed flag
 			unset( $params['completed'] );
 
 		} else {
 
-			// Set content offset
-			$params['content_offset'] = $content_offset;
+			// Set file bytes offset
+			$params['file_bytes_offset'] = $file_bytes_offset;
 
-			// Set archive offset
-			$params['archive_offset'] = $archive_offset;
+			// Set archive bytes offset
+			$params['archive_bytes_offset'] = $archive_bytes_offset;
 
-			// Set processed files
-			$params['processed'] = $processed;
+			// Set processed files size
+			$params['processed_files_size'] = $processed_files_size;
 
 			// Set completed flag
-			$params['completed'] = false;
+			$params['completed'] = $completed;
 		}
 
 		// Close the archive file

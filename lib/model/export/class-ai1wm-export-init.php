@@ -27,9 +27,18 @@ class Ai1wm_Export_Init {
 
 	public static function execute( $params ) {
 
+		$blog_id = null;
+
+		// Get subsite Blog ID
+		if ( isset( $params['options']['sites'] ) && ( $sites = $params['options']['sites'] ) ) {
+			if ( count( $sites ) === 1 ) {
+				$blog_id = array_shift( $sites );
+			}
+		}
+
 		// Set archive
 		if ( empty( $params['archive'] ) ) {
-			$params['archive'] = ai1wm_archive_file();
+			$params['archive'] = ai1wm_archive_file( $blog_id );
 		}
 
 		// Set storage
