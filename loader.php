@@ -373,6 +373,14 @@ require_once AI1WM_MODEL_PATH .
 
 require_once AI1WM_MODEL_PATH .
 			DIRECTORY_SEPARATOR .
+			'class-ai1wm-message.php';
+
+require_once AI1WM_MODEL_PATH .
+			DIRECTORY_SEPARATOR .
+			'class-ai1wm-notification.php';
+
+require_once AI1WM_MODEL_PATH .
+			DIRECTORY_SEPARATOR .
 			'class-ai1wm-handler.php';
 
 require_once AI1WM_MODEL_PATH .

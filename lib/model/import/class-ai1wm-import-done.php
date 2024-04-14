@@ -170,6 +170,10 @@ class Ai1wm_Import_Done {
 
 		// Set progress
 		Ai1wm_Status::done(
+			__(
+				'Your data has been imported successfully!',
+				AI1WM_PLUGIN_NAME
+			),
 			sprintf(
 				__(
 					'You need to perform two more steps:<br />' .
@@ -178,10 +182,6 @@ class Ai1wm_Import_Done {
 					AI1WM_PLUGIN_NAME
 				),
 				admin_url( 'options-permalink.php#submit' )
-			),
-			__(
-				'Your data has been imported successfully!',
-				AI1WM_PLUGIN_NAME
 			)
 		);
 

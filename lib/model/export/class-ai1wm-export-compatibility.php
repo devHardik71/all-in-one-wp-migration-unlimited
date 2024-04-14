@@ -38,27 +38,10 @@ class Ai1wm_Export_Compatibility {
 			return $params;
 		}
 
-		// Set progress
-		Ai1wm_Status::error( implode( $messages ) );
+		// Enable notifications
+		add_filter( 'ai1wm_notification_error_toggle', '__return_true', 20 );
 
-		// Manual export
-		if ( empty( $params['ai1wm_manual_export'] ) ) {
-			if ( function_exists( 'wp_mail' ) ) {
-
-				// Set recipient
-				$recipient = get_option( 'admin_email', '' );
-
-				// Set subject
-				$subject = __( 'Unable to backup your site', AI1WM_PLUGIN_NAME );
-
-				// Set message
-				$message = sprintf( __( 'All-in-One WP Migration was unable to backup %s. %s', AI1WM_PLUGIN_NAME ), site_url(), implode( $messages ) );
-
-				// Send email
-				wp_mail( $recipient, $subject, $message );
-			}
-		}
-
-		exit;
+		// Error message
+		throw new Ai1wm_Compatibility_Exception( implode( $messages ) );
 	}
 }

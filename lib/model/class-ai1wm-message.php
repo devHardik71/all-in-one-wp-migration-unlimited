@@ -23,20 +23,37 @@
  * ╚══════╝╚══════╝╚═╝  ╚═╝  ╚═══╝  ╚═╝     ╚═╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝
  */
 
-class Ai1wm_Archive_Exception extends Exception {}
-class Ai1wm_Backups_Exception extends Exception {}
-class Ai1wm_Export_Exception extends Exception {}
-class Ai1wm_Http_Exception extends Exception {}
-class Ai1wm_Import_Exception extends Exception {}
-class Ai1wm_Import_Retry_Exception extends Exception {}
-class Ai1wm_Not_Accessible_Exception extends Exception {}
-class Ai1wm_Not_Seekable_Exception extends Exception {}
-class Ai1wm_Not_Tellable_Exception extends Exception {}
-class Ai1wm_Not_Readable_Exception extends Exception {}
-class Ai1wm_Not_Writable_Exception extends Exception {}
-class Ai1wm_Not_Found_Exception extends Exception {}
-class Ai1wm_Not_Directory_Exception extends Exception {}
-class Ai1wm_Not_Valid_Secret_Key_Exception extends Exception {}
-class Ai1wm_Quota_Exceeded_Exception extends Exception {}
-class Ai1wm_Storage_Exception extends Exception {}
-class Ai1wm_Compatibility_Exception extends Exception {}
+class Ai1wm_Message {
+
+	public static function flash( $type, $message ) {
+		if ( ( $messages = get_option( AI1WM_MESSAGES, array() ) ) !== false ) {
+			return update_option( AI1WM_MESSAGES, array_merge( $messages, array( $type => $message ) ) );
+		}
+
+		return false;
+	}
+
+	public static function has( $type ) {
+		if ( ( $messages = get_option( AI1WM_MESSAGES, array() ) ) ) {
+			if ( isset( $messages[ $type ] ) ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	public static function get( $type ) {
+		$message = null;
+		if ( ( $messages = get_option( AI1WM_MESSAGES, array() ) ) ) {
+			if ( isset( $messages[ $type ] ) && ( $message = $messages[ $type ] ) ) {
+				unset( $messages[ $type ] );
+			}
+
+			// Set messages
+			update_option( AI1WM_MESSAGES, $messages );
+		}
+
+		return $message;
+	}
+}

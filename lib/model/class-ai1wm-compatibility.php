@@ -24,6 +24,7 @@
  */
 
 class Ai1wm_Compatibility {
+
 	public static function get( $params ) {
 		$extensions = Ai1wm_Extensions::get();
 
@@ -52,12 +53,16 @@ class Ai1wm_Compatibility {
 	public static function check( $extension ) {
 		if ( $extension['version'] !== 'develop' ) {
 			if ( version_compare( $extension['version'], $extension['requires'], '<' ) ) {
-				$plugin = get_plugin_data( sprintf( '%s/%s', WP_PLUGIN_DIR, $extension['basename'] ) );
-				return sprintf( __(
-					'<strong>%s</strong> is not the latest version. ' .
-					'You must update the plugin before you can use it. ',
-					AI1WM_PLUGIN_NAME
-				), $plugin['Name'] );
+				if ( ( $plugin = get_plugin_data( sprintf( '%s/%s', WP_PLUGIN_DIR, $extension['basename'] ) ) ) ) {
+					return sprintf(
+						__(
+							'<strong>%s</strong> is not the latest version. ' .
+							'You must update the plugin before you can use it. <br />',
+							AI1WM_PLUGIN_NAME
+						),
+						$plugin['Name']
+					);
+				}
 			}
 		}
 	}

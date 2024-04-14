@@ -25,36 +25,36 @@
 
 class Ai1wm_Status {
 
-	public static function error( $message, $title = null ) {
-		self::log( array( 'type' => 'error', 'message' => $message, 'title' => $title ) );
+	public static function error( $title, $message ) {
+		self::log( array( 'type' => 'error', 'title' => $title, 'message' => $message ) );
 	}
 
-	public static function info( $message, $title = null ) {
-		self::log( array( 'type' => 'info', 'message' => $message, 'title' => $title ) );
+	public static function info( $message ) {
+		self::log( array( 'type' => 'info', 'message' => $message ) );
 	}
 
-	public static function download( $message, $title = null ) {
-		self::log( array( 'type' => 'download', 'message' => $message, 'title' => $title ) );
+	public static function download( $message ) {
+		self::log( array( 'type' => 'download', 'message' => $message ) );
 	}
 
-	public static function confirm( $message, $title = null ) {
-		self::log( array( 'type' => 'confirm', 'message' => $message, 'title' => $title ) );
+	public static function confirm( $message ) {
+		self::log( array( 'type' => 'confirm', 'message' => $message ) );
 	}
 
-	public static function done( $message, $title = null ) {
-		self::log( array( 'type' => 'done', 'message' => $message, 'title' => $title ) );
+	public static function done( $title, $message ) {
+		self::log( array( 'type' => 'done', 'title' => $title, 'message' => $message ) );
 	}
 
-	public static function blogs( $message, $title = null ) {
-		self::log( array( 'type' => 'blogs', 'message' => $message, 'title' => $title ) );
+	public static function blogs( $title, $message ) {
+		self::log( array( 'type' => 'blogs', 'title' => $title, 'message' => $message ) );
 	}
 
-	public static function progress( $percent, $title = null ) {
-		self::log( array( 'type' => 'progress', 'percent' => $percent, 'title' => $title ) );
+	public static function progress( $percent ) {
+		self::log( array( 'type' => 'progress', 'percent' => $percent ) );
 	}
 
-	public static function log( $data = array() ) {
-		if ( isset( $_REQUEST['ai1wm_manual_export'] ) || isset( $_REQUEST['ai1wm_manual_import'] ) || isset( $_REQUEST['ai1wm_manual_restore'] ) ) {
+	public static function log( $data ) {
+		if ( ! ai1wm_is_scheduled_backup() ) {
 			update_option( AI1WM_STATUS, $data );
 		}
 	}

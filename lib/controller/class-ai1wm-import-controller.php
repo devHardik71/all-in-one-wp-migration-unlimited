@@ -89,7 +89,8 @@ class Ai1wm_Import_Controller {
 							echo json_encode( array( 'errors' => array( array( 'code' => $e->getCode(), 'message' => $e->getMessage() ) ) ) );
 							exit;
 						} catch ( Exception $e ) {
-							Ai1wm_Status::error( $e->getMessage() );
+							Ai1wm_Status::error( __( 'Unable to import', AI1WM_PLUGIN_NAME ), $e->getMessage() );
+							Ai1wm_Notification::error( __( 'Unable to import', AI1WM_PLUGIN_NAME ), $e->getMessage() );
 							Ai1wm_Directory::delete( ai1wm_storage_path( $params ) );
 							exit;
 						}
@@ -128,6 +129,7 @@ class Ai1wm_Import_Controller {
 			apply_filters( 'ai1wm_import_onedrive', Ai1wm_Template::get_content( 'import/button-onedrive' ) ),
 			apply_filters( 'ai1wm_import_box', Ai1wm_Template::get_content( 'import/button-box' ) ),
 			apply_filters( 'ai1wm_import_mega', Ai1wm_Template::get_content( 'import/button-mega' ) ),
+			apply_filters( 'ai1wm_import_digitalocean', Ai1wm_Template::get_content( 'import/button-digitalocean' ) ),
 		);
 	}
 

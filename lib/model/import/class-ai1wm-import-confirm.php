@@ -57,7 +57,7 @@ class Ai1wm_Import_Confirm {
 		}
 
 		// Set progress
-		Ai1wm_Status::confirm( implode( null, $messages ) );
+		Ai1wm_Status::confirm( implode( $messages ) );
 		exit;
 	}
 }

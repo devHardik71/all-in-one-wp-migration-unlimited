@@ -85,7 +85,8 @@ class Ai1wm_Export_Controller {
 							Ai1wm_Log::export( $params );
 
 						} catch ( Exception $e ) {
-							Ai1wm_Status::error( $e->getMessage() );
+							Ai1wm_Status::error( __( 'Unable to export', AI1WM_PLUGIN_NAME ), $e->getMessage() );
+							Ai1wm_Notification::error( __( 'Unable to export', AI1WM_PLUGIN_NAME ), $e->getMessage() );
 							Ai1wm_Directory::delete( ai1wm_storage_path( $params ) );
 							exit;
 						}
@@ -123,6 +124,7 @@ class Ai1wm_Export_Controller {
 			apply_filters( 'ai1wm_export_onedrive', Ai1wm_Template::get_content( 'export/button-onedrive' ) ),
 			apply_filters( 'ai1wm_export_box', Ai1wm_Template::get_content( 'export/button-box' ) ),
 			apply_filters( 'ai1wm_export_mega', Ai1wm_Template::get_content( 'export/button-mega' ) ),
+			apply_filters( 'ai1wm_export_digitalocean', Ai1wm_Template::get_content( 'export/button-digitalocean' ) ),
 		);
 	}
 }

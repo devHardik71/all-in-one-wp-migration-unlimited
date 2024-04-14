@@ -38,9 +38,10 @@ class Ai1wm_Import_Compatibility {
 			return $params;
 		}
 
-		// Set progress
-		Ai1wm_Status::error( implode( $messages ) );
+		// Enable notifications
+		add_filter( 'ai1wm_notification_error_toggle', '__return_true', 20 );
 
-		exit;
+		// Error message
+		throw new Ai1wm_Compatibility_Exception( implode( $messages ) );
 	}
 }

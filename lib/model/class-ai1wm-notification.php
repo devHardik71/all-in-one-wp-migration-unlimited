@@ -23,20 +23,59 @@
  * ╚══════╝╚══════╝╚═╝  ╚═╝  ╚═══╝  ╚═╝     ╚═╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝
  */
 
-class Ai1wm_Archive_Exception extends Exception {}
-class Ai1wm_Backups_Exception extends Exception {}
-class Ai1wm_Export_Exception extends Exception {}
-class Ai1wm_Http_Exception extends Exception {}
-class Ai1wm_Import_Exception extends Exception {}
-class Ai1wm_Import_Retry_Exception extends Exception {}
-class Ai1wm_Not_Accessible_Exception extends Exception {}
-class Ai1wm_Not_Seekable_Exception extends Exception {}
-class Ai1wm_Not_Tellable_Exception extends Exception {}
-class Ai1wm_Not_Readable_Exception extends Exception {}
-class Ai1wm_Not_Writable_Exception extends Exception {}
-class Ai1wm_Not_Found_Exception extends Exception {}
-class Ai1wm_Not_Directory_Exception extends Exception {}
-class Ai1wm_Not_Valid_Secret_Key_Exception extends Exception {}
-class Ai1wm_Quota_Exceeded_Exception extends Exception {}
-class Ai1wm_Storage_Exception extends Exception {}
-class Ai1wm_Compatibility_Exception extends Exception {}
+class Ai1wm_Notification {
+
+	public static function ok( $subject, $message ) {
+		// Enable notifications
+		if ( ! apply_filters( 'ai1wm_notification_ok_toggle', false ) ) {
+			return;
+		}
+
+		// Set email
+		if ( ! ( $email = apply_filters( 'ai1wm_notification_ok_email', get_option( 'admin_email', false ) ) ) ) {
+			return;
+		}
+
+		// Set subject
+		if ( ! ( $subject = apply_filters( 'ai1wm_notification_ok_subject', $subject ) ) ) {
+			return;
+		}
+
+		// Set message
+		if ( ! ( $message = apply_filters( 'ai1wm_notification_ok_message', $message ) ) ) {
+			return;
+		}
+
+		// Send email
+		if ( ai1wm_is_scheduled_backup() ) {
+			wp_mail( $email, $subject, $message, array( 'Content-Type: text/html; charset=UTF-8' ) );
+		}
+	}
+
+	public static function error( $subject, $message ) {
+		// Enable notifications
+		if ( ! apply_filters( 'ai1wm_notification_error_toggle', false ) ) {
+			return;
+		}
+
+		// Set email
+		if ( ! ( $email = apply_filters( 'ai1wm_notification_error_email', get_option( 'admin_email', false ) ) ) ) {
+			return;
+		}
+
+		// Set subject
+		if ( ! ( $subject = apply_filters( 'ai1wm_notification_error_subject', $subject ) ) ) {
+			return;
+		}
+
+		// Set message
+		if ( ! ( $message = apply_filters( 'ai1wm_notification_error_message', $message ) ) ) {
+			return;
+		}
+
+		// Send email
+		if ( ai1wm_is_scheduled_backup() ) {
+			wp_mail( $email, $subject, $message, array( 'Content-Type: text/html; charset=UTF-8' ) );
+		}
+	}
+}

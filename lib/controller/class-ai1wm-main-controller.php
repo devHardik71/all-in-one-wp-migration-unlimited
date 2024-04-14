@@ -126,8 +126,8 @@ class Ai1wm_Main_Controller {
 		add_filter( 'ai1wm_export', 'Ai1wm_Export_Init::execute', 5 );
 		add_filter( 'ai1wm_export', 'Ai1wm_Export_Compatibility::execute', 5 );
 
-		// Do not resolve URL address
-		if ( ! isset( $_REQUEST['ai1wm_manual_export'] ) ) {
+		// Resolve URL address
+		if ( ai1wm_is_scheduled_backup() ) {
 			add_filter( 'ai1wm_export', 'Ai1wm_Export_Resolve::execute', 5 );
 		}
 
@@ -144,8 +144,8 @@ class Ai1wm_Main_Controller {
 		add_filter( 'ai1wm_import', 'Ai1wm_Import_Upload::execute', 5 );
 		add_filter( 'ai1wm_import', 'Ai1wm_Import_Compatibility::execute', 10 );
 
-		// Do not resolve URL address
-		if ( ! isset( $_REQUEST['ai1wm_manual_import'] ) && ! isset( $_REQUEST['ai1wm_manual_restore'] ) ) {
+		// Resolve URL address
+		if ( ai1wm_is_scheduled_backup() ) {
 			add_filter( 'ai1wm_import', 'Ai1wm_Import_Resolve::execute', 10 );
 		}
 
