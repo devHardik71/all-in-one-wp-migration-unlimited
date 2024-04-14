@@ -53,6 +53,12 @@ class Ai1wm_Compressor extends Ai1wm_Archiver {
 	public function add_file( $file_name, $new_file_name = '', &$file_written = 0, &$file_offset = 0, $timeout = 0 ) {
 		$file_written = 0;
 
+		// Replace / with DIRECTORY_SEPARATOR in file name
+		$file_name = str_replace( '/', DIRECTORY_SEPARATOR, $file_name );
+
+		// Replace \ with \\ in file name (Windows)
+		$file_name = str_replace( '\\', '\\\\', $file_name );
+
 		// Flag to hold if file data has been processed
 		$completed = true;
 

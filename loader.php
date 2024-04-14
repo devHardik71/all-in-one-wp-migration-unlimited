@@ -238,6 +238,10 @@ require_once AI1WM_EXPORT_PATH .
 
 require_once AI1WM_EXPORT_PATH .
 			DIRECTORY_SEPARATOR .
+			'class-ai1wm-export-database-file.php';
+
+require_once AI1WM_EXPORT_PATH .
+			DIRECTORY_SEPARATOR .
 			'class-ai1wm-export-download.php';
 
 require_once AI1WM_EXPORT_PATH .

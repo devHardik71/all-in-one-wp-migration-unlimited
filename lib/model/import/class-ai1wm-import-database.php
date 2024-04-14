@@ -619,7 +619,7 @@ class Ai1wm_Import_Database {
 		if ( $mysql->import( ai1wm_database_path( $params ), $query_offset, 10 ) ) {
 
 			// Set progress
-			Ai1wm_Status::info( __( 'Done restoring database...', AI1WM_PLUGIN_NAME ) );
+			Ai1wm_Status::info( __( 'Done restoring database.', AI1WM_PLUGIN_NAME ) );
 
 			// Unset query offset
 			unset( $params['query_offset'] );

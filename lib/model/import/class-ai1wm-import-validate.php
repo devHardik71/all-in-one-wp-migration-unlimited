@@ -27,6 +27,17 @@ class Ai1wm_Import_Validate {
 
 	public static function execute( $params ) {
 
+		// Verify file if size > 2GB and PHP = 32-bit
+		if ( ! ai1wm_is_filesize_supported( ai1wm_archive_path( $params ) ) ) {
+			throw new Ai1wm_Import_Exception(
+				__(
+					'Your PHP is 32-bit. In order to import your file, please change your PHP version to 64-bit and try again. ' .
+					'<a href="https://help.servmask.com/knowledgebase/php-32bit/" target="_blank">Technical details</a>',
+					AI1WM_PLUGIN_NAME
+				)
+			);
+		}
+
 		// Set file bytes offset
 		if ( isset( $params['file_bytes_offset'] ) ) {
 			$file_bytes_offset = (int) $params['file_bytes_offset'];
@@ -41,8 +52,14 @@ class Ai1wm_Import_Validate {
 			$archive_bytes_offset = 0;
 		}
 
+		// Obtain the size of the archive
+		$total_files_size = ai1wm_archive_bytes( $params );
+
+		// What percent of files have we processed?
+		$progress = (int) min( ( $archive_bytes_offset / $total_files_size ) * 100, 100 );
+
 		// Set progress
-		Ai1wm_Status::info( __( 'Unpacking archive...', AI1WM_PLUGIN_NAME ) );
+		Ai1wm_Status::info( sprintf( __( 'Unpacking archive...<br />%d%% complete', AI1WM_PLUGIN_NAME ), $progress ) );
 
 		// Open the archive file for reading
 		$archive = new Ai1wm_Extractor( ai1wm_archive_path( $params ) );
@@ -54,30 +71,17 @@ class Ai1wm_Import_Validate {
 		if ( ! $archive->is_valid() ) {
 			throw new Ai1wm_Import_Exception(
 				__(
-					'The archive file is corrupted. Follow this article to resolve the problem: ' .
-					'<a href="https://help.servmask.com/knowledgebase/corrupted-archive/" target="_blank">https://help.servmask.com/knowledgebase/corrupted-archive/</a>',
+					'The archive file is corrupted. Follow ' .
+					'<a href="https://help.servmask.com/knowledgebase/corrupted-archive/" target="_blank">this article</a> to resolve the problem.',
 					AI1WM_PLUGIN_NAME
 				)
-			);
-		}
-
-		// Obtain the name of the archive
-		$name = ai1wm_archive_name( $params );
-
-		// Obtain the size of the archive
-		$size = ai1wm_archive_bytes( $params );
-
-		// Check file size of the archive
-		if ( false === $size ) {
-			throw new Ai1wm_Not_Accessible_Exception(
-				sprintf( __( 'Unable to get the file size of <strong>%s</strong>', AI1WM_PLUGIN_NAME ), $name )
 			);
 		}
 
 		$allowed_size = apply_filters( 'ai1wm_max_file_size', AI1WM_MAX_FILE_SIZE );
 
 		// Let's check the size of the file to make sure it is less than the maximum allowed
-		if ( ( $allowed_size > 0 ) && ( $size > $allowed_size ) ) {
+		if ( ( $allowed_size > 0 ) && ( $total_files_size > $allowed_size ) ) {
 			throw new Ai1wm_Import_Exception(
 				sprintf(
 					__(
@@ -112,9 +116,16 @@ class Ai1wm_Import_Validate {
 			// Check package.json file
 			if ( false === is_file( ai1wm_package_path( $params ) ) ) {
 				throw new Ai1wm_Import_Exception(
-					__( 'Invalid archive file. It should contain <strong>package.json</strong> file.', AI1WM_PLUGIN_NAME )
+					__(
+						'Please make sure that your file was exported using <strong>All-in-One WP Migration</strong> plugin. ' .
+						'<a href="https://help.servmask.com/knowledgebase/invalid-backup-file/" target="_blank">Technical details</a>',
+						AI1WM_PLUGIN_NAME
+					)
 				);
 			}
+
+			// Set progress
+			Ai1wm_Status::info( __( 'Done unpacking archive.', AI1WM_PLUGIN_NAME ) );
 
 			// Unset file bytes offset
 			unset( $params['file_bytes_offset'] );
@@ -126,6 +137,12 @@ class Ai1wm_Import_Validate {
 			unset( $params['completed'] );
 
 		} else {
+
+			// What percent of files have we processed?
+			$progress = (int) min( ( $archive_bytes_offset / $total_files_size ) * 100, 100 );
+
+			// Set progress
+			Ai1wm_Status::info( sprintf( __( 'Unpacking archive...<br />%d%% complete', AI1WM_PLUGIN_NAME ), $progress ) );
 
 			// Set file bytes offset
 			$params['file_bytes_offset'] = $file_bytes_offset;

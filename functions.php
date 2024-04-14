@@ -963,6 +963,32 @@ function ai1wm_find_smaller_number( Math_BigInteger $a, Math_BigInteger $b ) {
 }
 
 /**
+ * Check whether file size is supported by current PHP version
+ *
+ * @param  string  $file         Path to file
+ * @param  integer $php_int_size Size of PHP integer
+ * @return boolean $php_int_max  Max value of PHP integer
+ */
+function ai1wm_is_filesize_supported( $file, $php_int_size = PHP_INT_SIZE, $php_int_max = PHP_INT_MAX ) {
+	$size_result = true;
+
+	// Check whether file size is less than 2GB in PHP 32bits
+	if ( $php_int_size === 4 ) {
+		if ( ( $file_handle = @fopen( $file, 'r' ) ) ) {
+			if ( @fseek( $file_handle, $php_int_max, SEEK_SET ) !== -1 ) {
+				if ( @fgetc( $file_handle ) !== false ) {
+					$size_result = false;
+				}
+			}
+
+			@fclose( $file_handle );
+		}
+	}
+
+	return $size_result;
+}
+
+/**
  * Wrapper around fseek
  *
  * This function works with offsets that are > PHP_INT_MAX

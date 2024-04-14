@@ -34,7 +34,7 @@ class Ai1wm_Export_Resolve {
 		Ai1wm_Http::resolve( admin_url( 'admin-ajax.php?action=ai1wm_resolve' ) );
 
 		// Set progress
-		Ai1wm_Status::info( __( 'Done resolving URL address...', AI1WM_PLUGIN_NAME ) );
+		Ai1wm_Status::info( __( 'Done resolving URL address.', AI1WM_PLUGIN_NAME ) );
 
 		return $params;
 	}

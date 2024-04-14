@@ -558,7 +558,7 @@ abstract class Ai1wm_Database {
 					$table_where = implode( ' AND ', $table_where );
 
 					// Set query with offset and rows count
-					$query = sprintf( 'SELECT t1.* FROM `%s` AS t1 JOIN (SELECT %s FROM `%s` ORDER BY %s LIMIT %d, %d) AS t2 USING (%s) WHERE %s', $table_name, $table_keys, $table_name, $table_keys, $table_offset, 1000, $table_keys, $table_where );
+					$query = sprintf( 'SELECT t1.* FROM `%s` AS t1 JOIN (SELECT %s FROM `%s` WHERE %s ORDER BY %s LIMIT %d, %d) AS t2 USING (%s)', $table_name, $table_keys, $table_name, $table_where, $table_keys, $table_offset, 1000, $table_keys );
 
 				} else {
 
@@ -622,12 +622,12 @@ abstract class Ai1wm_Database {
 							ai1wm_write( $file_handler, "COMMIT;\n" );
 						}
 					}
+				} else {
 
 					// Write end of transaction
 					if ( $table_offset % Ai1wm_Database::QUERIES_PER_TRANSACTION !== 0 ) {
 						ai1wm_write( $file_handler, "COMMIT;\n" );
 					}
-				} else {
 
 					// Set current table offset
 					$table_offset = 0;

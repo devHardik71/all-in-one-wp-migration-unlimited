@@ -164,6 +164,9 @@ class Ai1wm_Extractor extends Ai1wm_Archiver {
 			throw new Ai1wm_Not_Directory_Exception( sprintf( 'Location is not a directory: %s', $location ) );
 		}
 
+		// Replace / with DIRECTORY_SEPARATOR in location
+		$location = str_replace( '/', DIRECTORY_SEPARATOR, $location );
+
 		// Flag to hold if file data has been processed
 		$completed = true;
 
@@ -226,15 +229,21 @@ class Ai1wm_Extractor extends Ai1wm_Archiver {
 							}
 						}
 
+						// Replace \ with \\ in file path (Windows)
+						$file_path = str_replace( '\\', '\\\\', $location . DIRECTORY_SEPARATOR . $file_path );
+
+						// Replace \ with \\ in file name (Windows)
+						$file_name = str_replace( '\\', '\\\\', $location . DIRECTORY_SEPARATOR . $file_name );
+
 						// Check if location doesn't exist, then create it
-						if ( false === is_dir( $location . DIRECTORY_SEPARATOR . $file_path ) ) {
-							@mkdir( $location . DIRECTORY_SEPARATOR . $file_path, $this->get_permissions_for_directory(), true );
+						if ( false === is_dir( $file_path ) ) {
+							@mkdir( $file_path, $this->get_permissions_for_directory(), true );
 						}
 
 						$file_written = 0;
 
 						// We have a match, let's extract the file
-						if ( ( $completed = $this->extract_to( $location . DIRECTORY_SEPARATOR . $file_name, $file_size, $file_mtime, $file_written, $file_offset, $timeout ) ) ) {
+						if ( ( $completed = $this->extract_to( $file_name, $file_size, $file_mtime, $file_written, $file_offset, $timeout ) ) ) {
 							$file_offset = 0;
 						}
 					} else {
@@ -269,6 +278,9 @@ class Ai1wm_Extractor extends Ai1wm_Archiver {
 		if ( false === is_dir( $location ) ) {
 			throw new Ai1wm_Not_Directory_Exception( sprintf( 'Location is not a directory: %s', $location ) );
 		}
+
+		// Replace / with DIRECTORY_SEPARATOR in location
+		$location = str_replace( '/', DIRECTORY_SEPARATOR, $location );
 
 		// Flag to hold if file data has been processed
 		$completed = true;
@@ -326,15 +338,21 @@ class Ai1wm_Extractor extends Ai1wm_Archiver {
 					// Do we have a match?
 					if ( $should_include_file === true ) {
 
+						// Replace \ with \\ in file path (Windows)
+						$file_path = str_replace( '\\', '\\\\', $location . DIRECTORY_SEPARATOR . $file_path );
+
+						// Replace \ with \\ in file name (Windows)
+						$file_name = str_replace( '\\', '\\\\', $location . DIRECTORY_SEPARATOR . $file_name );
+
 						// Check if location doesn't exist, then create it
-						if ( false === is_dir( $location . DIRECTORY_SEPARATOR . $file_path ) ) {
-							@mkdir( $location . DIRECTORY_SEPARATOR . $file_path, $this->get_permissions_for_directory(), true );
+						if ( false === is_dir( $file_path ) ) {
+							@mkdir( $file_path, $this->get_permissions_for_directory(), true );
 						}
 
 						$file_written = 0;
 
 						// We have a match, let's extract the file and remove it from the array
-						if ( ( $completed = $this->extract_to( $location . DIRECTORY_SEPARATOR . $file_name, $file_size, $file_mtime, $file_written, $file_offset, $timeout ) ) ) {
+						if ( ( $completed = $this->extract_to( $file_name, $file_size, $file_mtime, $file_written, $file_offset, $timeout ) ) ) {
 							$file_offset = 0;
 						}
 					} else {
@@ -491,12 +509,12 @@ class Ai1wm_Extractor extends Ai1wm_Archiver {
 			$data['filename'] = ( $data['path'] === '.' ? $data['filename'] : $data['path'] . DIRECTORY_SEPARATOR . $data['filename'] );
 
 			// Set file path
-			$data['path'] = ( $data['path'] === '.' ? null : $data['path'] );
+			$data['path'] = ( $data['path'] === '.' ? '' : $data['path'] );
 
-			// Replace forward slash with current directory separator
+			// Replace / with DIRECTORY_SEPARATOR in file name
 			$data['filename'] = str_replace( '/', DIRECTORY_SEPARATOR, $data['filename'] );
 
-			// Replace forward slash with current directory separator
+			// Replace / with DIRECTORY_SEPARATOR in path
 			$data['path'] = str_replace( '/', DIRECTORY_SEPARATOR, $data['path'] );
 		}
 

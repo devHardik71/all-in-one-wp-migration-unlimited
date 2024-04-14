@@ -136,6 +136,7 @@ class Ai1wm_Main_Controller {
 		add_filter( 'ai1wm_export', 'Ai1wm_Export_Enumerate::execute', 100 );
 		add_filter( 'ai1wm_export', 'Ai1wm_Export_Content::execute', 150 );
 		add_filter( 'ai1wm_export', 'Ai1wm_Export_Database::execute', 200 );
+		add_filter( 'ai1wm_export', 'Ai1wm_Export_Database_File::execute', 220 );
 		add_filter( 'ai1wm_export', 'Ai1wm_Export_Download::execute', 250 );
 		add_filter( 'ai1wm_export', 'Ai1wm_Export_Clean::execute', 300 );
 
@@ -410,7 +411,7 @@ class Ai1wm_Main_Controller {
 	 * @return void
 	 */
 	public function register_export_scripts_and_styles( $hook ) {
-		if ( 'toplevel_page_site-migration-export' !== strtolower( $hook ) ) {
+		if ( stripos( 'toplevel_page_site-migration-export', $hook ) === false ) {
 			return;
 		}
 
@@ -460,7 +461,7 @@ class Ai1wm_Main_Controller {
 	 * @return void
 	 */
 	public function register_import_scripts_and_styles( $hook ) {
-		if ( 'all-in-one-wp-migration_page_site-migration-import' !== strtolower( $hook ) ) {
+		if ( stripos( 'all-in-one-wp-migration_page_site-migration-import', $hook ) === false ) {
 			return;
 		}
 
@@ -545,7 +546,7 @@ class Ai1wm_Main_Controller {
 	 * @return void
 	 */
 	public function register_backups_scripts_and_styles( $hook ) {
-		if ( 'all-in-one-wp-migration_page_site-migration-backups' !== strtolower( $hook ) ) {
+		if ( stripos( 'all-in-one-wp-migration_page_site-migration-backups', $hook ) === false ) {
 			return;
 		}
 

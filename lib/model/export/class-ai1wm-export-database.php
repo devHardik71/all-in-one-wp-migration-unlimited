@@ -127,15 +127,8 @@ class Ai1wm_Export_Database {
 		// Export database
 		if ( $mysql->export( ai1wm_database_path( $params ), $table_index, $table_offset, 10 ) ) {
 
-			// Get archive file
-			$archive = new Ai1wm_Compressor( ai1wm_archive_path( $params ) );
-
-			// Add database to archive
-			$archive->add_file( ai1wm_database_path( $params ), AI1WM_DATABASE_NAME );
-			$archive->close();
-
 			// Set progress
-			Ai1wm_Status::info( __( 'Done exporting database...', AI1WM_PLUGIN_NAME ) );
+			Ai1wm_Status::info( __( 'Done exporting database.', AI1WM_PLUGIN_NAME ) );
 
 			// Unset table index
 			unset( $params['table_index'] );

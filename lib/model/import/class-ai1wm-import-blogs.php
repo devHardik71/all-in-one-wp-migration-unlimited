@@ -121,7 +121,7 @@ class Ai1wm_Import_Blogs {
 		ai1wm_close( $handle );
 
 		// Set progress
-		Ai1wm_Status::info( __( 'Done preparing blogs...', AI1WM_PLUGIN_NAME ) );
+		Ai1wm_Status::info( __( 'Done preparing blogs.', AI1WM_PLUGIN_NAME ) );
 
 		return $params;
 	}

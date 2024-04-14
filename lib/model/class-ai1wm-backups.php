@@ -41,16 +41,24 @@ class Ai1wm_Backups {
 
 		foreach ( $iterator as $item ) {
 			try {
-				$backups[] = array(
-					'filename' => $item->getFilename(),
-					'mtime'    => $item->getMTime(),
-					'size'     => $item->getSize(),
-				);
+				if ( ai1wm_is_filesize_supported( $item->getPathname() ) ) {
+					$backups[] = array(
+						'filename' => $item->getFilename(),
+						'mtime'    => $item->getMTime(),
+						'size'     => $item->getSize(),
+					);
+				} else {
+					$backups[] = array(
+						'filename' => $item->getFilename(),
+						'mtime'    => $item->getMTime(),
+						'size'     => null,
+					);
+				}
 			} catch ( Exception $e ) {
 				$backups[] = array(
 					'filename' => $item->getFilename(),
 					'mtime'    => null,
-					'size'     => ai1wm_filesize( $item->getPathname() ),
+					'size'     => null,
 				);
 			}
 		}
