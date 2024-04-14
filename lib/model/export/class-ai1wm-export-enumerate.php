@@ -103,7 +103,7 @@ class Ai1wm_Export_Enumerate {
 		}
 
 		// Create map file
-		$filemap = ai1wm_open( ai1wm_filemap_path( $params ) , 'a+' );
+		$filemap = ai1wm_open( ai1wm_filemap_path( $params ) , 'w' );
 
 		try {
 
@@ -126,7 +126,7 @@ class Ai1wm_Export_Enumerate {
 						$total_files_count++;
 
 						// Add current file size
-						$total_files_size += filesize( $iterator->getPathname() );
+						$total_files_size += $iterator->getSize();
 					}
 				}
 			}

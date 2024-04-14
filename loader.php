@@ -35,13 +35,15 @@ require_once AI1WM_VENDOR_PATH .
 			'Bandar.php';
 
 
-require_once AI1WM_VENDOR_PATH .
-			DIRECTORY_SEPARATOR .
-			'servmask' .
-			DIRECTORY_SEPARATOR .
-			'command' .
-			DIRECTORY_SEPARATOR .
-			'class-ai1wm-wp-cli-command.php';
+if ( class_exists( 'WP_CLI' ) ) {
+	require_once AI1WM_VENDOR_PATH .
+				DIRECTORY_SEPARATOR .
+				'servmask' .
+				DIRECTORY_SEPARATOR .
+				'command' .
+				DIRECTORY_SEPARATOR .
+				'class-ai1wm-wp-cli-command.php';
+}
 
 require_once AI1WM_VENDOR_PATH .
 			DIRECTORY_SEPARATOR .
