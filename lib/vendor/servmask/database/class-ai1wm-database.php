@@ -129,6 +129,17 @@ abstract class Ai1wm_Database {
 	public function __construct( $wpdb ) {
 		$this->wpdb = $wpdb;
 
+		// Check Microsoft SQL Server support
+		if ( is_resource( $this->wpdb->dbh ) ) {
+			if ( get_resource_type( $this->wpdb->dbh ) === 'SQL Server Connection' ) {
+				throw new Exception(
+					'Your WordPress installation uses Microsoft SQL Server. ' .
+					'In order to use All in One WP Migration, please change your installation to MySQL and try again. ' .
+					'<a href="https://help.servmask.com/knowledgebase/microsoft-sql-server/" target="_blank">Technical details</a>'
+				);
+			}
+		}
+
 		// Set database host (HyberDB)
 		if ( empty( $this->wpdb->dbhost ) ) {
 			if ( isset( $this->wpdb->last_used_server['host'] ) ) {
@@ -493,6 +504,9 @@ abstract class Ai1wm_Database {
 		// Flag to hold if all tables have been processed
 		$completed = true;
 
+		// Set SQL Mode
+		$this->query( "SET SESSION sql_mode = ''" );
+
 		// Get tables
 		$tables = $this->get_tables();
 
@@ -673,11 +687,12 @@ abstract class Ai1wm_Database {
 		// Flag to hold if all tables have been processed
 		$completed = true;
 
-		// Set empty query
-		$query = null;
+		// Set SQL Mode
+		$this->query( "SET SESSION sql_mode = ''" );
 
 		// Set file pointer at the query offset
 		if ( fseek( $file_handler, $query_offset ) !== -1 ) {
+			$query = null;
 
 			// Start transaction
 			$this->query( 'START TRANSACTION' );
@@ -914,13 +929,13 @@ abstract class Ai1wm_Database {
 	protected function replace_table_values( $input ) {
 		// Replace base64 encoded values (Visual Composer)
 		if ( $this->get_visual_composer() ) {
-			$input = preg_replace_callback( '/\[vc_raw_html\](.+?)\[\/vc_raw_html\]/S', array( $this, 'replace_base64_values_callback' ), $input );
+			$input = preg_replace_callback( '/\[vc_raw_html\]([a-zA-Z0-9+\/=]*+)\[\/vc_raw_html\]/S', array( $this, 'replace_base64_values_callback' ), $input );
 		}
 
 		// Replace serialized values
 		foreach ( $this->get_old_replace_values() as $old_value ) {
 			if ( strpos( $input, $this->escape( $old_value ) ) !== false ) {
-				$input = preg_replace_callback( "/'(.*?)(?<!\\\\)'/S", array( $this, 'replace_table_values_callback' ), $input );
+				$input = preg_replace_callback( "/'([^'\\\\]*+(?:\\\\.[^'\\\\]*)*+)'/S", array( $this, 'replace_table_values_callback' ), $input );
 				break;
 			}
 		}

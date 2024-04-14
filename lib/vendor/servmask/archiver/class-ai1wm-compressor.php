@@ -121,7 +121,10 @@ class Ai1wm_Compressor extends Ai1wm_Archiver {
 
 					// Seek to beginning of file size
 					if ( @fseek( $this->file_handle, - $file_offset - 4096 - 12 - 14, SEEK_CUR ) === -1 ) {
-						throw new Ai1wm_Not_Seekable_Exception( sprintf( 'Unable to seek to offset on file. File: %s Offset: %d', $this->file_name, - $file_offset - 4096 - 12 - 14 ) );
+						throw new Ai1wm_Not_Seekable_Exception(
+							'Your PHP is 32-bit. In order to export your file, please change your PHP version to 64-bit and try again. ' .
+							'<a href="https://help.servmask.com/knowledgebase/php-32bit/" target="_blank">Technical details</a>'
+						);
 					}
 
 					// Write file size to file header
@@ -135,7 +138,10 @@ class Ai1wm_Compressor extends Ai1wm_Archiver {
 
 					// Seek to end of file content
 					if ( @fseek( $this->file_handle, + $file_offset + 4096 + 12, SEEK_CUR ) === -1 ) {
-						throw new Ai1wm_Not_Seekable_Exception( sprintf( 'Unable to seek to offset on file. File: %s Offset: %d', $this->file_name, + $file_offset + 4096 + 12 ) );
+						throw new Ai1wm_Not_Seekable_Exception(
+							'Your PHP is 32-bit. In order to export your file, please change your PHP version to 64-bit and try again. ' .
+							'<a href="https://help.servmask.com/knowledgebase/php-32bit/" target="_blank">Technical details</a>'
+						);
 					}
 				}
 			}

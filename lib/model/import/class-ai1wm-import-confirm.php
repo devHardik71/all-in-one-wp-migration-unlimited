@@ -29,7 +29,7 @@ class Ai1wm_Import_Confirm {
 
 		// Set progress
 		Ai1wm_Status::confirm( __(
-			'The import process will overwrite your database, media, plugins, and themes. ' .
+			'The import process will overwrite your website including the database, media, plugins, and themes. ' .
 			'Please ensure that you have a backup of your data before proceeding to the next step.',
 			AI1WM_PLUGIN_NAME
 		) );
