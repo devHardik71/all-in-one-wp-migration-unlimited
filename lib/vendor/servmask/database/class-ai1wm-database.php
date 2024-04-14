@@ -708,6 +708,16 @@ abstract class Ai1wm_Database {
 						// Run SQL query
 						$this->query( $query );
 
+						// Replace table engines (Azure)
+						if ( $this->errno() === 1030 ) {
+
+							// Replace table engines
+							$query = $this->replace_table_engines( $query );
+
+							// Run SQL query
+							$this->query( $query );
+						}
+
 						// Set query offset
 						$query_offset = ftell( $file_handler );
 
@@ -1106,7 +1116,6 @@ abstract class Ai1wm_Database {
 			'ROW_FORMAT=PAGE',
 			'ROW_FORMAT=FIXED',
 			'ROW_FORMAT=DYNAMIC',
-
 		);
 		$replace = array(
 			'ENGINE=InnoDB',
@@ -1121,6 +1130,26 @@ abstract class Ai1wm_Database {
 			'',
 			'',
 			'',
+		);
+
+		return str_ireplace( $search, $replace, $input );
+	}
+
+	/**
+	 * Replace table engines
+	 *
+	 * @param  string $input SQL statement
+	 * @return string
+	 */
+	protected function replace_table_engines( $input ) {
+		// Set table replace engines
+		$search = array(
+			'ENGINE=MyISAM',
+			'ENGINE=Aria',
+		);
+		$replace = array(
+			'ENGINE=InnoDB',
+			'ENGINE=InnoDB',
 		);
 
 		return str_ireplace( $search, $replace, $input );
