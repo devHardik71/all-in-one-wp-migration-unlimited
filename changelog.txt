@@ -299,7 +299,7 @@
 
 = 1.2.0 =
 * Increased upload limit of files from 128MB to 512MB
-* Used ZipArchive with fallback to PclZip (a few users notified us that they don’t have ZipArchive enabled on their servers)
+* Used ZipArchive with fallback to PclZip (a few users notified us that they don't have ZipArchive enabled on their servers)
 * Used PDO with fallback to mysql (a few users notified us that they dont have PDO enabled on their servers, mysql is deprecated as of PHP v5.5 but we are supporting PHP v5.2.17)
 * Supported PHP v5.2.17 and WordPress v3.3 and above
 * Fixed a bug during export that causes plugins to not be exported on some hosts (the problem that you are experiencing)
