@@ -31,7 +31,7 @@ define( 'AI1WM_DEBUG', false );
 // ==================
 // = Plugin Version =
 // ==================
-define( 'AI1WM_VERSION', '6.66' );
+define( 'AI1WM_VERSION', '6.67' );
 
 // ===============
 // = Plugin Name =
@@ -362,7 +362,7 @@ if ( defined( 'AI1WMIE_PLUGIN_BASENAME' ) ) {
 // = DigitalOcean Extension About =
 // ================================
 if ( ! defined( 'AI1WMIE_PLUGIN_ABOUT' ) ) {
-	define( 'AI1WMIE_PLUGIN_ABOUT', 'https://servmask.com/products/digitalocean-extension/about' );
+	define( 'AI1WMIE_PLUGIN_ABOUT', 'https://servmask.com/products/digitalocean-spaces-extension/about' );
 }
 
 // ==============================
