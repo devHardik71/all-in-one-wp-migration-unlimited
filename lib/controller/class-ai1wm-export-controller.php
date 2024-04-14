@@ -86,6 +86,7 @@ class Ai1wm_Export_Controller {
 
 						} catch ( Exception $e ) {
 							Ai1wm_Status::error( $e->getMessage() );
+							Ai1wm_Directory::delete( ai1wm_storage_path( $params ) );
 							exit;
 						}
 					}

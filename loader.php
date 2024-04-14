@@ -40,6 +40,14 @@ require_once AI1WM_VENDOR_PATH .
 			DIRECTORY_SEPARATOR .
 			'filesystem' .
 			DIRECTORY_SEPARATOR .
+			'class-ai1wm-directory.php';
+
+require_once AI1WM_VENDOR_PATH .
+			DIRECTORY_SEPARATOR .
+			'servmask' .
+			DIRECTORY_SEPARATOR .
+			'filesystem' .
+			DIRECTORY_SEPARATOR .
 			'class-ai1wm-file.php';
 
 require_once AI1WM_VENDOR_PATH .

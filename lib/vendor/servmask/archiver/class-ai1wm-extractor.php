@@ -220,6 +220,7 @@ class Ai1wm_Extractor extends Ai1wm_Archiver {
 						// Replace extract paths
 						for ( $i = 0; $i < count( $old_paths ); $i++ ) {
 							if ( strpos( $file_path . DIRECTORY_SEPARATOR, $old_paths[ $i ] . DIRECTORY_SEPARATOR ) === 0 ) {
+								$file_name = substr_replace( $file_name, $new_paths[ $i ], 0, strlen( $old_paths[ $i ] ) );
 								$file_path = substr_replace( $file_path, $new_paths[ $i ], 0, strlen( $old_paths[ $i ] ) );
 								break;
 							}
