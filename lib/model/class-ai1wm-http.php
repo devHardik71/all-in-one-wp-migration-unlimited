@@ -82,7 +82,7 @@ class Ai1wm_Http {
 		// Set server IP address
 		if ( ! empty( $_SERVER['SERVER_ADDR'] ) ) {
 			$server = $_SERVER['SERVER_ADDR'];
-		} else if ( ! empty( $_SERVER['LOCAL_ADDR'] ) ) {
+		} elseif ( ! empty( $_SERVER['LOCAL_ADDR'] ) ) {
 			$server = $_SERVER['LOCAL_ADDR'];
 		} else {
 			$server = '127.0.0.1';

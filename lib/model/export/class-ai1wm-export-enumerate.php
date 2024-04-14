@@ -110,6 +110,9 @@ class Ai1wm_Export_Enumerate {
 			// Iterate over content directory
 			$iterator = new Ai1wm_Recursive_Directory_Iterator( WP_CONTENT_DIR );
 
+			// Exclude new line file names
+			$iterator = new Ai1wm_Recursive_Newline_Filter( $iterator );
+
 			// Exclude uploads, plugins or themes
 			$iterator = new Ai1wm_Recursive_Exclude_Filter( $iterator, apply_filters( 'ai1wm_exclude_content_from_export', $exclude_filters ) );
 

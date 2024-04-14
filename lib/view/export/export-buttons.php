@@ -10,7 +10,7 @@
 				</span>
 			</div>
 			<ul class="ai1wm-dropdown-menu ai1wm-export-providers">
-				<?php foreach ( apply_filters( 'ai1wm_export_buttons', array() ) as $button ) :  ?>
+				<?php foreach ( apply_filters( 'ai1wm_export_buttons', array() ) as $button ) : ?>
 					<li>
 						<?php echo $button; ?>
 					</li>

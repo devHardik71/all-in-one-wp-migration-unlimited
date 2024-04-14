@@ -33,30 +33,37 @@ class Ai1wm_Backups {
 	public function get_files() {
 		$backups = array();
 
+		// Iterate over directory
+		$iterator = new Ai1wm_Recursive_Directory_Iterator( AI1WM_BACKUPS_PATH );
+
+		// Recursively iterate over directory
+		$iterator = new RecursiveIteratorIterator( $iterator, RecursiveIteratorIterator::CHILD_FIRST, RecursiveIteratorIterator::CATCH_GET_CHILD );
+		$iterator->setMaxDepth( 3 );
+
 		// Get backup files
-		$iterator = new Ai1wm_Extension_Filter(
-			new DirectoryIterator( AI1WM_BACKUPS_PATH ),
-			array( 'wpress', 'bin' )
-		);
+		$iterator = new Ai1wm_Extension_Filter( $iterator, array( 'wpress', 'bin' ) );
 
 		foreach ( $iterator as $item ) {
 			try {
 				if ( ai1wm_is_filesize_supported( $item->getPathname() ) ) {
 					$backups[] = array(
-						'filename' => $item->getFilename(),
-						'mtime'    => $item->getMTime(),
-						'size'     => $item->getSize(),
+						'path'     => $iterator->getSubPath(),
+						'filename' => $iterator->getSubPathname(),
+						'mtime'    => $iterator->getMTime(),
+						'size'     => $iterator->getSize(),
 					);
 				} else {
 					$backups[] = array(
-						'filename' => $item->getFilename(),
-						'mtime'    => $item->getMTime(),
+						'path'     => $iterator->getSubPath(),
+						'filename' => $iterator->getSubPathname(),
+						'mtime'    => $iterator->getMTime(),
 						'size'     => null,
 					);
 				}
 			} catch ( Exception $e ) {
 				$backups[] = array(
-					'filename' => $item->getFilename(),
+					'path'     => $iterator->getSubPath(),
+					'filename' => $iterator->getSubPathname(),
 					'mtime'    => null,
 					'size'     => null,
 				);
@@ -76,8 +83,8 @@ class Ai1wm_Backups {
 	 * @return boolean
 	 */
 	public function delete_file( $file ) {
-		if ( ( $basename = basename( $file ) ) ) {
-			return @unlink( AI1WM_BACKUPS_PATH . DIRECTORY_SEPARATOR . $basename );
+		if ( validate_file( $file ) === 0 ) {
+			return @unlink( ai1wm_backup_path( array( 'archive' => $file ) ) );
 		}
 	}
 

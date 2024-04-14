@@ -34,7 +34,7 @@
 
 				<form action="" method="post" id="ai1wm-backups-form" class="ai1wm-clear">
 
-					<?php if ( is_readable( AI1WM_BACKUPS_PATH ) && is_writable( AI1WM_BACKUPS_PATH ) ) :  ?>
+					<?php if ( is_readable( AI1WM_BACKUPS_PATH ) && is_writable( AI1WM_BACKUPS_PATH ) ) : ?>
 						<?php if ( $backups ) : ?>
 							<table class="ai1wm-backups">
 								<thead>
@@ -49,21 +49,26 @@
 									<?php foreach ( $backups as $backup ) : ?>
 									<tr>
 										<td class="ai1wm-column-name">
+											<?php if ( $backup['path'] ) : ?>
+												<i class="ai1wm-icon-folder"></i>
+												<?php echo esc_html( $backup['path'] ); ?>
+												<br />
+											<?php endif; ?>
 											<i class="ai1wm-icon-file-zip"></i>
-											<?php echo esc_html( $backup['filename'] ); ?>
+											<?php echo esc_html( basename( $backup['filename'] ) ); ?>
 										</td>
 										<td class="ai1wm-column-date">
 											<?php echo human_time_diff( $backup['mtime'] ); ?> <?php _e( 'ago', AI1WM_PLUGIN_NAME ); ?>
 										</td>
 										<td class="ai1wm-column-size">
-											<?php if ( is_null( $backup['size'] ) ) :  ?>
+											<?php if ( is_null( $backup['size'] ) ) : ?>
 												<?php _e( '2GB+', AI1WM_PLUGIN_NAME ); ?>
 											<?php else : ?>
 												<?php echo size_format( $backup['size'], 2 ); ?>
 											<?php endif; ?>
 										</td>
 										<td class="ai1wm-column-actions ai1wm-backup-actions">
-											<a href="<?php echo ai1wm_backups_url( array( 'archive' => esc_attr( $backup['filename'] ) ) ); ?>" class="ai1wm-button-green ai1wm-button-alone ai1wm-backup-download">
+											<a href="<?php echo ai1wm_backup_url( array( 'archive' => esc_attr( $backup['filename'] ) ) ); ?>" class="ai1wm-button-green ai1wm-button-alone ai1wm-backup-download">
 												<i class="ai1wm-icon-arrow-down ai1wm-icon-alone"></i>
 												<span><?php _e( 'Download', AI1WM_PLUGIN_NAME ); ?></span>
 											</a>
@@ -80,20 +85,19 @@
 									<?php endforeach; ?>
 								</tbody>
 							</table>
-						<?php else : ?>
-							<div class="ai1wm-backups-empty">
-								<p><?php _e( 'There are no backups available at this time, why not create a new one?', AI1WM_PLUGIN_NAME ); ?></p>
-								<p>
-									<a href="<?php echo network_admin_url( 'admin.php?page=site-migration-export' ); ?>" class="ai1wm-button-green">
-										<i class="ai1wm-icon-export"></i>
-										<?php _e( 'Create backup', AI1WM_PLUGIN_NAME ); ?>
-									</a>
-								</p>
-							</div>
 						<?php endif; ?>
+						<div class="ai1wm-backups-create">
+							<p class="ai1wm-backups-empty <?php echo $backups ? 'ai1wm-hide' : null; ?>">
+								<?php _e( 'There are no backups available at this time, why not create a new one?', AI1WM_PLUGIN_NAME ); ?>
+							</p>
+							<p>
+								<a href="<?php echo network_admin_url( 'admin.php?page=site-migration-export' ); ?>" class="ai1wm-button-green">
+									<i class="ai1wm-icon-export"></i>
+									<?php _e( 'Create backup', AI1WM_PLUGIN_NAME ); ?>
+								</a>
+							</p>
+						</div>
 					<?php else : ?>
-						<br />
-						<br />
 						<div class="ai1wm-clear ai1wm-message ai1wm-red-message">
 							<?php
 							printf(
@@ -110,7 +114,7 @@
 
 					<?php do_action( 'ai1wm_backups_left_end' ); ?>
 
-					<input type="hidden" name="ai1wm_manual_backups" value="1" />
+					<input type="hidden" name="ai1wm_manual_restore" value="1" />
 
 				</form>
 			</div>

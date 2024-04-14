@@ -103,7 +103,7 @@ class Ai1wm_Import_Controller {
 
 					// Do request
 					if ( $completed === false || ( $next = next( $filters ) ) && ( $params['priority'] = key( $filters ) ) ) {
-						if ( isset( $params['ai1wm_manual_import'] ) || isset( $params['ai1wm_manual_backups'] ) ) {
+						if ( isset( $params['ai1wm_manual_import'] ) || isset( $params['ai1wm_manual_restore'] ) ) {
 							echo json_encode( $params );
 							exit;
 						}

@@ -41,11 +41,11 @@ class Ai1wm_Feedback {
 		// Submit feedback to ServMask
 		if ( empty( $type ) ) {
 			$errors[] = __( 'Feedback type is invalid.', AI1WM_PLUGIN_NAME );
-		} else if ( ! filter_var( $email, FILTER_VALIDATE_EMAIL ) ) {
+		} elseif ( ! filter_var( $email, FILTER_VALIDATE_EMAIL ) ) {
 			$errors[] = __( 'Your email is not valid.', AI1WM_PLUGIN_NAME );
-		} else if ( empty( $message ) ) {
+		} elseif ( empty( $message ) ) {
 			$errors[] = __( 'Please enter comments in the text area.', AI1WM_PLUGIN_NAME );
-		} else if ( empty( $terms ) ) {
+		} elseif ( empty( $terms ) ) {
 			$errors[] = __( 'Please accept feedback term conditions.', AI1WM_PLUGIN_NAME );
 		} else {
 			$response = wp_remote_post(

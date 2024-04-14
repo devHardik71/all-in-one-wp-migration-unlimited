@@ -54,7 +54,7 @@ class Ai1wm_Status {
 	}
 
 	public static function log( $data = array() ) {
-		if ( isset( $_REQUEST['ai1wm_manual_export'] ) || isset( $_REQUEST['ai1wm_manual_import'] ) || isset( $_REQUEST['ai1wm_manual_backups'] ) ) {
+		if ( isset( $_REQUEST['ai1wm_manual_export'] ) || isset( $_REQUEST['ai1wm_manual_import'] ) || isset( $_REQUEST['ai1wm_manual_restore'] ) ) {
 			update_option( AI1WM_STATUS, $data );
 		}
 	}

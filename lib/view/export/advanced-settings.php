@@ -31,7 +31,7 @@
 				</label>
 			</li>
 
-			<?php if ( apply_filters( 'ai1wm_max_file_size', AI1WM_MAX_FILE_SIZE ) === 0 ) :  ?>
+			<?php if ( apply_filters( 'ai1wm_max_file_size', AI1WM_MAX_FILE_SIZE ) === 0 ) : ?>
 				<li>
 					<label for="ai1wm-no-inactive-themes">
 						<input type="checkbox" id="ai1wm-no-inactive-themes" name="options[no_inactive_themes]" />
@@ -56,7 +56,7 @@
 				</label>
 			</li>
 
-			<?php if ( apply_filters( 'ai1wm_max_file_size', AI1WM_MAX_FILE_SIZE ) === 0 ) :  ?>
+			<?php if ( apply_filters( 'ai1wm_max_file_size', AI1WM_MAX_FILE_SIZE ) === 0 ) : ?>
 				<li>
 					<label for="ai1wm-no-inactive-plugins">
 						<input type="checkbox" id="ai1wm-no-inactive-plugins" name="options[no_inactive_plugins]" />

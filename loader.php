@@ -110,6 +110,14 @@ require_once AI1WM_VENDOR_PATH .
 			DIRECTORY_SEPARATOR .
 			'servmask' .
 			DIRECTORY_SEPARATOR .
+			'filter' .
+			DIRECTORY_SEPARATOR .
+			'class-ai1wm-recursive-newline-filter.php';
+
+require_once AI1WM_VENDOR_PATH .
+			DIRECTORY_SEPARATOR .
+			'servmask' .
+			DIRECTORY_SEPARATOR .
 			'archiver' .
 			DIRECTORY_SEPARATOR .
 			'class-ai1wm-archiver.php';

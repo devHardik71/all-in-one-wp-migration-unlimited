@@ -23,46 +23,10 @@
  * ╚══════╝╚══════╝╚═╝  ╚═╝  ╚═══╝  ╚═╝     ╚═╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝
  */
 
-class Ai1wm_Recursive_Directory_Iterator extends RecursiveDirectoryIterator {
+class Ai1wm_Recursive_Newline_Filter extends RecursiveFilterIterator {
 
-	protected $exclude = array();
-
-	public function __construct( $path ) {
-		parent::__construct( $path );
-
-		// Skip current and parent directory
-		$this->skipdots();
-	}
-
-	public function rewind() {
-		parent::rewind();
-
-		// Skip current and parent directory
-		$this->skipdots();
-	}
-
-	public function next() {
-		parent::next();
-
-		// Skip current and parent directory
-		$this->skipdots();
-	}
-
-	/**
-	 * Returns whether current entry is a directory and not '.' or '..'
-	 *
-	 * Explicitly set allow links flag, because RecursiveDirectoryIterator::FOLLOW_SYMLINKS
-	 * is not supported by <= PHP 5.3.0
-	 *
-	 * @return bool
-	 */
-	public function hasChildren( $allow_links = true ) {
-		return parent::hasChildren( $allow_links );
-	}
-
-	protected function skipdots() {
-		while ( $this->isDot() ) {
-			parent::next();
-		}
+	public function accept() {
+		return strpos( $this->getInnerIterator()->getSubPathname(), "\n" ) === false &&
+			strpos( $this->getInnerIterator()->getSubPathname(), "\r" ) === false;
 	}
 }

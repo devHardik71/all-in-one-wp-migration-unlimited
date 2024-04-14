@@ -17,11 +17,14 @@
 		</div>
 		<div class="ai1wm-field">
 			<div class="ai1wm-buttons">
-				<button type="submit" id="ai1wm-report-submit" class="ai1wm-button-blue">
+				<a href="#" id="ai1wm-report-cancel" class="ai1wm-report-cancel"><?php _e( 'Cancel', AI1WM_PLUGIN_NAME ); ?></a>
+
+				<button type="submit" id="ai1wm-report-submit" class="ai1wm-button-blue ai1wm-form-submit">
 					<i class="ai1wm-icon-paperplane"></i>
 					<?php _e( 'Send', AI1WM_PLUGIN_NAME ); ?>
 				</button>
-				<a href="#" id="ai1wm-report-cancel" class="ai1wm-report-cancel"><?php _e( 'Cancel', AI1WM_PLUGIN_NAME ); ?></a>
+				<span class="spinner"></span>
+				<div class="ai1wm-clear"></div>
 			</div>
 		</div>
 	</div>

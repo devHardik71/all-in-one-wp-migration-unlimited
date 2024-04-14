@@ -59,7 +59,7 @@ class Ai1wm_Database_Utility {
 			// Some unserialized data cannot be re-serialized eg. SimpleXMLElements
 			if ( is_serialized( $data ) && ( $unserialized = @unserialize( $data ) ) !== false ) {
 				$data = self::replace_serialized_values( $from, $to, $unserialized, true );
-			} else if ( is_array( $data ) ) {
+			} elseif ( is_array( $data ) ) {
 				$tmp = array();
 				foreach ( $data as $key => $value ) {
 					$tmp[ $key ] = self::replace_serialized_values( $from, $to, $value, false );

@@ -31,7 +31,7 @@
  */
 function ai1wm_storage_path( $params ) {
 	if ( empty( $params['storage'] ) ) {
-		throw new Ai1wm_Storage_Exception( 'Unable to locate storage path' );
+		throw new Ai1wm_Storage_Exception( __( 'Unable to locate storage path', AI1WM_PLUGIN_NAME ) );
 	}
 
 	// Get storage path
@@ -44,17 +44,22 @@ function ai1wm_storage_path( $params ) {
 }
 
 /**
- * Get backups absolute path
+ * Get backup absolute path
  *
  * @param  array  $params Request parameters
  * @return string
  */
-function ai1wm_backups_path( $params ) {
+function ai1wm_backup_path( $params ) {
 	if ( empty( $params['archive'] ) ) {
-		throw new Ai1wm_Archive_Exception( 'Unable to locate archive path' );
+		throw new Ai1wm_Archive_Exception( __( 'Unable to locate archive path', AI1WM_PLUGIN_NAME ) );
 	}
 
-	return AI1WM_BACKUPS_PATH;
+	// Validate archive path
+	if ( validate_file( $params['archive'] ) !== 0 ) {
+		throw new Ai1wm_Archive_Exception( __( 'Invalid archive path', AI1WM_PLUGIN_NAME ) );
+	}
+
+	return AI1WM_BACKUPS_PATH . DIRECTORY_SEPARATOR . $params['archive'];
 }
 
 /**
@@ -65,25 +70,20 @@ function ai1wm_backups_path( $params ) {
  */
 function ai1wm_archive_path( $params ) {
 	if ( empty( $params['archive'] ) ) {
-		throw new Ai1wm_Storage_Exception( 'Unable to locate archive path' );
+		throw new Ai1wm_Archive_Exception( __( 'Unable to locate archive path', AI1WM_PLUGIN_NAME ) );
+	}
+
+	// Validate archive path
+	if ( validate_file( $params['archive'] ) !== 0 ) {
+		throw new Ai1wm_Archive_Exception( __( 'Invalid archive path', AI1WM_PLUGIN_NAME ) );
 	}
 
 	// Get archive path
-	if ( empty( $params['ai1wm_manual_backups'] ) ) {
-		return ai1wm_storage_path( $params ) . DIRECTORY_SEPARATOR . basename( $params['archive'] );
+	if ( empty( $params['ai1wm_manual_restore'] ) ) {
+		return ai1wm_storage_path( $params ) . DIRECTORY_SEPARATOR . $params['archive'];
 	}
 
-	return ai1wm_backups_path( $params ) . DIRECTORY_SEPARATOR . basename( $params['archive'] );
-}
-
-/**
- * Get download absolute path
- *
- * @param  array  $params Request parameters
- * @return string
- */
-function ai1wm_download_path( $params ) {
-	return ai1wm_backups_path( $params ) . DIRECTORY_SEPARATOR . basename( $params['archive'] );
+	return ai1wm_backup_path( $params );
 }
 
 /**
@@ -190,13 +190,13 @@ function ai1wm_archive_name( $params ) {
 }
 
 /**
- * Get backups URL address
+ * Get backup URL address
  *
  * @param  array  $params Request parameters
  * @return string
  */
-function ai1wm_backups_url( $params ) {
-	return AI1WM_BACKUPS_URL . '/' . ai1wm_archive_name( $params );
+function ai1wm_backup_url( $params ) {
+	return AI1WM_BACKUPS_URL . '/' . str_replace( DIRECTORY_SEPARATOR, '/', $params['archive'] );
 }
 
 /**
@@ -210,13 +210,13 @@ function ai1wm_archive_bytes( $params ) {
 }
 
 /**
- * Get download size in bytes
+ * Get backup size in bytes
  *
  * @param  array   $params Request parameters
  * @return integer
  */
-function ai1wm_download_bytes( $params ) {
-	return filesize( ai1wm_download_path( $params ) );
+function ai1wm_backup_bytes( $params ) {
+	return filesize( ai1wm_backup_path( $params ) );
 }
 
 /**
@@ -240,13 +240,13 @@ function ai1wm_archive_size( $params ) {
 }
 
 /**
- * Get download size as text
+ * Get backup size as text
  *
  * @param  array  $params Request parameters
  * @return string
  */
-function ai1wm_download_size( $params ) {
-	return size_format( filesize( ai1wm_download_path( $params ) ) );
+function ai1wm_backup_size( $params ) {
+	return size_format( filesize( ai1wm_backup_path( $params ) ) );
 }
 
 /**
@@ -394,7 +394,7 @@ function ai1wm_files_path( $blog_id = null ) {
  */
 function ai1wm_blogsdir_path( $blog_id = null ) {
 	if ( ai1wm_main_site( $blog_id ) ) {
-		return '/wp-content/blogs.dir/';
+		return '/wp-content/uploads/';
 	}
 
 	return "/wp-content/blogs.dir/{$blog_id}/files/";
@@ -408,7 +408,7 @@ function ai1wm_blogsdir_path( $blog_id = null ) {
  */
 function ai1wm_blogsdir_url( $blog_id = null ) {
 	if ( ai1wm_main_site( $blog_id ) ) {
-		return get_site_url( $blog_id, '/wp-content/blogs.dir/' );
+		return get_site_url( $blog_id, '/wp-content/uploads/' );
 	}
 
 	return get_site_url( $blog_id, "/wp-content/blogs.dir/{$blog_id}/files/" );

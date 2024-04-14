@@ -38,11 +38,14 @@
 		</div>
 		<div class="ai1wm-field">
 			<div class="ai1wm-buttons">
-				<button type="submit" id="ai1wm-feedback-submit" class="ai1wm-button-blue">
+				<a class="ai1wm-feedback-cancel" id="ai1wm-feedback-cancel" href="#"><?php _e( 'Cancel', AI1WM_PLUGIN_NAME ); ?></a>
+
+				<button type="submit" id="ai1wm-feedback-submit" class="ai1wm-button-blue ai1wm-form-submit">
 					<i class="ai1wm-icon-paperplane"></i>
 					<?php _e( 'Send', AI1WM_PLUGIN_NAME ); ?>
 				</button>
-				<a class="ai1wm-feedback-cancel" id="ai1wm-feedback-cancel" href="#"><?php _e( 'Cancel', AI1WM_PLUGIN_NAME ); ?></a>
+				<span class="spinner"></span>
+				<div class="ai1wm-clear"></div>
 			</div>
 		</div>
 	</div>

@@ -40,9 +40,9 @@ class Ai1wm_Report {
 		// Submit report to ServMask
 		if ( ! filter_var( $email, FILTER_VALIDATE_EMAIL ) ) {
 			$errors[] = __( 'Your email is not valid.', AI1WM_PLUGIN_NAME );
-		} else if ( empty( $message ) ) {
+		} elseif ( empty( $message ) ) {
 			$errors[] = __( 'Please enter comments in the text area.', AI1WM_PLUGIN_NAME );
-		} else if ( empty( $terms ) ) {
+		} elseif ( empty( $terms ) ) {
 			$errors[] = __( 'Please accept report term conditions.', AI1WM_PLUGIN_NAME );
 		} else {
 			$response = wp_remote_post(

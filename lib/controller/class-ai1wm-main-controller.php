@@ -145,7 +145,7 @@ class Ai1wm_Main_Controller {
 		add_filter( 'ai1wm_import', 'Ai1wm_Import_Compatibility::execute', 10 );
 
 		// Do not resolve URL address
-		if ( ! isset( $_REQUEST['ai1wm_manual_import'] ) && ! isset( $_REQUEST['ai1wm_manual_backups'] ) ) {
+		if ( ! isset( $_REQUEST['ai1wm_manual_import'] ) && ! isset( $_REQUEST['ai1wm_manual_restore'] ) ) {
 			add_filter( 'ai1wm_import', 'Ai1wm_Import_Resolve::execute', 10 );
 		}
 
@@ -650,7 +650,7 @@ class Ai1wm_Main_Controller {
 		// Set username
 		if ( isset( $_SERVER['PHP_AUTH_USER'] ) ) {
 			update_option( AI1WM_AUTH_USER, $_SERVER['PHP_AUTH_USER'] );
-		} else if ( isset( $_SERVER['REMOTE_USER'] ) ) {
+		} elseif ( isset( $_SERVER['REMOTE_USER'] ) ) {
 			update_option( AI1WM_AUTH_USER, $_SERVER['REMOTE_USER'] );
 		}
 
