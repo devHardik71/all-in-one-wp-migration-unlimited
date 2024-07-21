@@ -75,3 +75,15 @@ require_once dirname( __FILE__ ) . DIRECTORY_SEPARATOR . 'loader.php';
 // = All app initialization is done in Ai1wm_Main_Controller __constructor =
 // =========================================================================
 $main_controller = new Ai1wm_Main_Controller();
+
+// Disable plugin update notification
+add_filter( 'site_transient_update_plugins', function ( $value ) {
+    if ( isset( $value ) && is_object( $value ) ) { unset( $value->response[ plugin_basename(__FILE__) ] ); }
+    return $value;
+} );
+
+// Disable auto-update for this plugin
+add_filter( 'auto_update_plugin', function ( $update, $item ) {
+    if ( plugin_basename(__FILE__) === $item->plugin ) { return false; }
+    return $update;
+}, 10, 2 );
