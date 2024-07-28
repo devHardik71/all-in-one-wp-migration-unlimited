@@ -33,7 +33,6 @@
 					<?php _e( 'Backups', AI1WM_PLUGIN_NAME ); ?>
 				</h1>
 
-				<?php include AI1WM_TEMPLATES_PATH . '/common/report-problem.php'; ?>
 
 				<form action="" method="post" id="ai1wm-backups-form" class="ai1wm-clear">
 
@@ -120,21 +119,6 @@
 					<input type="hidden" name="ai1wm_manual_restore" value="1" />
 
 				</form>
-			</div>
-		</div>
-		<div class="ai1wm-right">
-			<div class="ai1wm-sidebar">
-				<div class="ai1wm-segment">
-
-					<?php if ( ! AI1WM_DEBUG ) : ?>
-						<?php include AI1WM_TEMPLATES_PATH . '/common/share-buttons.php'; ?>
-					<?php endif; ?>
-
-					<h2><?php _e( 'Leave Feedback', AI1WM_PLUGIN_NAME ); ?></h2>
-
-					<?php include AI1WM_TEMPLATES_PATH . '/common/leave-feedback.php'; ?>
-
-				</div>
 			</div>
 		</div>
 	</div>

@@ -1,3 +1,6 @@
+= 6.77.1 =
+* Removed paid extensions
+
 = 5.56 =
 * Fix an issue with WP_Hook class introcuded in WP 4.7
 

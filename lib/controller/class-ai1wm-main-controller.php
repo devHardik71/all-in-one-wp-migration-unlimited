@@ -442,7 +442,7 @@ class Ai1wm_Main_Controller {
 	 */
 	public function plugin_row_meta( $links, $file ) {
 		if ( $file == AI1WM_PLUGIN_BASENAME ) {
-			$links[] = Ai1wm_Template::get_content( 'main/get-support' );
+			$links[] = Ai1wm_Template::get_content( 'main/modified-by' );
 		}
 
 		return $links;

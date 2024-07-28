@@ -1,4 +1,4 @@
-# All-in-One WP Migration (v6.77) (Unlimited Import Size)
+# All-in-One WP Migration (v6.77.1) (Unlimited Import Size)
 
 Welcome to the modified version of All-in-One WP Migration! In this version, we've removed the size restriction on importing or restoring backups, allowing you to seamlessly transfer websites of any size.
 
@@ -11,7 +11,7 @@ Welcome to the modified version of All-in-One WP Migration! In this version, we'
 
 ## Getting Started:
 
-To begin using this modified version of All-in-One WP Migration, simply download the plugin files from [this repository](https://github.com/devHardik71/All-in-One-WP-Migration-Unlimited). Once installed, you'll have access to the unrestricted import functionality, allowing you to import backups of any size without encountering limitations.
+To begin using this modified version of All-in-One WP Migration, simply download the plugin files from [this repository](https://github.com/devHardik71/all-in-one-wp-migration-unlimited). Once installed, you'll have access to the unrestricted import functionality, allowing you to import backups of any size without encountering limitations.
 
 If you want to download the latest version of the original All-in-One WP Migration plugin, please visit the [official website](https://wordpress.org/plugins/all-in-one-wp-migration/).
 

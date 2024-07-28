@@ -121,26 +121,6 @@ class Ai1wm_Import_Controller {
 		}
 	}
 
-	public static function buttons() {
-		return array(
-			apply_filters( 'ai1wm_import_file', Ai1wm_Template::get_content( 'import/button-file' ) ),
-			apply_filters( 'ai1wm_import_url', Ai1wm_Template::get_content( 'import/button-url' ) ),
-			apply_filters( 'ai1wm_import_ftp', Ai1wm_Template::get_content( 'import/button-ftp' ) ),
-			apply_filters( 'ai1wm_import_dropbox', Ai1wm_Template::get_content( 'import/button-dropbox' ) ),
-			apply_filters( 'ai1wm_import_gdrive', Ai1wm_Template::get_content( 'import/button-gdrive' ) ),
-			apply_filters( 'ai1wm_import_s3', Ai1wm_Template::get_content( 'import/button-s3' ) ),
-			apply_filters( 'ai1wm_import_b2', Ai1wm_Template::get_content( 'import/button-b2' ) ),
-			apply_filters( 'ai1wm_import_onedrive', Ai1wm_Template::get_content( 'import/button-onedrive' ) ),
-			apply_filters( 'ai1wm_import_box', Ai1wm_Template::get_content( 'import/button-box' ) ),
-			apply_filters( 'ai1wm_import_mega', Ai1wm_Template::get_content( 'import/button-mega' ) ),
-			apply_filters( 'ai1wm_import_digitalocean', Ai1wm_Template::get_content( 'import/button-digitalocean' ) ),
-			apply_filters( 'ai1wm_import_gcloud_storage', Ai1wm_Template::get_content( 'import/button-gcloud-storage' ) ),
-			apply_filters( 'ai1wm_import_azure_storage', Ai1wm_Template::get_content( 'import/button-azure-storage' ) ),
-			apply_filters( 'ai1wm_import_glacier', Ai1wm_Template::get_content( 'import/button-glacier' ) ),
-			apply_filters( 'ai1wm_import_pcloud', Ai1wm_Template::get_content( 'import/button-pcloud' ) ),
-		);
-	}
-
 	public static function http_import_headers( $headers = array() ) {
 		if ( ( $user = get_option( AI1WM_AUTH_USER ) ) && ( $password = get_option( AI1WM_AUTH_PASSWORD ) ) ) {
 			if ( ( $hash = base64_encode( sprintf( '%s:%s', $user, $password ) ) ) ) {

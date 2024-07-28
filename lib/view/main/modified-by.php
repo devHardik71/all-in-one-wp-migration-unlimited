@@ -1,0 +1,1 @@
+Modified by <a href="https://github.com/devHardik71" target="_blank"><?php _e( 'devHardik71', AI1WM_PLUGIN_NAME ); ?></a>
